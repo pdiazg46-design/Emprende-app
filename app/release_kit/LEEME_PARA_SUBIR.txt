@@ -1,0 +1,24 @@
+# 🚀 Kit de Lanzamiento Finanza Fácil (v2)
+
+Este directorio contiene todo lo necesario para tu lanzamiento en Google Play.
+
+## 📦 Archivos Incluidos
+- **app-release-v2.aab**: El archivo CORREGIDO que debes subir a Google Play Console.
+  - Incluye nuevo icono (Antena/Luna).
+  - Incluye nuevo nombre corto ("Fácil").
+  - Soluciona el error de "Server Error" al limpiar la caché interna.
+
+## 📝 Pasos para Subir (Actualizado)
+
+1.  Ve a **Google Play Console** > **Seleccionar App** > **Producción** (o Testing).
+2.  Haz clic en **"Crear nueva versión"**.
+3.  Arrastra el archivo `app-release-v2.aab` a la zona de carga.
+4.  Nombre de la versión: Sugerimos usar "1.0.1 (Fix Server Error & Branding)".
+5.  Notas de la versión: "Corrección crítica de conexión y actualización de identidad visual".
+
+## ✅ Verificación Técnica
+- **Web:** Verificada y operativa (Status 200).
+- **Google Auth:** Credenciales corregidas y funcionales.
+- **Assetlinks:** Archivo de verificación activo para App Links.
+
+¡Listo para el despegue! 🚀

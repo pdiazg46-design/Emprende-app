@@ -1,0 +1,11 @@
+<svg width="2732" height="2732" viewBox="0 0 2732 2732" xmlns="http://www.w3.org/2000/svg">
+  <!-- Navy Blue Background -->
+  <rect width="2732" height="2732" fill="#0f172a"/>
+  
+  <!-- Antenna Symbol Centered -->
+  <g transform="translate(1366, 1366) scale(2) rotate(-45)">
+    <path d="M -300 0 A 300 300 0 0 1 300 0" stroke="white" stroke-width="80" fill="none" stroke-linecap="round" transform="translate(0, 100)"/>
+    <path d="M -180 0 A 180 180 0 0 1 180 0" stroke="white" stroke-width="80" fill="none" stroke-linecap="round" transform="translate(0, 100)"/>
+    <circle cx="0" cy="100" r="50" fill="white"/>
+  </g>
+</svg>
