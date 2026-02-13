@@ -182,7 +182,7 @@ export async function getDashboardMetrics() {
         orderBy: { name: 'asc' }
     })
 
-    const totalStockValue = inventory.reduce((acc, curr) => acc + (curr.price * curr.stock), 0)
+    const totalStockValue = inventory.reduce((acc, curr) => acc + (curr.price * Math.max(0, curr.stock)), 0)
 
     return {
         salesToday: salesToday._sum.amount || 0,

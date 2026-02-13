@@ -55,8 +55,9 @@ export function StockList({ inventory }: { inventory: Product[] }) {
                                 {prod.name}
                             </p>
                             {/* Format: Date + "Stock" + Product (Already in title) + Qty */}
-                            <p className="text-[11px] font-medium text-slate-400">
-                                {new Date(prod.updatedAt).toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit' })} • Stock: {prod.stock} u.
+                            <p className={`text-[11px] font-medium ${prod.stock < 0 ? 'text-rose-600 font-bold' : 'text-slate-400'}`}>
+                                {new Date(prod.updatedAt).toLocaleDateString('es-CL', { day: '2-digit', month: '2-digit' })} •
+                                {prod.stock < 0 ? ` DÉFICIT: ${prod.stock} u.` : ` Stock: ${prod.stock} u.`}
                             </p>
                         </div>
                     </div>
