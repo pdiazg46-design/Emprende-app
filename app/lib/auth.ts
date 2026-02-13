@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import Google from "next-auth/providers/google"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+    debug: true,
     adapter: PrismaAdapter(prisma),
     providers: [
         Google({
@@ -20,4 +21,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     pages: {
         signIn: "/auth/signin",
     },
+    trustHost: true,
+    secret: process.env.AUTH_SECRET || "fallback-secret-force-local-dev",
 })

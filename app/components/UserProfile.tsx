@@ -77,21 +77,21 @@ export function UserProfile({ user }: UserProfileProps) {
                         )}
 
                         <div className="p-4 pt-2 text-center">
-                            <button
-                                onClick={() => signOut()}
-                                className="w-full bg-red-50 text-red-600 font-bold py-2 rounded-xl text-sm"
+                            <a
+                                href="/api/manual-logout"
+                                className="block w-full bg-red-50 text-red-600 font-bold py-2 rounded-xl text-sm"
                             >
                                 Cerrar Sesión
-                            </button>
+                            </a>
                         </div>
 
 
-                        <button
-                            onClick={() => signOut({ callbackUrl: "/auth/signin" })}
+                        <a
+                            href="/api/manual-logout"
                             className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-red-500 hover:bg-red-50 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest text-center active:scale-95 border border-transparent hover:border-red-100"
                         >
                             <LogOut className="w-3.5 h-3.5" /> Salir
-                        </button>
+                        </a>
                     </div>
                 </>
             )}
