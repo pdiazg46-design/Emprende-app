@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import { getUsers, switchUserPlan } from "../app/actions/user-actions"
-import { X, Users, Sparkles, Shield, Search, RefreshCw, Calendar } from "lucide-react"
+import { getUsers, switchUserPlan, toggleMachineAccess } from "../app/actions/user-actions"
+import { X, Users, Sparkles, Shield, Search, RefreshCw, Calendar, Monitor, Laptop } from "lucide-react"
 import { createPortal } from "react-dom"
 
 interface User {
@@ -12,6 +12,7 @@ interface User {
     image: string | null
     plan: string
     createdAt: Date
+    allowedMachineIds: string | null
 }
 
 interface AdminUsersModalProps {
@@ -24,10 +25,16 @@ export function AdminUsersModal({ isOpen, onClose }: AdminUsersModalProps) {
     const [isLoading, setIsLoading] = useState(true)
     const [searchQuery, setSearchQuery] = useState("")
     const [updatingEmail, setUpdatingEmail] = useState<string | null>(null)
+    const [currentMachineId, setCurrentMachineId] = useState<string | null>(null)
 
     useEffect(() => {
         if (isOpen) {
             fetchUsers()
+            // @ts-ignore
+            if (typeof window !== 'undefined' && window.electronAPI) {
+                // @ts-ignore
+                window.electronAPI.getMachineId().then(id => setCurrentMachineId(id))
+            }
         }
     }, [isOpen])
 
@@ -48,6 +55,16 @@ export function AdminUsersModal({ isOpen, onClose }: AdminUsersModalProps) {
         setUpdatingEmail(null)
     }
 
+    const handleToggleMachine = async (email: string, machineId: string) => {
+        setUpdatingEmail(email)
+        const result = await toggleMachineAccess(email, machineId)
+        if (result.success) {
+            // Refresh users to get updated list
+            fetchUsers()
+        }
+        setUpdatingEmail(null)
+    }
+
     const filteredUsers = users.filter(u =>
         u.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         u.email?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -59,7 +76,7 @@ export function AdminUsersModal({ isOpen, onClose }: AdminUsersModalProps) {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
 
-            <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
                     <div className="flex items-center gap-3">
@@ -71,6 +88,12 @@ export function AdminUsersModal({ isOpen, onClose }: AdminUsersModalProps) {
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{users.length} Registrados</p>
                         </div>
                     </div>
+                    {currentMachineId && (
+                        <div className="px-3 py-1 bg-slate-100 rounded-lg border border-slate-200">
+                            <p className="text-[8px] font-bold text-slate-400 uppercase">Tu ID Terminal</p>
+                            <p className="text-[10px] font-mono font-bold text-slate-600">{currentMachineId}</p>
+                        </div>
+                    )}
                     <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
                         <X className="w-5 h-5 text-slate-400" />
                     </button>
@@ -102,54 +125,104 @@ export function AdminUsersModal({ isOpen, onClose }: AdminUsersModalProps) {
                             <p className="text-sm font-medium">No se encontraron usuarios</p>
                         </div>
                     ) : (
-                        filteredUsers.map((user) => (
-                            <div key={user.id} className="p-3 bg-white border border-slate-100 rounded-2xl flex items-center justify-between hover:border-blue-100 hover:shadow-md hover:shadow-blue-500/5 transition-all">
-                                <div className="flex items-center gap-3 min-w-0">
-                                    <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-100 overflow-hidden flex-shrink-0">
-                                        {user.image ? (
-                                            <img src={user.image} alt="" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-xs font-black text-slate-400 uppercase">
-                                                {(user.name || user.email || "U").charAt(0)}
+                        filteredUsers.map((user) => {
+                            const allowedIds = user.allowedMachineIds ? user.allowedMachineIds.split(',') : []
+                            const isCurrentMachineAllowed = currentMachineId && allowedIds.includes(currentMachineId)
+
+                            return (
+                                <div key={user.id} className="p-3 bg-white border border-slate-100 rounded-2xl flex flex-col gap-3 hover:border-blue-100 hover:shadow-md hover:shadow-blue-500/5 transition-all">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-100 overflow-hidden flex-shrink-0">
+                                                {user.image ? (
+                                                    <img src={user.image} alt="" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-xs font-black text-slate-400 uppercase">
+                                                        {(user.name || user.email || "U").charAt(0)}
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
-                                    <div className="min-w-0">
-                                        <div className="flex items-center gap-1.5">
-                                            <p className="text-sm font-black text-slate-900 truncate">{user.name || 'Sin nombre'}</p>
-                                            {user.plan === 'PREMIUM' && (
-                                                <Sparkles className="w-3 h-3 text-amber-500 fill-amber-500" />
-                                            )}
+                                            <div className="min-w-0">
+                                                <div className="flex items-center gap-1.5">
+                                                    <p className="text-sm font-black text-slate-900 truncate">{user.name || 'Sin nombre'}</p>
+                                                    {user.plan === 'PREMIUM' && (
+                                                        <Sparkles className="w-3 h-3 text-amber-500 fill-amber-500" />
+                                                    )}
+                                                </div>
+                                                <div className="flex flex-col gap-0.5">
+                                                    <p className="text-[10px] font-medium text-slate-400 truncate">{user.email}</p>
+                                                    <div className="flex items-center gap-1 text-[9px] font-bold text-slate-300 uppercase tracking-tighter">
+                                                        <Calendar className="w-2.5 h-2.5" />
+                                                        <span>Desde {new Date(user.createdAt).toLocaleDateString('es-CL')}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col gap-0.5">
-                                            <p className="text-[10px] font-medium text-slate-400 truncate">{user.email}</p>
-                                            <div className="flex items-center gap-1 text-[9px] font-bold text-slate-300 uppercase tracking-tighter">
-                                                <Calendar className="w-2.5 h-2.5" />
-                                                <span>Desde {new Date(user.createdAt).toLocaleDateString('es-CL')}</span>
-                                            </div>
+
+                                        <div className="flex items-center gap-2">
+                                            {/* Plan Toggle */}
+                                            <button
+                                                onClick={() => handleTogglePlan(user.email!, user.plan)}
+                                                disabled={updatingEmail === user.email}
+                                                className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 ${user.plan === 'PREMIUM'
+                                                    ? 'bg-amber-50 text-amber-600 border border-amber-100 hover:bg-amber-100'
+                                                    : 'bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100'
+                                                    }`}
+                                            >
+                                                {updatingEmail === user.email ? (
+                                                    <RefreshCw className="w-3 h-3 animate-spin" />
+                                                ) : (
+                                                    <>
+                                                        <Shield className="w-3 h-3" />
+                                                        {user.plan === 'PREMIUM' ? 'Hacer Gratis' : 'Hacer Premium'}
+                                                    </>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Licensing Section */}
+                                    <div className="pl-[52px]">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className="h-px bg-slate-100 flex-1" />
+                                            <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Licencias de Hardware</span>
+                                            <div className="h-px bg-slate-100 flex-1" />
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-2 items-center">
+                                            {allowedIds.length === 0 && (
+                                                <span className="text-[10px] text-slate-400 italic">Sin terminales autorizadas</span>
+                                            )}
+
+                                            {allowedIds.map(id => (
+                                                <div key={id} className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1">
+                                                    <Monitor className="w-3 h-3 text-slate-400" />
+                                                    <span className="text-[9px] font-mono text-slate-600">{id}</span>
+                                                    <button
+                                                        onClick={() => handleToggleMachine(user.email!, id)}
+                                                        disabled={updatingEmail === user.email}
+                                                        className="w-4 h-4 flex items-center justify-center hover:bg-red-50 hover:text-red-500 rounded transition-colors"
+                                                    >
+                                                        <X className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                            ))}
+
+                                            {currentMachineId && !isCurrentMachineAllowed && (
+                                                <button
+                                                    onClick={() => handleToggleMachine(user.email!, currentMachineId)}
+                                                    disabled={updatingEmail === user.email}
+                                                    className="flex items-center gap-1.5 bg-green-50 border border-green-200 hover:bg-green-100 text-green-700 rounded-lg px-2 py-1 transition-all active:scale-95"
+                                                >
+                                                    <Laptop className="w-3 h-3" />
+                                                    <span className="text-[9px] font-bold uppercase">Autorizar ESTA PC</span>
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
-
-                                <button
-                                    onClick={() => handleTogglePlan(user.email!, user.plan)}
-                                    disabled={updatingEmail === user.email}
-                                    className={`ml-2 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 ${user.plan === 'PREMIUM'
-                                        ? 'bg-amber-50 text-amber-600 border border-amber-100 hover:bg-amber-100'
-                                        : 'bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100'
-                                        }`}
-                                >
-                                    {updatingEmail === user.email ? (
-                                        <RefreshCw className="w-3 h-3 animate-spin" />
-                                    ) : (
-                                        <>
-                                            <Shield className="w-3 h-3" />
-                                            {user.plan === 'PREMIUM' ? 'Hacer Gratis' : 'Hacer Premium'}
-                                        </>
-                                    )}
-                                </button>
-                            </div>
-                        ))
+                            )
+                        })
                     )}
                 </div>
             </div>

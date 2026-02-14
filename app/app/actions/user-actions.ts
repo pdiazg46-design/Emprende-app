@@ -45,12 +45,67 @@ export async function getUsers() {
                 email: true,
                 image: true,
                 plan: true,
-                createdAt: true
+                createdAt: true,
+                allowedMachineIds: true
             }
         })
         return users
     } catch (error) {
         console.error("Failed to fetch users:", error)
+        return []
+    }
+}
+
+export async function toggleMachineAccess(targetEmail: string, machineId: string) {
+    const session = await auth()
+
+    if (session?.user?.email !== "pdiazg46@gmail.com") {
+        throw new Error("Unauthorized")
+    }
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email: targetEmail },
+            select: { allowedMachineIds: true }
+        })
+
+        if (!user) return { success: false, message: "User not found" }
+
+        const currentIds = user.allowedMachineIds ? user.allowedMachineIds.split(",") : []
+        const exists = currentIds.includes(machineId)
+
+        let newIds: string[]
+        if (exists) {
+            newIds = currentIds.filter(id => id !== machineId)
+        } else {
+            newIds = [...currentIds, machineId]
+        }
+
+        await prisma.user.update({
+            where: { email: targetEmail },
+            data: { allowedMachineIds: newIds.join(",") }
+        })
+
+        revalidatePath("/", "layout")
+        return { success: true, message: exists ? "Machine removed" : "Machine authorized" }
+    } catch (error) {
+        console.error("Failed to toggle machine:", error)
+        return { success: false, message: "Error" }
+    }
+}
+
+export async function getMyAllowedIds() {
+    const session = await auth()
+    if (!session?.user?.email) return []
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email: session.user.email },
+            select: { allowedMachineIds: true }
+        })
+        return user?.allowedMachineIds ? user.allowedMachineIds.split(",") : []
+    } catch (error) {
+        console.error("Failed to fetch allowed IDs:", error)
         return []
     }
 }

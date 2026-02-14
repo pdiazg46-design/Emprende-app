@@ -5,6 +5,7 @@ import { LogOut, Users, RefreshCw } from "lucide-react"
 import { useState } from "react"
 import { AdminUsersModal } from "./AdminUsersModal"
 import { InstallButton } from "./InstallButton"
+import { HardwareIdFetcher } from "./HardwareIdFetcher"
 
 interface UserProfileProps {
     user: {
@@ -48,6 +49,31 @@ export function UserProfile({ user }: UserProfileProps) {
                         </div>
 
                         <div className="px-1 mt-1">
+                            {/* Hardware ID Display for Licensing */}
+                            <div className="px-3 py-2 bg-slate-50 rounded-lg mb-2 border border-slate-100">
+                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">ID de Terminal (Licencia)</p>
+                                <p className="text-[9px] font-mono text-slate-600 break-all select-all cursor-pointer hover:text-blue-600 transition-colors"
+                                    onClick={() => {
+                                        // @ts-ignore
+                                        if (typeof window !== 'undefined' && window.electronAPI) {
+                                            // @ts-ignore
+                                            window.electronAPI.getMachineId().then(id => {
+                                                navigator.clipboard.writeText(id);
+                                                alert("ID copiado: " + id);
+                                            });
+                                        } else {
+                                            alert("No estás ejecutando la versión de escritorio.");
+                                        }
+                                    }}
+                                >
+                                    {/* Render simpler placeholder initially, actual logic handled via click or effect usually, 
+                                        but for simplicity/perf we'll just make it clickable to fetch or use a hook if preferred.
+                                        Let's try a self-fetching text if electron exists.
+                                    */}
+                                    <HardwareIdFetcher />
+                                </p>
+                            </div>
+
                             <InstallButton />
 
                             <button
