@@ -1,12 +1,13 @@
 "use strict";
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useMobileSimulator } from "@/components/MobileSimulatorContext";
 import { cn } from "@/lib/utils";
 import { usePathname, useSearchParams } from "next/navigation";
 
-export function MobileFrame({ children }: { children: React.ReactNode }) {
+// Internal component that uses search params
+function MobileFrameContent({ children }: { children: React.ReactNode }) {
     const { isMobileMode, toggleMobileMode } = useMobileSimulator();
     const pathname = usePathname();
     const searchParams = useSearchParams();
@@ -62,5 +63,14 @@ export function MobileFrame({ children }: { children: React.ReactNode }) {
                 </button>
             </div>
         </div>
+    );
+}
+
+// Main component that wraps content in Suspense
+export function MobileFrame({ children }: { children: React.ReactNode }) {
+    return (
+        <Suspense fallback={<>{children}</>}>
+            <MobileFrameContent>{children}</MobileFrameContent>
+        </Suspense>
     );
 }
