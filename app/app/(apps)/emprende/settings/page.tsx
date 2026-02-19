@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { DesktopLayout } from "@/components/layout/DesktopLayout"
 import { Save, CreditCard, ShieldCheck, Key, ArrowLeft } from "lucide-react"
 import { updatePaymentConfig, getPaymentConfig } from "@/actions/user-settings-actions"
 import { useRouter } from "next/navigation"
 
-export default function SettingsPage() {
+function SettingsContent() {
     const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
@@ -260,10 +260,10 @@ function Toggle({ checked, onChange }: { checked: boolean, onChange: (v: boolean
     )
 }
 
-function ImageBadge({ src, fallback }: { src?: string, fallback: string }) {
+export default function SettingsPage() {
     return (
-        <div className="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center font-bold text-xs shadow-sm">
-            {fallback}
-        </div>
+        <Suspense fallback={<div className="p-10 text-center">Cargando configuración...</div>}>
+            <SettingsContent />
+        </Suspense>
     )
 }
