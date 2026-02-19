@@ -6,15 +6,17 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, TrendingUp, TrendingDown, Settings, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserProfile } from "@/components/UserProfile";
+import { MobileSimulatorToggle } from "@/components/MobileSimulatorToggle";
+import { VoiceToggle } from "@/components/voice/VoiceToggle";
 
 export function DesktopSidebar({ user }: { user: any }) {
     const pathname = usePathname();
 
     const navItems = [
-        { name: "Dashboard", href: "/", icon: LayoutDashboard },
-        { name: "Ventas", href: "/ventas", icon: TrendingUp },
-        { name: "Gastos", href: "/gastos", icon: TrendingDown },
-        { name: "Configuración", href: "/settings", icon: Settings },
+        { name: "Dashboard", href: "/emprende", icon: LayoutDashboard },
+        { name: "Ventas", href: "/emprende/ventas", icon: TrendingUp },
+        { name: "Gastos", href: "/emprende/gastos", icon: TrendingDown },
+        { name: "Configuración", href: "/emprende/settings", icon: Settings },
     ];
 
     return (
@@ -34,8 +36,8 @@ export function DesktopSidebar({ user }: { user: any }) {
                     <h1 className="font-black text-[#4379F2] leading-tight text-xl uppercase tracking-[0.2em] drop-shadow-sm">
                         Emprende
                     </h1>
-                    <p className="text-[10px] font-bold text-slate-400 tracking-[0.2em] uppercase mt-1">
-                        Business OS
+                    <p className="text-xs font-semibold text-slate-500 tracking-wide mt-1.5">
+                        Tu visión, nuestra tecnología
                     </p>
                 </div>
             </div>
@@ -59,14 +61,28 @@ export function DesktopSidebar({ user }: { user: any }) {
                         </Link>
                     )
                 })}
+
+                {/* Mobile Simulator Toggle */}
+                <MobileSimulatorToggle />
             </nav>
 
-            <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+            <div className="p-4 border-t border-slate-100 bg-slate-50/50 space-y-3">
+
+                {/* Voice Toggle for Quick Access */}
+                <div className="flex items-center justify-between px-1 bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Modo Voz</span>
+                    </div>
+                    <VoiceToggle />
+                </div>
+
                 <div className="flex items-center gap-3">
-                    {/* Placeholder for UserProfile. Adapt if component expects different props */}
-                    <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-slate-800 truncate">{user?.name || "Usuario"}</p>
-                        <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+                    <div className="flex items-center gap-3">
+                        <UserProfile user={user} />
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-slate-800 truncate">{user?.name || "Usuario"}</p>
+                            <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+                        </div>
                     </div>
                 </div>
             </div>

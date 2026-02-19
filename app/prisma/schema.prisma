@@ -21,6 +21,33 @@ model User {
   transactions  Transaction[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+
+
+  // SaaS / Admin Fields
+  role               String    @default("USER") // "ADMIN" | "USER"
+  subscriptionStatus String    @default("TRIAL") // "ACTIVE", "INACTIVE", "PAST_DUE", "TRIAL"
+  subscriptionPlan   String    @default("BASIC") // "BASIC", "PRO"
+  mpPreapprovalId    String?   // ID de la suscripción en Mercado Pago
+  nextPaymentDate    DateTime? @default(now()) // Default to now for trial start? No, leave null or handle in logic. Let's say trial starts now + 14 days by default upon creation if handled by code, but here keep simple.
+  
+  // Auditoría
+  notes              String?   // Notas sobre el cliente
+
+  // Payment Configuration
+  mpAccessToken      String?
+  mpPublicKey        String?
+  useSumUp           Boolean   @default(false)
+  acceptsCash        Boolean   @default(true)
+  acceptsMercadoPago Boolean   @default(false)
+  acceptsTransfer    Boolean   @default(false)
+
+  // Transfer Details
+  bankName           String?
+  accountType        String?
+  accountNumber      String?
+  accountHolder      String?
+  accountEmail       String?
 }
 
 model Account {
@@ -62,7 +89,9 @@ model Product {
   id          String        @id @default(cuid())
   name        String
   price       Int           @default(0)
+  cost        Int           @default(0)
   stock       Int           @default(0)
+  minStock    Int           @default(5)
   imageUrl    String?
   userId      String
   user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -76,8 +105,11 @@ model Transaction {
   type        String   // 'SALE' | 'EXPENSE' | 'INVENTORY_IN'
   amount      Int
   quantity    Int      @default(1)
+  paymentMethod String? // 'CASH' | 'MP' | 'SUMUP'
   description String?
   date        DateTime @default(now())
+  
+  groupId     String?  // For grouping multiple items into one "Order"
   
   productId   String?
   product     Product? @relation(fields: [productId], references: [id])

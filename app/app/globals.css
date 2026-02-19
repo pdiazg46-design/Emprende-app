@@ -135,4 +135,20 @@
   [id^="headlessui-dialog-panel"] {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+
+  /* Privacy Mode Styles */
+  .privacy-mode .privacy-sensitive {
+    filter: blur(8px) !important;
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+  }
+
+  .privacy-mode .privacy-sensitive:hover {
+    filter: blur(0px) !important;
+    /* Reveal on hover? Maybe user wants that. Or keep strict? "No funciona" implies current state is broken. Best to force strict hide. */
+    opacity: 1;
+    pointer-events: auto;
+  }
 }

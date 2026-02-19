@@ -1,11 +1,13 @@
 'use client'
 
 import { signOut, useSession } from "next-auth/react"
-import { LogOut, Users, RefreshCw } from "lucide-react"
+import { LogOut, Users, RefreshCw, Settings } from "lucide-react"
 import { useState } from "react"
 import { AdminUsersModal } from "./AdminUsersModal"
 import { InstallButton } from "./InstallButton"
 import { HardwareIdFetcher } from "./HardwareIdFetcher"
+import { useVoicePreferences } from "./voice/VoicePreferencesContext"
+import { VoiceToggle } from "./voice/VoiceToggle"
 
 interface UserProfileProps {
     user: {
@@ -49,6 +51,12 @@ export function UserProfile({ user }: UserProfileProps) {
                         </div>
 
                         <div className="px-1 mt-1">
+                            {/* Voice Toggle - Moved to top for visibility */}
+                            <div className="flex items-center justify-between px-3 py-2 bg-slate-100 rounded-xl mb-2 border border-slate-200 shadow-sm mx-1">
+                                <span className="text-[11px] font-black text-slate-700 uppercase tracking-tight">Comandos de Voz</span>
+                                <VoiceToggle />
+                            </div>
+
                             {/* Hardware ID Display for Licensing */}
                             <div className="px-3 py-2 bg-slate-50 rounded-lg mb-2 border border-slate-100">
                                 <p className="text-[8px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">ID de Terminal (Licencia)</p>
@@ -74,7 +82,19 @@ export function UserProfile({ user }: UserProfileProps) {
                                 </p>
                             </div>
 
+                            <button
+                                onClick={() => {
+                                    setIsOpen(false)
+                                    window.location.href = "/emprende/settings"
+                                }}
+                                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest text-center mb-2 border border-slate-200"
+                            >
+                                <Settings className="w-3.5 h-3.5" /> Configuración
+                            </button>
+
                             <InstallButton />
+
+
 
                             <button
                                 onClick={() => {
@@ -129,3 +149,5 @@ export function UserProfile({ user }: UserProfileProps) {
         </div>
     )
 }
+
+// function VoiceToggle() { ... removed ... }

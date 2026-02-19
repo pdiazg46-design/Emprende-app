@@ -2,17 +2,28 @@
 
 import { useState } from "react"
 import { VoiceFloatingButton } from "./VoiceFloatingButton"
-import { addTransaction, addProduct } from "@/actions/transaction-actions"
+import { addTransaction, addProduct, addMultiProductTransaction } from "@/actions/transaction-actions"
 import { useRouter } from "next/navigation"
+import { TriangleAlert } from "lucide-react"
+import { useVoicePreferences } from "./VoicePreferencesContext"
 
 export function VoiceWrapper() {
     const router = useRouter()
+    const { isVoiceEnabled } = useVoicePreferences()
     const [feedback, setFeedback] = useState<{ type: 'success' | 'error' | 'neutral', message: string } | null>(null)
+
+    if (!isVoiceEnabled) return null; // Hide everything if disabled
 
     const showFeedback = (type: 'success' | 'error', message: string) => {
         setFeedback({ type, message })
-        setTimeout(() => setFeedback(null), 3500)
+
+        // Only auto-hide success messages
+        if (type === 'success') {
+            setTimeout(() => setFeedback(null), 3500)
+        }
     }
+
+    const clearFeedback = () => setFeedback(null);
 
     const handleCommand = async (intent: any) => {
         console.log("Comando recibido:", intent)
@@ -31,6 +42,25 @@ export function VoiceWrapper() {
                     showFeedback('success', "📦 " + result.message);
                 } else {
                     showFeedback('success', `💰 ¡Venta de $${(result.amount || intent.amount).toLocaleString('es-CL')} registrada!`)
+                }
+            }
+            else if (intent.type === 'MULTI_SALE') {
+                try {
+                    const result = await addMultiProductTransaction(intent.items);
+
+                    if (result.success) {
+                        showFeedback('success', "🚀 " + result.message);
+                    } else {
+                        showFeedback('error', "❌ " + (result.message || "Error al registrar la venta múltiple."));
+                    }
+                } catch (err: any) {
+                    console.error("Error executing multi-sale:", err);
+                    // Show specific error from server if available
+                    const errorMessage = err.message && err.message.length < 100
+                        ? err.message
+                        : "Error inesperado al procesar la venta.";
+
+                    showFeedback('error', "❌ " + errorMessage);
                 }
             }
             else if (intent.type === 'EXPENSE') {
@@ -66,12 +96,52 @@ export function VoiceWrapper() {
         } catch (error: any) {
             console.error("Error ejecutando comando:", error)
             // Show specific error message from server if possible
-            const errorMsg = error.message.includes("No encontré el producto")
+            // Show specific error message from server
+            const errorMsg = error.message && error.message.length < 150
                 ? error.message
-                : "❌ Error al guardar. Intenta nuevamente.";
+                : "❌ Error inesperado. Intenta nuevamente.";
             showFeedback('error', errorMsg)
         }
     }
 
-    return <VoiceFloatingButton onCommand={handleCommand} feedback={feedback} />
+    return (
+        <>
+            {/* Pass feedback ONLY if it's NOT an error, to avoid VoiceFloatingButton showing it too */}
+            <VoiceFloatingButton
+                onCommand={handleCommand}
+                feedback={feedback?.type !== 'error' ? feedback : null}
+            />
+
+            {/* GLOBAL ERROR MODAL (Moved out of VoiceFloatingButton to avoid resize issues) */}
+            {feedback?.type === 'error' && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white rounded-2xl p-6 shadow-2xl max-w-sm w-full text-center border-t-8 border-rose-500 animate-in zoom-in-95 slide-in-from-bottom-8 duration-300 relative">
+                        <button
+                            onClick={clearFeedback}
+                            className="absolute top-2 right-2 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                        </button>
+
+                        <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-5 border-4 border-white shadow-sm text-rose-500">
+                            <TriangleAlert className="w-10 h-10" />
+                        </div>
+                        <h3 className="text-2xl font-black text-rose-950 mb-3 leading-tight tracking-tight">
+                            ¡Algo pasó!
+                        </h3>
+                        <p className="text-slate-600 font-medium text-lg mb-8 leading-relaxed">
+                            {feedback.message.replace(/^❌ /, '')}
+                        </p>
+
+                        <button
+                            onClick={clearFeedback}
+                            className="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold text-sm tracking-widest uppercase hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        >
+                            Entendido
+                        </button>
+                    </div>
+                </div>
+            )}
+        </>
+    )
 }

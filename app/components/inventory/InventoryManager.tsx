@@ -1,26 +1,34 @@
 "use client"
 
 import { useState } from "react"
-import { Save, Plus, Package, RefreshCw, Trash2 } from "lucide-react"
+import { Save, Plus, Package, RefreshCw, Trash2, Pencil } from "lucide-react"
 import { bulkUpdateStock, addProduct, deleteProduct } from "@/actions/transaction-actions"
 import { useRouter } from "next/navigation"
+import { EditProductModal } from "./EditProductModal"
+import { useCart } from "@/components/pos/CartContext"
 
 interface Product {
     id: string
     name: string
     price: number
     stock: number
+    minStock: number
+    cost: number
 }
 
 export function InventoryManager({ inventory }: { inventory: Product[] }) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
+    const { addToCart } = useCart()
 
     // State for bulk updates: Map productId -> { price, addStock, name }
     const [updates, setUpdates] = useState<Record<string, { price: number, addStock: number, name?: string }>>({})
 
     // State for new product
-    const [newItem, setNewItem] = useState({ name: "", price: "" })
+    const [newItem, setNewItem] = useState({ name: "", price: "", minStock: "" })
+
+    // State for modal editing
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null)
 
     // Helper for display
     const formatNumber = (num: number | string) => {
@@ -91,23 +99,37 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
         }
     }
 
-    const handleCreateProduct = async () => {
-        if (!newItem.name || !newItem.price) return;
-        const cleanPrice = parseInt(newItem.price.replace(/\D/g, '')) || 0;
+    const handleEditProduct = (product: Product) => {
+        setEditingProduct(product)
+    }
 
-        setLoading(true)
+    const handleSaveEdit = async (id: string, name: string, price: number, minStock: number, cost: number) => {
         try {
-            await addProduct({
-                name: newItem.name,
-                price: cleanPrice,
-                stock: 0
-            })
-            setNewItem({ name: "", price: "" })
+            if (id === 'new') {
+                console.log("Creating new product...", { name, price, minStock, cost });
+                await addProduct({
+                    name,
+                    price,
+                    cost,
+                    stock: 0,
+                    minStock
+                })
+            } else {
+                console.log("Saving edit...", { id, name, price, minStock, cost });
+                await bulkUpdateStock([{
+                    id,
+                    name,
+                    price,
+                    cost,
+                    addStock: 0,
+                    minStock
+                }])
+            }
+            setEditingProduct(null)
             router.refresh()
         } catch (error) {
-            alert("Error al crear producto")
-        } finally {
-            setLoading(false)
+            console.error("Failed to save/create product:", error);
+            alert("Error al guardar. Revisa la consola.");
         }
     }
 
@@ -141,102 +163,110 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                 <table className="w-full text-sm text-left">
                     <thead className="text-xs text-slate-400 uppercase bg-slate-50 font-bold border-b border-slate-100">
                         <tr>
-                            <th className="px-5 py-4 w-auto min-w-[200px]">Producto</th>
-                            <th className="px-2 py-4 w-28 text-right">Precio</th>
-                            <th className="px-2 py-4 w-20 text-center">Stock</th>
-                            <th className="px-2 py-4 w-32 text-center bg-blue-50/50 text-atsit-blue">Ingresar (+)</th>
-                            <th className="px-2 py-4 w-10"></th>
+                            <th className="px-1 py-3 w-10 text-center text-atsit-blue">
+                                <Plus className="w-4 h-4 mx-auto" />
+                            </th>
+                            <th className="px-1 py-3 w-auto min-w-[120px]">Producto</th>
+                            <th className="px-1 py-3 w-10 text-center">Stock</th>
+                            <th className="px-1 py-3 w-12 text-center bg-blue-50/50 text-atsit-blue">Input</th>
+                            <th className="px-1 py-3 w-16 text-center">Acción</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {inventory.map((product) => (
                             <tr key={product.id} className="hover:bg-slate-50/50 transition-colors group">
-                                <td className="px-5 py-3">
-                                    <input
-                                        type="text"
-                                        className="w-full bg-transparent font-bold text-slate-700 outline-none border-b border-transparent focus:border-atsit-blue focus:bg-white rounded-sm px-1 transition-all caret-atsit-blue truncate"
-                                        title={product.name}
-                                        onFocus={(e) => e.target.select()}
-                                        value={updates[product.id]?.name ?? product.name}
-                                        onChange={(e) => handleUpdateChange(product.id, 'name', e.target.value)}
-                                    />
+                                <td className="px-1 py-2 text-center">
+                                    <button
+                                        onClick={() => {
+                                            if (product.stock <= 0) {
+                                                alert("No hay stock disponible");
+                                                return;
+                                            }
+                                            addToCart({
+                                                name: product.name,
+                                                price: product.price,
+                                                quantity: 1,
+                                                id: product.id
+                                            })
+                                        }}
+                                        className="bg-blue-600 text-white hover:bg-blue-700 p-2 rounded-lg transition-all shadow-sm shadow-blue-500/30 flex items-center justify-center mx-auto active:scale-90"
+                                        title="Agregar a Venta"
+                                        disabled={product.stock <= 0}
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                    </button>
                                 </td>
-                                <td className="px-2 py-3">
-                                    <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg px-2 py-1.5 focus-within:border-atsit-blue transition-all shadow-sm w-full">
-                                        <span className="text-slate-400 font-bold">$</span>
-                                        <input
-                                            type="text"
-                                            inputMode="numeric"
-                                            className="w-full bg-transparent font-bold text-slate-900 outline-none caret-atsit-blue text-right"
-                                            onFocus={(e) => e.target.select()}
-                                            value={formatNumber(updates[product.id]?.price ?? product.price)}
-                                            onChange={(e) => handleUpdateChange(product.id, 'price', e.target.value)}
-                                        />
+                                <td className="px-1 py-2">
+                                    <div className="flex flex-col gap-0.5">
+                                        <span className="font-bold text-slate-700 text-xs md:text-sm line-clamp-2 leading-tight uppercase">
+                                            {product.name}
+                                        </span>
+                                        <span className="font-bold text-slate-500 text-xs">
+                                            ${formatNumber(product.price)}
+                                        </span>
                                     </div>
                                 </td>
-                                <td className="px-2 py-3 text-center">
-                                    <span className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md font-bold text-xs inline-block min-w-[2.5rem]">
-                                        {product.stock}
-                                    </span>
+                                <td className="px-1 py-1 text-center align-middle">
+                                    <div className="flex items-center justify-center">
+                                        <span className={`px-2 rounded-lg font-black text-lg flex items-center justify-center min-w-[3rem] h-10 shadow-sm border ${product.stock <= 0
+                                            ? "bg-rose-100 text-rose-700 border-rose-200"
+                                            : product.stock <= (product.minStock || 5)
+                                                ? "bg-amber-100 text-amber-700 border-amber-200"
+                                                : "bg-slate-50 text-slate-800 border-slate-200"
+                                            }`}>
+                                            {product.stock}
+                                        </span>
+                                    </div>
                                 </td>
-                                <td className="px-2 py-3 text-center bg-blue-50/10">
-                                    <div className="flex items-center justify-center gap-2">
-                                        <div className="relative w-full max-w-[6rem]">
-                                            <Plus className="w-3 h-3 absolute left-2 top-1/2 -translate-y-1/2 text-atsit-blue pointer-events-none" />
+                                <td className="px-1 py-1 text-center bg-blue-50/10 align-middle">
+                                    <div className="flex items-center justify-center">
+                                        <div className="relative w-full max-w-[3rem]">
                                             <input
                                                 type="text"
                                                 inputMode="numeric"
-                                                placeholder="0"
-                                                className="w-full pl-6 pr-2 py-1.5 bg-white border-2 border-slate-200 rounded-lg font-black text-center text-slate-900 focus:border-atsit-blue outline-none transition-all placeholder:text-slate-300 caret-atsit-blue shadow-sm text-sm"
+                                                placeholder="+"
+                                                className="w-full h-10 px-0.5 bg-white border border-slate-200 rounded-lg font-bold text-center text-slate-900 focus:border-atsit-blue outline-none transition-all placeholder:text-slate-300 caret-atsit-blue shadow-sm text-lg"
                                                 onFocus={(e) => e.target.select()}
-                                                value={formatNumber(updates[product.id]?.addStock || "")}
+                                                value={updates[product.id]?.addStock || ""}
                                                 onChange={(e) => handleUpdateChange(product.id, 'addStock', e.target.value)}
                                             />
                                         </div>
                                     </div>
                                 </td>
-                                <td className="px-2 py-3 text-center">
-                                    <button
-                                        onClick={() => handleDelete(product.id)}
-                                        className="text-slate-300 hover:text-rose-500 hover:bg-rose-50 p-2 rounded-full transition-all"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
+                                <td className="px-0 py-2 text-center align-top pt-2 md:align-middle">
+                                    <div className="flex items-center justify-end gap-0.5 pr-1">
+                                        <button
+                                            onClick={() => handleEditProduct(product)}
+                                            className="text-slate-300 hover:text-blue-500 hover:bg-blue-50 p-1.5 rounded-full transition-all"
+                                            title="Editar"
+                                        >
+                                            <Pencil className="w-4 h-4" />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(product.id)}
+                                            className="text-slate-300 hover:text-rose-500 hover:bg-rose-50 p-1.5 rounded-full transition-all"
+                                            title="Eliminar"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
 
-                        {/* Row to add new product */}
+                        {/* Row to add new product - Button Only */}
                         <tr className="bg-slate-50 border-t-2 border-slate-100 border-dashed">
-                            <td className="px-5 py-4">
-                                <input
-                                    type="text"
-                                    placeholder="Nombre Nuevo Producto..."
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-atsit-blue caret-atsit-blue text-slate-900 font-medium shadow-sm transition-all"
-                                    value={newItem.name}
-                                    onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-                                />
-                            </td>
-                            <td className="px-2 py-4">
-                                <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-lg px-2 py-2 focus-within:border-atsit-blue transition-all shadow-sm w-full">
-                                    <span className="text-slate-400 font-bold">$</span>
-                                    <input
-                                        type="text"
-                                        inputMode="numeric"
-                                        placeholder="Precio"
-                                        className="w-full bg-transparent font-bold text-slate-900 outline-none caret-atsit-blue text-right"
-                                        value={newItem.price}
-                                        onChange={(e) => setNewItem({ ...newItem, price: e.target.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ".") })}
-                                    />
-                                </div>
-                            </td>
-                            <td colSpan={3} className="px-5 py-4">
+                            <td colSpan={5} className="px-2 py-3">
                                 <button
-                                    onClick={handleCreateProduct}
-                                    disabled={!newItem.name || !newItem.price || loading}
-                                    className="w-full py-2.5 bg-slate-800 text-white rounded-lg font-bold text-xs hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm tracking-wide uppercase"
+                                    onClick={() => {
+                                        setEditingProduct({ id: 'new', name: '', price: 0, stock: 0, minStock: 5, cost: 0 } as Product)
+                                    }}
+                                    className="w-full py-3 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 transform active:scale-95 group"
                                 >
-                                    + Crear Item
+                                    <div className="bg-white/20 p-1 rounded-full group-hover:bg-white/30 transition-colors">
+                                        <Plus className="w-4 h-4" />
+                                    </div>
+                                    CREAR NUEVO PRODUCTO
                                 </button>
                             </td>
                         </tr>
@@ -248,6 +278,16 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                 <div className="p-8 text-center text-slate-400 text-sm">
                     No tienes productos. Usa la última fila para agregar el primero.
                 </div>
+            )}
+
+            {editingProduct && (
+                <EditProductModal
+                    key={editingProduct.id}
+                    isOpen={true}
+                    onClose={() => setEditingProduct(null)}
+                    product={editingProduct}
+                    onSave={handleSaveEdit}
+                />
             )}
         </div>
     )

@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client-finanza"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("FINANZA_DATABASE_URL")
+}
+
+model User {
+  id               String      @id
+  name             String?
+  email            String?     @unique
+  plan             String      @default("FREE")
+  emprendeAccess   Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}

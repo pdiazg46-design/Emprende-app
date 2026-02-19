@@ -6,7 +6,7 @@ const montserrat = Montserrat({ subsets: ["latin"], weight: ["400", "600", "700"
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: "Finanza Fácil | Libertad",
+  title: "Emprende",
   description: "Simplifica tus finanzas y gana libertad.",
   /* 
   DISABLED PWA FEATURES BY USER REQUEST
@@ -34,8 +34,7 @@ export const viewport = {
 import { Providers } from "@/components/Providers";
 import { PWARegistration } from "@/components/PWARegistration";
 import { InstallPrompt } from "@/components/InstallPrompt";
-import { SeniorModeProvider } from "@/components/SeniorModeContext";
-import { SeniorModeToggle } from "@/components/SeniorModeToggle";
+import { MobileFrame } from "@/components/MobileFrame";
 
 export default function RootLayout({
   children,
@@ -48,14 +47,13 @@ export default function RootLayout({
         className={`${montserrat.variable} ${inter.variable} font-sans antialiased bg-[#F4F7F9]`}
         suppressHydrationWarning
       >
-        <SeniorModeProvider>
-          <PWARegistration />
-          <InstallPrompt />
-          <Providers>
+        <PWARegistration />
+        <InstallPrompt />
+        <Providers>
+          <MobileFrame>
             {children}
-          </Providers>
-          <SeniorModeToggle />
-        </SeniorModeProvider>
+          </MobileFrame>
+        </Providers>
       </body>
     </html>
   );

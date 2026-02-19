@@ -1,0 +1,218 @@
+
+> emprende-app@0.1.0 electron:build
+> npm run build && electron-builder
+
+
+> emprende-app@0.1.0 build
+> prisma generate && next build
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+
+✔ Generated Prisma Client (v6.4.1) to .\node_modules\@prisma\client in 88ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 8.9s
+  Skipping validation of types
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/8) ...
+  Generating static pages using 11 workers (2/8) 
+  Generating static pages using 11 workers (4/8) 
+  Generating static pages using 11 workers (6/8) 
+✓ Generating static pages using 11 workers (8/8) in 889.4ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/auth/[...nextauth]
+├ ƒ /api/manual-logout
+├ ƒ /api/seed
+├ ƒ /emprende
+├ ○ /emprende/ventas
+└ ○ /signin
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+  • electron-builder  version=26.7.0 os=10.0.26200
+  • loaded configuration  file=C:\Users\pdiaz\Desarrollos\Emprende\app\electron-builder.yml
+  • description is missed in the package.json  appPackageFile=C:\Users\pdiaz\Desarrollos\Emprende\app\package.json
+  • author is missed in the package.json  appPackageFile=C:\Users\pdiaz\Desarrollos\Emprende\app\package.json
+  • executing @electron/rebuild  electronVersion=40.4.1 arch=x64 buildFromSource=false workspaceRoot=C:\Users\pdiaz\Desarrollos\Emprende\app projectDir=./ appDir=./
+  • installing native dependencies  arch=x64
+  • preparing       moduleName=sharp arch=x64
+  • finished        moduleName=sharp arch=x64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=x64 electron=40.4.1 appOutDir=dist\win-unpacked
+  • asar usage is disabled — this is strongly not recommended  solution=enable asar and use asarUnpack to unpack files that must be externally available
+  • searching for node modules  pm=npm searchDir=C:\Users\pdiaz\Desarrollos\Emprende\app
+(node:15724) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\node_modules\@esbuild\win32-x64\esbuild.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\node_modules\@prisma\engines\schema-engine-windows.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\node_modules\prisma\query-engine-windows.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\rcedit-ia32.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\rcedit-x64.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-6\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-6\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\x64\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\x64\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\x64\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\x64\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\x64\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\x64\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\ia32\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\ia32\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\ia32\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\ia32\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\ia32\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\windows-10\ia32\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\981032667\openssl-ia32\openssl.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\rcedit-ia32.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\rcedit-x64.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-6\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-6\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\x64\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\x64\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\x64\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\x64\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\x64\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\x64\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\ia32\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\ia32\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\ia32\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\ia32\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\ia32\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\windows-10\ia32\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\819557299\openssl-ia32\openssl.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\rcedit-x64.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\rcedit-ia32.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-6\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-6\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\x64\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\x64\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\x64\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\x64\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\x64\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\x64\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\ia32\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\ia32\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\ia32\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\ia32\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\ia32\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\windows-10\ia32\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\812045015\openssl-ia32\openssl.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\rcedit-ia32.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\rcedit-x64.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-6\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-6\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\x64\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\x64\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\x64\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\x64\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\x64\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\x64\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\ia32\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\ia32\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\ia32\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\ia32\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\ia32\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\windows-10\ia32\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\776000771\openssl-ia32\openssl.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\rcedit-ia32.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\rcedit-x64.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-6\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-6\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\x64\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\x64\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\x64\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\x64\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\x64\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\x64\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\ia32\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\ia32\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\ia32\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\ia32\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\ia32\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\windows-10\ia32\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\648947067\openssl-ia32\openssl.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\rcedit-x64.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\rcedit-ia32.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-6\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-6\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\x64\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\x64\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\x64\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\x64\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\x64\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\x64\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\ia32\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\ia32\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\ia32\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\ia32\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\ia32\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\windows-10\ia32\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\448110387\openssl-ia32\openssl.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\rcedit-ia32.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\rcedit-x64.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-6\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-6\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\x64\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\x64\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\x64\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\x64\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\x64\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\x64\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\ia32\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\ia32\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\ia32\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\ia32\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\ia32\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\windows-10\ia32\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\440045659\openssl-ia32\openssl.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\rcedit-ia32.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\rcedit-x64.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-6\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-6\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\x64\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\x64\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\x64\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\x64\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\x64\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\x64\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\ia32\makecat.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\ia32\makeappx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\ia32\makecert.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\ia32\makepri.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\ia32\pvk2pfx.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\windows-10\ia32\signtool.exe
+  • signing with signtool.exe  path=dist\win-unpacked\resources\app\.cache\winCodeSign\243961519\openssl-ia32\openssl.exe
+  ⨯ Cannot cleanup: 
+
+Error #1 --------------------------------------------------------------------------------
+Error: EPERM: operation not permitted, symlink 'C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\@prisma\client' -> 'C:\Users\pdiaz\Desarrollos\Emprende\app\dist\win-unpacked\resources\app\.next\node_modules\@prisma\client-2c3a283f134fdcb6'
+
+Error #2 --------------------------------------------------------------------------------
+Error: EPERM: operation not permitted, symlink 'C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\@prisma\client' -> 'C:\Users\pdiaz\Desarrollos\Emprende\app\dist\win-unpacked\resources\app\.next\node_modules\@prisma\client-2c3a283f134fdcb6'  failedTask=build stackTrace=Error: Cannot cleanup: 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Error #1 --------------------------------------------------------------------------------
+Error: EPERM: operation not permitted, symlink 'C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\@prisma\client' -> 'C:\Users\pdiaz\Desarrollos\Emprende\app\dist\win-unpacked\resources\app\.next\node_modules\@prisma\client-2c3a283f134fdcb6'
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Error #2 --------------------------------------------------------------------------------
+Error: EPERM: operation not permitted, symlink 'C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\@prisma\client' -> 'C:\Users\pdiaz\Desarrollos\Emprende\app\dist\win-unpacked\resources\app\.next\node_modules\@prisma\client-2c3a283f134fdcb6'
+    at throwError (C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\builder-util\src\asyncTaskManager.ts:88:11)
+    at checkErrors (C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\builder-util\src\asyncTaskManager.ts:53:9)
+    at AsyncTaskManager.awaitTasks (C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\builder-util\src\asyncTaskManager.ts:67:7)
+    at WinPackager.doPack (C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\app-builder-lib\src\platformPackager.ts:310:5)
+    at WinPackager.pack (C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\app-builder-lib\src\platformPackager.ts:161:5)
+    at Packager.doBuild (C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\app-builder-lib\src\packager.ts:538:11)
+    at executeFinally (C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\builder-util\src\promise.ts:12:14)
+    at Packager.build (C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\app-builder-lib\src\packager.ts:458:31)
+    at executeFinally (C:\Users\pdiaz\Desarrollos\Emprende\app\node_modules\builder-util\src\promise.ts:12:14)

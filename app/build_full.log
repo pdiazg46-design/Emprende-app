@@ -1,0 +1,46 @@
+
+> emprende-app@0.1.0 build
+> prisma generate && next build
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+
+✔ Generated Prisma Client (v6.4.1) to .\node_modules\@prisma\client in 91ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./app/(apps)/finanza/auth/signin/page.tsx:7:1
+Module not found: Can't resolve '../../../public/logo.png'
+[0m [90m  5 |[39m [36mimport[39m { [33mKeyRound[39m[33m,[39m [33mMail[39m[33m,[39m [33mSparkles[39m } [36mfrom[39m [32m"lucide-react"[39m
+ [90m  6 |[39m [36mimport[39m [33mImage[39m [36mfrom[39m [32m"next/image"[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m logo [36mfrom[39m [32m"../../../public/logo.png"[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m
+ [90m  9 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mSignIn[39m() {
+ [90m 10 |[39m     [36mconst[39m [email[33m,[39m setEmail] [33m=[39m useState([32m""[39m)[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(apps)/finanza/auth/signin/page.tsx [Client Component Browser]
+    ./app/(apps)/finanza/auth/signin/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(apps)/finanza/auth/signin/page.tsx [Client Component SSR]
+    ./app/(apps)/finanza/auth/signin/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./app/(apps)/finanza/auth/signin/page.tsx:7:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
