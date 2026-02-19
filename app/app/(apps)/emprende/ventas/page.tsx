@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useState } from "react"
 import { getDashboardMetrics } from "@/actions/transaction-actions"
 import { TrendingUp, TrendingDown, DollarSign, AlertCircle, CheckCircle2, ShoppingBag } from "lucide-react"
