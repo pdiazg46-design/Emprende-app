@@ -6,6 +6,8 @@ import { Save, CreditCard, ShieldCheck, Key, ArrowLeft } from "lucide-react"
 import { updatePaymentConfig, getPaymentConfig } from "@/actions/user-settings-actions"
 import { useRouter } from "next/navigation"
 
+export const dynamic = 'force-dynamic'
+
 function SettingsContent() {
     const router = useRouter()
     const [loading, setLoading] = useState(true)
