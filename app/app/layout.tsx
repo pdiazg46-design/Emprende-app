@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Simplifica tus finanzas y gana libertad.",
   manifest: "/manifest.json",
   icons: {
-    apple: "/pwa-icon.png",
+    apple: "/pwa-icon.png?v=2",
   },
   appleWebApp: {
     capable: true,
