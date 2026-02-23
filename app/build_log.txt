@@ -1,0 +1,60 @@
+
+> emprende-app@0.1.0 electron:build
+> npm run build && electron-builder
+
+
+> emprende-app@0.1.0 build
+> prisma generate && next build
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+
+✔ Generated Prisma Client (v6.4.1) to .\node_modules\@prisma\client in 91ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Curious about the SQL queries Prisma ORM generates? Optimize helps you enhance your visibility: https://pris.ly/tip-2-optimize
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 6.5s
+  Skipping validation of types
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/8) ...
+  Generating static pages using 11 workers (2/8) 
+  Generating static pages using 11 workers (4/8) 
+  Generating static pages using 11 workers (6/8) 
+✓ Generating static pages using 11 workers (8/8) in 1136.7ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /api/auth/[...nextauth]
+├ ƒ /api/manual-logout
+├ ƒ /api/seed
+├ ƒ /emprende
+├ ○ /emprende/ventas
+└ ○ /signin
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+  • electron-builder  version=26.7.0 os=10.0.26200
+  • loaded configuration  file=C:\Users\pdiaz\Desarrollos\Emprende\app\electron-builder.yml
+  • description is missed in the package.json  appPackageFile=C:\Users\pdiaz\Desarrollos\Emprende\app\package.json
+  • author is missed in the package.json  appPackageFile=C:\Users\pdiaz\Desarrollos\Emprende\app\package.json
+  • executing @electron/rebuild  electronVersion=40.4.1 arch=x64 buildFromSource=false workspaceRoot=C:\Users\pdiaz\Desarrollos\Emprende\app projectDir=./ appDir=./
+  • installing native dependencies  arch=x64
+  • preparing       moduleName=sharp arch=x64
+  • finished        moduleName=sharp arch=x64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=x64 electron=40.4.1 appOutDir=dist\win-unpacked
+  • searching for node modules  pm=npm searchDir=C:\Users\pdiaz\Desarrollos\Emprende\app
+(node:4956) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  • cancelled by SIGINT
+�Desea terminar el trabajo por lotes (S/N)? 

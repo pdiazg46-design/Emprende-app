@@ -1,0 +1,39 @@
+Conectando a DB...
+Conexión exitosa.
+Creando usuario: Jose Diaz (josediaz@test.com)...
+PrismaClientValidationError: 
+Invalid `prisma.user.upsert()` invocation in
+C:\Users\pdiaz\Desarrollos\Emprende\app\create-jose-robust.js:46:36
+
+  43 
+  44 console.log(`Creando usuario: ${name} (${email})...`)
+  45 
+→ 46 const user = await prisma.user.upsert({
+       where: {
+         email: "josediaz@test.com"
+       },
+       update: {
+         name: "Jose Diaz"
+       },
+       create: {
+         email: "josediaz@test.com",
+         name: "Jose Diaz",
+         image: null,
+         emailVerified: new Date("2026-02-15T22:17:44.545Z"),
+         ~~~~~~~~~~~~~
+     ?   id?: String,
+     ?   planFinanza?: String | Null,
+     ?   planEmprende?: String | Null,
+     ?   createdAt?: DateTime,
+     ?   updatedAt?: DateTime,
+     ?   sharedFund?: SharedFundCreateNestedOneWithoutUserInput
+       }
+     })
+
+Unknown argument `emailVerified`. Available options are marked with ?.
+Conectando a DB...
+Conexión exitosa.
+Creando usuario: Jose Diaz (josediaz@test.com)...
+Usuario creado/verificado:
+Creando Shared Fund inicial...
+Shared Fund creado.

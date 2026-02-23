@@ -1,0 +1,16 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Navy Blue Background -->
+  <rect width="1024" height="1024" fill="#0f172a"/>
+  
+  <!-- Antenna / Signal Symbol (White) -->
+  <g transform="translate(512, 512) rotate(-45)">
+    <!-- Outer Arc -->
+    <path d="M -300 0 A 300 300 0 0 1 300 0" stroke="white" stroke-width="80" fill="none" stroke-linecap="round" transform="translate(0, 100)"/>
+    
+    <!-- Middle Arc -->
+    <path d="M -180 0 A 180 180 0 0 1 180 0" stroke="white" stroke-width="80" fill="none" stroke-linecap="round" transform="translate(0, 100)"/>
+    
+    <!-- Inner Dot -->
+    <circle cx="0" cy="100" r="50" fill="white"/>
+  </g>
+</svg>

@@ -1,0 +1,30 @@
+7ce63f6 HEAD@{0}: reset: moving to 7ce63f6
+a224507 HEAD@{1}: checkout: moving from main to main
+a224507 HEAD@{2}: commit: fix(auth): resolve dependencies and prisma imports for vercel build
+514c634 HEAD@{3}: commit: chore: revert to 7ce63f6 snapshot safely, removing Google provider and leaked secrets (final pass)
+a58ca76 HEAD@{4}: reset: moving to HEAD~1
+517d85c HEAD@{5}: commit: chore: revert to 7ce63f6 snapshot safely, removing Google provider and leaked secrets
+a58ca76 HEAD@{6}: reset: moving to HEAD~1
+da82ba2 HEAD@{7}: commit: chore: revert repository to 7ce63f6 snapshot and enforce Email/Password login
+a58ca76 HEAD@{8}: reset: moving to origin/main
+54620c3 HEAD@{9}: commit: fix(auth): restore email/pass login and remove google provider manually from historic commit
+7ce63f6 HEAD@{10}: reset: moving to 7ce63f6
+a58ca76 HEAD@{11}: commit: fix(auth): add force-dynamic to signin route to bust vercel cache
+51b0555 HEAD@{12}: commit: fix(ui): expose Admin VIP and Logout buttons in DesktopSidebar
+d888949 HEAD@{13}: reset: moving to HEAD
+d888949 HEAD@{14}: reset: moving to origin/main
+ccd5577 HEAD@{15}: commit: fix(ui): re-commit sidebar after pull
+a50756f HEAD@{16}: reset: moving to HEAD
+a50756f HEAD@{17}: commit: fix(ui): expose Admin VIP and Logout buttons in DesktopSidebar
+7ce63f6 HEAD@{18}: commit: chore: Vercel Auth.js domain force sync
+eae626b HEAD@{19}: commit: Fix schema postgres push directly
+d888949 HEAD@{20}: commit: fix: Global Suspense wrapper in MobileFrame and force-dynamic in 404
+4f161d1 HEAD@{21}: commit: fix: Add custom 404 page with force-dynamic to fix Vercel build
+89e3069 HEAD@{22}: commit: refactor: Extract VentasClient to fix Vercel build
+5a1e42f HEAD@{23}: commit: fix: Force dynamic rendering for Ventas page to fix Vercel build
+aea1bed HEAD@{24}: commit: refactor: Extract SettingsClient to fix Vercel build
+a384af9 HEAD@{25}: commit: fix: Force dynamic rendering for Settings page
+7006f54 HEAD@{26}: commit: fix: Add Suspense to Settings page to fix build
+dba08c7 HEAD@{27}: Branch: renamed refs/heads/master to refs/heads/main
+dba08c7 HEAD@{29}: commit: feat: Transformacion SaaS y Suscripciones MP
+d397728 HEAD@{30}: reset: moving to d397728
