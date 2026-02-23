@@ -67,7 +67,7 @@ export function DesktopSidebar({ user }: { user: any }) {
                 <MobileSimulatorToggle />
             </nav>
 
-            <div className="p-4 border-t border-slate-100 bg-slate-50/50 space-y-3">
+            <div className="p-4 border-t border-slate-100 bg-slate-50/50 space-y-3 shrink-0">
 
                 {/* Voice Toggle for Quick Access */}
                 <div className="flex items-center justify-between px-1 bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
