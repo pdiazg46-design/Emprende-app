@@ -1,0 +1,13 @@
+dist
+out
+build
+release_kit
+electron
+android
+.next
+node_modules
+*.exe
+*.apk
+*.aab
+*.zip
+*.db

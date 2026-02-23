@@ -1,0 +1,328 @@
+{
+  "app": {
+    "title": "Emprende",
+    "subtitle": "Control Total"
+  },
+  "auth": {
+    "signin": {
+      "title": "Control Total",
+      "subtitle": "Tu libertad financiera comienza con un primer comando. Ingresa tu email para comenzar.",
+      "secureLogin": "Ingresa con tu cuenta segura",
+      "continueWith": "O continúa con",
+      "google": "Google",
+      "securedBy": "Asegurado por Finanza Fácil Cloud"
+    }
+  },
+  "freedom": {
+    "days": "Días de Libertad",
+    "target": "Meta",
+    "status": "Estado",
+    "compass": {
+      "title": "Brújula Financiera",
+      "yourCompass": "Tu Brújula",
+      "anatomy": "Anatomía de tu Libertad",
+      "description": "Representa el tiempo que podrías vivir sin ingresos externos manteniendo tus gastos actuales.",
+      "tip": "Terminando deudas y ahorrando, este número crece para proteger tu tiempo de vida.",
+      "currentLevel": "Tu Nivel Actual:",
+      "safe": "Zona Segura",
+      "warning": "Zona de Alerta",
+      "danger": "Zona Crítica"
+    },
+    "tiers": {
+      "survival": "En la cuerda floja",
+      "survivalDesc": "Estado Crítico. No tienes suficiente respiro para el mes. El objetivo es salir de aquí rápido.",
+      "security": "Piso Firme",
+      "securityDesc": "Tienes un colchón de 3 a 6 meses. Estás protegido ante imprevistos.",
+      "flexibility": "Caminando solo",
+      "flexibilityDesc": "Puedes empezar a tomar decisiones sin presión inmediata.",
+      "independence": "Dueño de mi Tiempo",
+      "independenceDesc": "¡Felicidades! Tienes más de un año de vida asegurada.",
+      "abundance": "Libertad Total",
+      "abundanceDesc": "Has alcanzado la cima. Tu tiempo hoy es 100% tuyo."
+    }
+  },
+  "liquidity": {
+    "available": {
+      "title": "Total Disponible",
+      "subtitle": "Entradas - Salidas fijos",
+      "info": "Tus ingresos declarados menos los gastos fijos del mes. Es el monto total disponible para tus cuentas compartidas.",
+      "description": "Mantener este pozo positivo asegura que tus compromisos fijos estén cubiertos."
+    },
+    "disposable": {
+      "title": "Plata para Disfrutar",
+      "subtitle": "Tu margen hoy",
+      "info": "Tu margen real de hoy. Es la plata que queda libre después de asegurar tus gastos y deudas del mes.",
+      "description": "Este es el dinero que puedes gastar hoy sin culpa y sin comprometer tu futuro."
+    }
+  },
+  "dimension": {
+    "title": "Dimensión Libertad",
+    "burnRate": "Mi Costo por Día",
+    "reserves": "Mis Ahorros de Emergencia",
+    "debt": "Deuda Total",
+    "assets": "Activos",
+    "netWorth": "Patrimonio Neto",
+    "dailyCost": "Tu costo diario",
+    "emergencySavings": "Efectivo + Inversiones",
+    "debtImpact": "Tiempo perdido en deudas",
+    "allPending": "Todo lo pendiente",
+    "realWealth": "Mi Riqueza Real",
+    "whatIHave": "Lo que tengo (Bienes)",
+    "whatIOwe": "Lo que debo (Deudas)",
+    "netWorthLabel": "Riqueza Real"
+  },
+  "tooltips": {
+    "freedomDays": {
+      "title": "Días de Respiro",
+      "content": "Representa el tiempo que podrías vivir sin ingresos externos manteniendo tus gastos actuales.",
+      "description": "Tus días son el resultado de dividir tu respaldo total (Saldos + Inversiones) por lo que gastas cada día."
+    },
+    "burnRate": {
+      "title": "Mi Costo por Día",
+      "content": "Lo que te cuesta vivir cada día basado en tu Estructura Real declarada."
+    },
+    "reserves": {
+      "title": "Ahorros para Emergencias",
+      "content": "Suma de tus saldos bancarios, ahorros e inversiones líquidas.",
+      "description": "Solo lo que puedes convertir en efectivo en 24-48 horas se considera respaldo real."
+    },
+    "debt": {
+      "title": "Deuda Total",
+      "content": "Suma de todas tus deudas activas (créditos, cuotas pendientes).",
+      "description": "Cada peso en deuda reduce tu libertad financiera."
+    }
+  },
+  "movements": {
+    "title": "Movimientos Recientes",
+    "recentActivity": "Actividad Reciente",
+    "viewAll": "Ver todo",
+    "empty": "No hay movimientos recientes",
+    "emptyHint": "Usa el botón HABLAR para registrar algo",
+    "today": "HOY",
+    "expense": "Gasto",
+    "income": "Ingreso",
+    "contribution": "Aporte"
+  },
+  "voice": {
+    "recording": "🎤 Grabando... Suelta para enviar",
+    "processing": "Analizando...",
+    "saving": "Guardando...",
+    "saved": "✅ ¡Agregado!",
+    "incomeSaved": "✅ ¡Ingreso registrado!",
+    "error": "No entendí. Intenta de nuevo.",
+    "noAudio": "No se detectó audio",
+    "audioError": "Error de audio",
+    "holdToSpeak": "Mantén presionado para hablar"
+  },
+  "country": {
+    "selector": {
+      "title": "¿Desde dónde nos visitas?",
+      "subtitle": "Esto nos ayuda a personalizar tu experiencia",
+      "search": "Buscar país...",
+      "confirm": "Confirmar"
+    }
+  },
+  "premium": {
+    "banner": "¡Pásate a Premium y activa el Asistente AI avanzado!",
+    "upgrade": "Mejorar"
+  },
+  "setup": {
+    "title": "Cuentas Clave",
+    "myRealNumbers": "Mis Números Reales",
+    "saveAll": "Guardar todo",
+    "add": "Añadir",
+    "labels": {
+      "name": "Nombre",
+      "conceptName": "Nombre del concepto...",
+      "monthlyAmount": "Monto Mensual",
+      "totalInstallments": "Total cuotas:",
+      "totalDebt": "Deuda Total:",
+      "weightOnBreathing": "Peso en mi Respiro:",
+      "remaining": "restantes",
+      "automaticAverage": "Promedio Automático",
+      "automatic": "automático",
+      "assetsNote": "* Solo \"Inversión\" suma a Días de Respiro",
+      "burnRate": "Costo de Mantención (Burn Rate)",
+      "monthlyGoal": "Meta mensual",
+      "assetPlaceholder": "Ej: Auto, Depto, Inversiones...",
+      "unnamedConcept": "Concepto sin nombre"
+    },
+    "categories": {
+      "credits": "Deudas de Cuotas (Créditos)",
+      "subscriptions": "Gastos Hormiga (Suscripciones)",
+      "services": "Cuentas por Pagar (Servicios)",
+      "assets": "Bienes y Ahorros (Activos)",
+      "partner": "Aportes de Pareja",
+      "fixedPayments": "Pagos Fijos (Arriendos, Créditos)",
+      "variableServices": "Servicios Variables (Promediados)"
+    },
+    "assetTypes": {
+      "property": "Inmueble",
+      "vehicle": "Vehículo",
+      "investment": "Inversión",
+      "other": "Otro"
+    },
+    "credits": {
+      "title": "Deudas en Cuotas",
+      "subtitle": "Créditos",
+      "add": "Añadir",
+      "totalInstallments": "Total Cuotas",
+      "installmentOf": "cuota {current} de {total}",
+      "remaining": "{count} restantes",
+      "month": "mes",
+      "perMonth": "/ mes"
+    },
+    "subscriptions": {
+      "title": "Gastos Hormiga",
+      "subtitle": "Suscripciones"
+    },
+    "services": {
+      "title": "Cuentas por Pagar",
+      "subtitle": "Servicios",
+      "autoAverage": "Promedio automático",
+      "autoAverageInfo": "El sistema calcula el promedio de tus últimos 3 meses automáticamente"
+    },
+    "assets": {
+      "title": "Bienes y Ahorros",
+      "subtitle": "Activos",
+      "property": "Inmueble",
+      "vehicle": "Vehículo",
+      "investment": "Inversión",
+      "other": "Otro"
+    },
+    "partner": {
+      "title": "Aporte Pareja",
+      "name": "Nombre",
+      "monthlyAmount": "Monto mensual"
+    },
+    "burnRate": {
+      "title": "Costo de Mantención",
+      "subtitle": "BurnRate"
+    },
+    "goal": {
+      "title": "Meta Mensual",
+      "monthlyGoal": "Meta mensual"
+    },
+    "saveChanges": "Guardar Cambios"
+  },
+  "history": {
+    "title": "Historial",
+    "subtitle": "Analiza tus movimientos",
+    "filterByPeriod": "Filtrar por período",
+    "from": "Desde",
+    "to": "Hasta",
+    "income": "Ingresos",
+    "expenses": "Gastos",
+    "noMovements": "No hay movimientos en este período"
+  },
+  "routine": {
+    "dailyBurn": "Gasto Diario",
+    "days": "DÍAS",
+    "tutorial": {
+      "masterGoal": {
+        "title": "La Meta Maestra",
+        "description": "En Finanza Fácil, no acumulamos dinero, acumulamos TIEMPO. Nuestra meta compartida es alcanzar los 1.000 días de libertad."
+      },
+      "burnRate": {
+        "title": "El Burn Rate",
+        "description": "Vivir tiene un costo. Tu 'Burn Rate' es cuánto dinero necesitas cada día para que tu mundo siga girando sin deudas."
+      },
+      "realStructure": {
+        "title": "Estructura Real",
+        "description": "Para ganar, primero hay que medir. Configura tus Pasivos Fijos (arriendo, créditos) y Activos para calibrar tu base financiera."
+      },
+      "magicVoice": {
+        "title": "Voz Mágica",
+        "description": "No pierdas tiempo anotando. Usa el micrófono y di: 'compré sushi por 25 lucas'. El sistema entenderá el monto y el impacto automáticamente."
+      },
+      "freedomDays": {
+        "title": "Días de Libertad",
+        "description": "El resultado final: cuántos días puedes vivir hoy si dejaras de trabajar. ¡Cada peso ahorrado compra tiempo de vida!"
+      },
+      "nextStep": "Siguiente Pasito",
+      "readyToWin": "¡Listo para Ganar!",
+      "back": "Atrás",
+      "skipTutorial": "Saltar Tutorial"
+    }
+  },
+  "tiers": {
+    "survival": {
+      "label": "Al Filo",
+      "description": "Estado Crítico. No tienes suficiente colchón para el mes. El objetivo es salir de aquí rápido."
+    },
+    "security": {
+      "label": "Piso Firme",
+      "description": "Tienes un colchón de 3 a 6 meses. Estás protegido ante imprevistos."
+    },
+    "flexibility": {
+      "label": "Caminando Solo",
+      "description": "Puedes empezar a tomar decisiones sin presión inmediata."
+    },
+    "independence": {
+      "label": "Dueño de mi Tiempo",
+      "description": "¡Felicitaciones! Tienes más de un año de vida asegurado."
+    },
+    "abundance": {
+      "label": "Libertad Total",
+      "description": "Llegaste a la cima. Tu tiempo hoy es 100% tuyo."
+    }
+  },
+  "common": {
+    "close": "Cerrar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "search": "Buscar",
+    "loading": "Cargando...",
+    "private": "PRIVATE"
+  },
+  "welcome": {
+    "title": "¡Bienvenido a Finanza Fácil!",
+    "subtitle": "Para calcular tus días de libertad correctamente:",
+    "masterYourFreedom": "Domina tu libertad",
+    "masterYourFreedomDesc": "Aprende la filosofía de los 1.000 días con nuestra rutina interactiva.",
+    "startRoutine": "Iniciar Rutina de Aprendizaje",
+    "skipAndExplore": "Saltar y explorar solo"
+  },
+  "compass": {
+    "anatomy": "Anatomía de tu Libertad"
+  },
+  "netWorth": {
+    "title": "Mi Riqueza Real",
+    "tooltipTitle": "Mi Riqueza Real",
+    "tooltipContent": "La diferencia entre todo lo que tienes (Bienes + Ahorros) y todo lo que debes (Créditos).",
+    "tooltipDescription": "Es el valor de tu libertad final si hoy decidieras liquidar todo.",
+    "whatIHave": "Lo que tengo (Bienes)",
+    "whatIOwe": "Lo que debo (Deudas)",
+    "realWealth": "Riqueza Real"
+  },
+  "installments": {
+    "installments": "cuotas",
+    "installment": "cuota"
+  },
+  "tiers": {
+    "survival": {
+      "label": "En la cuerda floja",
+      "description": "Estado Crítico. No tienes suficiente respiro para el mes. El objetivo es salir de aquí rápido."
+    },
+    "security": {
+      "label": "Piso Firme",
+      "description": "Tienes un colchón de 3 a 6 meses. Estás protegido ante imprevistos."
+    },
+    "flexibility": {
+      "label": "Caminando solo",
+      "description": "Puedes empezar a tomar decisiones sin presión inmediata."
+    },
+    "independence": {
+      "label": "Dueño de mi Tiempo",
+      "description": "¡Felicidades! Tienes más de un año de vida asegurada."
+    },
+    "abundance": {
+      "label": "Libertad Total",
+      "description": "Has alcanzado la cima. Tu tiempo hoy es 100% tuyo."
+    }
+  },
+  "privacy": {
+    "show": "Mostrar valores",
+    "hide": "Ocultar valores"
+  }
+}
