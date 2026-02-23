@@ -1,8 +1,8 @@
 {
-    "id": "finanza-facil-v5-force",
-    "name": "Finanza Fácil",
-    "short_name": "Finanza Fácil",
-    "description": "Tu camino simple a la libertad financiera.",
+    "id": "emprende-v1",
+    "name": "Emprende",
+    "short_name": "Emprende",
+    "description": "Tu visión, nuestra tecnología.",
     "start_url": "/",
     "display": "standalone",
     "orientation": "portrait",
@@ -35,13 +35,13 @@
     ],
     "screenshots": [
         {
-            "src": "/logo-atsit.png",
+            "src": "/logo.png",
             "sizes": "1024x1024",
             "type": "image/png",
             "form_factor": "wide"
         },
         {
-            "src": "/logo-atsit.png",
+            "src": "/logo.png",
             "sizes": "1024x1024",
             "type": "image/png",
             "form_factor": "narrow"

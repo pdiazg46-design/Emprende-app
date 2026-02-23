@@ -8,8 +8,6 @@ const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 export const metadata: Metadata = {
   title: "Emprende",
   description: "Simplifica tus finanzas y gana libertad.",
-  /* 
-  DISABLED PWA FEATURES BY USER REQUEST
   manifest: "/manifest.json",
   icons: {
     apple: "/pwa-icon.png",
@@ -17,9 +15,8 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Finanza Fácil",
+    title: "Emprende",
   },
-  */
 };
 
 export const viewport = {
