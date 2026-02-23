@@ -79,14 +79,12 @@ export function DesktopSidebar({ user }: { user: any }) {
 
                 {/* Always-visible Admin and Logout buttons */}
                 <div className="flex flex-col gap-2 pb-2">
-                    {user?.role === 'ADMIN' && (
-                        <Link
-                            href="/admin"
-                            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-slate-900 text-white hover:bg-slate-800 rounded-lg transition-all text-[10px] font-bold uppercase tracking-widest text-center shadow-md active:scale-95"
-                        >
-                            <ShieldCheck className="w-4 h-4 text-emerald-400" /> Admin VIP
-                        </Link>
-                    )}
+                    <Link
+                        href="/admin"
+                        className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-slate-900 text-white hover:bg-slate-800 rounded-lg transition-all text-[10px] font-bold uppercase tracking-widest text-center shadow-md active:scale-95"
+                    >
+                        <ShieldCheck className="w-4 h-4 text-emerald-400" /> Admin VIP
+                    </Link>
 
                     <button
                         onClick={async () => {
