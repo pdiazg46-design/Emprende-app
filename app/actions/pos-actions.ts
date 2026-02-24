@@ -14,65 +14,55 @@ export async function processSale(cart: CartItem[], total: number, paymentMethod
 
     if (cart.length === 0) throw new Error("El carrito está vacío")
 
-    // 1. Validate Stock for all items FIRST
+    // 1. Validate Stock for all items (PRE-FETCH en RAM para evitar consultas N+1)
+    const productIds = cart.map(item => item.id);
+    const dbProducts = await prisma.product.findMany({
+        where: { id: { in: productIds }, userId: user.id }
+    });
+
+    const productsMap = new Map(dbProducts.map(p => [p.id, p]));
+
     for (const item of cart) {
-        const product = await prisma.product.findUnique({
-            where: { id: item.id, userId: user.id }
-        })
+        const product = productsMap.get(item.id);
 
         if (!product) {
-            throw new Error(`Producto no encontrado: ${item.name}`)
+            throw new Error(`Producto no encontrado: ${item.name}`);
         }
 
         if (product.stock < item.quantity) {
-            throw new Error(`Stock insuficiente para ${item.name}. Disponibles: ${product.stock}`)
+            throw new Error(`Stock insuficiente para ${item.name}. Disponibles: ${product.stock}`);
         }
     }
 
-    // 2. Execute Sale (Deduct Stock & Create Transaction)
-    // We create a single transaction for the whole cart? Or one per item?
-    // User requested "Show total order details". Usually a single Ticket.
-    // Our Transaction model is simple. Let's create a single "Sale" transaction with the summary description.
-    // Or multiple if we want detailed reporting per product?
-    // Current Dashboard aggregates by Type. A single transaction with "Venta: 2x Cola, 1x Pan" is better for simple list.
-    // BUT we lose structured data for analytics if we don't link productId. 
-    // Our Transaction model allows productId (optional). 
-    // If we have mixed products, we can't link ONE productId.
-    // Option A: Split transaction into one row per product (Cleaner for analytics).
-    // Option B: One big row.
-    // Decision: Split rows for proper analytics (Product margin, rotation).
-    // EXCEPT the user might want one entry in "Restante" / "Activity".
-    // Let's do Split Rows for data integrity, maybe grouping UI handles it?
-    // Actually `addMultiProductTransaction` logic does One Transaction with composite description.
-    // User wants "Estudios permanentes". Individual rows are CRITICAL for "Mejor producto".
-    // So I should create ONE transaction per product line item.
-
-    // However, CartSummary passes "cartTotal". If I split, I assume sum matches.
-
-    const transactionGroupId = crypto.randomUUID(); // Logical grouping (not in DB schema yet but useful concept)
+    // 2. Execute Sale (Deduct Stock & Create Transaction en UNA SOLA TRANSACCIÓN MASIVA)
+    const transactionGroupId = crypto.randomUUID();
+    const dbOperations = [];
 
     for (const item of cart) {
-        // Deduct Stock
-        await prisma.product.update({
-            where: { id: item.id },
-            data: { stock: { decrement: item.quantity } }
-        })
+        dbOperations.push(
+            prisma.product.update({
+                where: { id: item.id },
+                data: { stock: { decrement: item.quantity } }
+            })
+        );
 
-        // Create Transaction Record
-        await prisma.transaction.create({
-            data: {
-                userId: user.id,
-                type: 'SALE',
-                amount: item.price * item.quantity,
-                quantity: item.quantity,
-                description: `Venta POS: ${item.quantity}x ${item.name}`,
-                paymentMethod: paymentMethod,
-                groupId: transactionGroupId, // Link items together
-                productId: item.id
-                // We don't have groupId column yet, but individual rows are best for analytics.
-            }
-        })
+        dbOperations.push(
+            prisma.transaction.create({
+                data: {
+                    userId: user.id,
+                    type: 'SALE',
+                    amount: item.price * item.quantity,
+                    quantity: item.quantity,
+                    description: `Venta POS: ${item.quantity}x ${item.name}`,
+                    paymentMethod: paymentMethod,
+                    groupId: transactionGroupId,
+                    productId: item.id
+                }
+            })
+        );
     }
+
+    await prisma.$transaction(dbOperations);
 
     revalidatePath("/")
     return { success: true }

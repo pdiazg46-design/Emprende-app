@@ -3,6 +3,7 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { cache } from "react"
 
 export async function addTransaction(data: { type: string, amount: number, description?: string, productId?: string, isQuantity?: boolean }) {
     const session = await auth()
@@ -185,7 +186,7 @@ function getChileTimeBounds(baseDate: Date = new Date()) {
     return { todayStart, weekStart, weekEnd, monthStart, monthEnd, yearStart, yearEnd, chileTime };
 }
 
-export async function getDashboardMetrics() {
+export const getDashboardMetrics = cache(async () => {
     const session = await auth()
     if (!session?.user?.email) return { salesToday: 0, expensesToday: 0, transactionsToday: [], totalStockValue: 0, inventory: [] }
 
@@ -194,53 +195,51 @@ export async function getDashboardMetrics() {
 
     const bounds = getChileTimeBounds();
 
-    const transactionsToday = await prisma.transaction.findMany({
-        where: {
-            userId: user.id,
-            createdAt: { gte: bounds.todayStart } // Now correctly midnight in Chile
-        },
-        orderBy: { createdAt: 'desc' },
-        include: { product: true }
-    })
-
-    const salesThisWeek = await prisma.transaction.aggregate({
-        where: {
-            userId: user.id,
-            type: 'SALE',
-            amount: { gt: 0 },
-            NOT: [
-                { description: { contains: 'Añadido', mode: 'insensitive' } },
-                { description: { contains: 'Inventario', mode: 'insensitive' } },
-                { description: { contains: 'stock', mode: 'insensitive' } },
-                { description: { startsWith: 'Repuestos', mode: 'insensitive' } }
-            ],
-            createdAt: { gte: bounds.weekStart } // Chile aligned Week Start
-        },
-        _sum: { amount: true }
-    })
-
-    const expensesToday = await prisma.transaction.aggregate({
-        where: {
-            userId: user.id,
-            type: 'EXPENSE',
-            createdAt: { gte: bounds.todayStart }
-        },
-        _sum: { amount: true }
-    })
-
-    const expensesThisWeek = await prisma.transaction.aggregate({
-        where: {
-            userId: user.id,
-            type: 'EXPENSE',
-            createdAt: { gte: bounds.weekStart }
-        },
-        _sum: { amount: true }
-    })
-
-    const inventory = await prisma.product.findMany({
-        where: { userId: user.id },
-        orderBy: { name: 'asc' }
-    })
+    const [transactionsToday, salesThisWeek, expensesToday, expensesThisWeek, inventory] = await Promise.all([
+        prisma.transaction.findMany({
+            where: {
+                userId: user.id,
+                createdAt: { gte: bounds.todayStart }
+            },
+            orderBy: { createdAt: 'desc' },
+            include: { product: true }
+        }),
+        prisma.transaction.aggregate({
+            where: {
+                userId: user.id,
+                type: 'SALE',
+                amount: { gt: 0 },
+                NOT: [
+                    { description: { contains: 'Añadido', mode: 'insensitive' } },
+                    { description: { contains: 'Inventario', mode: 'insensitive' } },
+                    { description: { contains: 'stock', mode: 'insensitive' } },
+                    { description: { startsWith: 'Repuestos', mode: 'insensitive' } }
+                ],
+                createdAt: { gte: bounds.weekStart }
+            },
+            _sum: { amount: true }
+        }),
+        prisma.transaction.aggregate({
+            where: {
+                userId: user.id,
+                type: 'EXPENSE',
+                createdAt: { gte: bounds.todayStart }
+            },
+            _sum: { amount: true }
+        }),
+        prisma.transaction.aggregate({
+            where: {
+                userId: user.id,
+                type: 'EXPENSE',
+                createdAt: { gte: bounds.weekStart }
+            },
+            _sum: { amount: true }
+        }),
+        prisma.product.findMany({
+            where: { userId: user.id },
+            orderBy: { name: 'asc' }
+        })
+    ]);
 
     const totalStockValue = inventory.reduce((acc, curr) => acc + (curr.price * Math.max(0, curr.stock)), 0)
 
@@ -253,7 +252,7 @@ export async function getDashboardMetrics() {
         totalStockValue,
         inventory
     }
-}
+})
 
 export async function getTransactionsByRange(from: string, to: string) {
     const session = await auth()
