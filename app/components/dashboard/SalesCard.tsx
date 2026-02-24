@@ -4,6 +4,7 @@ import { useState } from "react"
 import { TrendingUp, Sparkles } from "lucide-react"
 import { SalesInsightModal } from "./SalesInsightModal"
 import { cn } from "@/lib/utils"
+import { useCart } from "../pos/CartContext"
 
 interface SalesCardProps {
     amount: number
@@ -13,6 +14,10 @@ interface SalesCardProps {
 
 export function SalesCard({ amount, variant = 'default', className }: SalesCardProps) {
     const [showModal, setShowModal] = useState(false)
+    const { optimisticSalesToday } = useCart()
+
+    // Sumamos la RAM local para velocidad instantánea
+    const displayAmount = amount + optimisticSalesToday
 
     if (variant === 'mobile-horizontal') {
         return (
@@ -33,9 +38,10 @@ export function SalesCard({ amount, variant = 'default', className }: SalesCardP
                         <div>
                             <p className="text-xs uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1">
                                 Venta Semanal
+                                {optimisticSalesToday > 0 && <span className="ml-1 px-1.5 py-0.5 rounded text-[8px] bg-emerald-100 text-emerald-700 animate-pulse">RAM</span>}
                                 <Sparkles className="w-3 h-3 text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                             </p>
-                            <p className="text-lg font-black text-slate-900">${amount.toLocaleString('es-CL')}</p>
+                            <p className="text-lg font-black text-slate-900">${displayAmount.toLocaleString('es-CL')}</p>
                         </div>
                     </div>
                 </div>
@@ -67,9 +73,10 @@ export function SalesCard({ amount, variant = 'default', className }: SalesCardP
                         <TrendingUp className="w-4 h-4 md:w-5 md:h-5" />
                     </div>
                     <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-slate-400 group-hover:text-emerald-700 transition-colors">Semana</span>
+                    {optimisticSalesToday > 0 && <span className="ml-2 px-2 py-0.5 rounded-md text-[9px] bg-emerald-100 text-emerald-700 font-bold animate-pulse">RAM</span>}
                 </div>
                 <p className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight privacy-sensitive">
-                    ${amount.toLocaleString('es-CL')}
+                    ${displayAmount.toLocaleString('es-CL')}
                 </p>
             </div>
 

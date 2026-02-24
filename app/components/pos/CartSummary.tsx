@@ -11,7 +11,7 @@ import { CheckoutModal } from "@/components/pos/CheckoutModal"
 import { getPaymentConfig } from "@/actions/user-settings-actions"
 
 export function CartSummary() {
-    const { cart, removeFromCart, clearCart, cartTotal, cartCount } = useCart()
+    const { cart, removeFromCart, clearCart, cartTotal, cartCount, addOptimisticSale } = useCart()
     const [isOpen, setIsOpen] = useState(false)
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
     const [isProcessing, setIsProcessing] = useState(false)
@@ -29,10 +29,13 @@ export function CartSummary() {
     const handleConfirmSale = async (method: string) => {
         setIsProcessing(true)
         try {
-            await processSale(cart, cartTotal, method)
-
+            // Promesa Paralela Optimizada (RAM Instantánea + Espera Fondo)
+            addOptimisticSale(cartTotal) // <- Manda venta al dashboard AL INSTANTE
             clearCart()
             setIsOpen(false)
+
+            // Lanza a Supabase y vuelve con SSR (Lento, pero el skeleton/SSR ocultará el delay)
+            await processSale(cart, cartTotal, method)
             router.refresh()
         } catch (error) {
             console.error(error)
