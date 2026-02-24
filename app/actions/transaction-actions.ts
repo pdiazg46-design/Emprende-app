@@ -252,15 +252,7 @@ export const getDashboardMetrics = cache(async () => {
         }),
         prisma.product.findMany({
             where: { userId: user.id },
-            orderBy: { name: 'asc' },
-            select: {
-                id: true,
-                name: true,
-                price: true,
-                stock: true,
-                minStock: true,
-                cost: true
-            }
+            orderBy: { name: 'asc' }
         })
     ]);
 
