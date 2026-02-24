@@ -17,9 +17,10 @@ interface CartContextType {
     clearCart: () => void
     cartTotal: number
     cartCount: number
-    // --- UI Optimista ---
     optimisticSalesToday: number
-    addOptimisticSale: (amount: number) => void
+    optimisticTransactions: any[]
+    addOptimisticSale: (amount: number, cartSnapshot: CartItem[], method: string) => void
+    clearOptimisticTransactions: () => void
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -28,6 +29,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const [cart, setCart] = useState<CartItem[]>([])
     // Estado transitorio para sumar a las ventas visuales del Dashboard. Se limpia on unmount o real reload.
     const [optimisticSalesToday, setOptimisticSalesToday] = useState(0)
+    const [optimisticTransactions, setOptimisticTransactions] = useState<any[]>([])
 
     // Load from localStorage on mount
     useEffect(() => {
@@ -80,14 +82,35 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
     const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
 
-    const addOptimisticSale = (amount: number) => {
+    const addOptimisticSale = (amount: number, cartSnapshot: CartItem[], method: string) => {
         setOptimisticSalesToday(prev => prev + amount)
+
+        const groupId = 'opt-group-' + crypto.randomUUID()
+        const newTx = cartSnapshot.map(item => ({
+            id: 'opt-' + crypto.randomUUID(),
+            type: 'SALE',
+            amount: item.price * item.quantity,
+            quantity: item.quantity,
+            description: `Venta POS: ${item.quantity}x ${item.name}`,
+            paymentMethod: method,
+            date: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+            groupId,
+            product: { name: item.name }
+        }))
+
+        setOptimisticTransactions(prev => [...newTx, ...prev])
+    }
+
+    const clearOptimisticTransactions = () => {
+        setOptimisticTransactions([])
     }
 
     return (
         <CartContext.Provider value={{
             cart, addToCart, removeFromCart, clearCart, cartTotal, cartCount,
-            optimisticSalesToday, addOptimisticSale
+            optimisticSalesToday, addOptimisticSale,
+            optimisticTransactions, clearOptimisticTransactions
         }}>
             {children}
         </CartContext.Provider>

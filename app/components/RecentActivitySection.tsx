@@ -4,6 +4,8 @@ import { useState } from "react"
 import { TransactionList } from "./TransactionList"
 import { HistoryModal } from "./history/HistoryModal"
 import { ArrowUpRight } from "lucide-react"
+import { useCart } from "./pos/CartContext"
+import { useEffect } from "react"
 
 interface RecentActivitySectionProps {
     transactions: any[]
@@ -11,6 +13,16 @@ interface RecentActivitySectionProps {
 
 export function RecentActivitySection({ transactions }: RecentActivitySectionProps) {
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const { optimisticTransactions, clearOptimisticTransactions } = useCart()
+
+    // Cuando el servidor empuja nuevas transacciones verificadas, vaciamos la RAM fantasma.
+    useEffect(() => {
+        if (optimisticTransactions.length > 0) {
+            clearOptimisticTransactions()
+        }
+    }, [transactions])
+
+    const displayTransactions = [...optimisticTransactions, ...transactions]
 
     return (
         <section className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm h-full flex flex-col">
@@ -18,9 +30,10 @@ export function RecentActivitySection({ transactions }: RecentActivitySectionPro
                 <div className="flex items-center gap-3">
                     <h2 className="text-lg font-black text-slate-800 uppercase tracking-wide flex items-center gap-2 whitespace-nowrap">
                         Actividad de Hoy
+                        {optimisticTransactions.length > 0 && <span className="ml-1 px-1.5 py-0.5 rounded text-[8px] bg-emerald-100 text-emerald-700 font-bold animate-pulse">OPTIMISTA</span>}
                     </h2>
                     <span className="text-[10px] font-bold text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-200 uppercase tracking-wider whitespace-nowrap">
-                        {new Set(transactions.map(t => t.groupId || t.id)).size} Mov.
+                        {new Set(displayTransactions.map(t => t.groupId || t.id)).size} Mov.
                     </span>
                 </div>
 
@@ -34,7 +47,7 @@ export function RecentActivitySection({ transactions }: RecentActivitySectionPro
             </div>
 
             <div className="flex-1 overflow-y-auto min-h-[300px]">
-                <TransactionList transactions={transactions} />
+                <TransactionList transactions={displayTransactions} />
             </div>
 
             <HistoryModal

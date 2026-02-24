@@ -32,7 +32,7 @@ export function CartSummary() {
         const snapshotTotal = cartTotal
 
         // 2. Ejecutar Matemáticas de RAM de inmediato (UI Optimista 0ms)
-        addOptimisticSale(snapshotTotal)
+        addOptimisticSale(snapshotTotal, snapshotCart, method)
         clearCart()
         setIsOpen(false)
         setIsCheckoutOpen(false) // Forzar cierre del modal
