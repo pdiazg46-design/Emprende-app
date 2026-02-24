@@ -38,36 +38,7 @@ function DashboardSkeleton() {
 async function DashboardContent({ session, isTrial, daysRemaining }: { session: any, isTrial: boolean, daysRemaining: number }) {
   const { salesToday, expensesToday, expensesThisWeek, transactionsToday, totalStockValue, inventory } = await getDashboardMetrics()
 
-  // FOMO Logic calculation
-  const subscriptionStatus = (session.user as any).subscriptionStatus;
-  const subscriptionPlan = (session.user as any).subscriptionPlan;
 
-  // Safe Date parsing from JWT:
-  const rawTrialStart = (session.user as any).trialStartsAt;
-  const rawCreatedAt = (session.user as any).createdAt; // If included in JWT, otherwise undefined
-
-  // We need a valid parseable string or number for Date()
-  let trialStartsAt = rawTrialStart || rawCreatedAt;
-  if (!trialStartsAt) {
-    // Fallback: If for some reason the DB is corrupt and JWT has neither date, 
-    // assume they just started to not break the app.
-    trialStartsAt = new Date().toISOString();
-  }
-
-  const isTrial = subscriptionPlan === 'BASIC' && subscriptionStatus === 'TRIAL';
-  let daysRemaining = 0;
-
-  if (isTrial) {
-    const startDate = new Date(trialStartsAt);
-    const today = new Date();
-    // Reset time portions to midnight to compare exact days
-    startDate.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-    const daysSinceStart = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    daysRemaining = Math.max(0, 30 - daysSinceStart);
-
-    console.log(`[FOMO DEBUG] User: ${session.user.email} | isTrial: ${isTrial} | Status: ${subscriptionStatus} | Plan: ${subscriptionPlan} | startDate: ${startDate.toISOString()} | daysSince: ${daysSinceStart}`);
-  }
 
   return (
     <>
