@@ -26,23 +26,29 @@ export function CartSummary() {
 
     if (cartCount === 0) return null
 
-    const handleConfirmSale = async (method: string) => {
-        setIsProcessing(true)
-        try {
-            // Promesa Paralela Optimizada (RAM Instantánea + Espera Fondo)
-            addOptimisticSale(cartTotal) // <- Manda venta al dashboard AL INSTANTE
-            clearCart()
-            setIsOpen(false)
+    const handleConfirmSale = (method: string) => {
+        // 1. Guardar foto de los datos (porque limpiaremos la RAM del carro)
+        const snapshotCart = [...cart]
+        const snapshotTotal = cartTotal
 
-            // Lanza a Supabase y vuelve con SSR (Lento, pero el skeleton/SSR ocultará el delay)
-            await processSale(cart, cartTotal, method)
-            router.refresh()
-        } catch (error) {
-            console.error(error)
-            alert("Error al procesar venta")
-        } finally {
-            setIsProcessing(false)
-        }
+        // 2. Ejecutar Matemáticas de RAM de inmediato (UI Optimista 0ms)
+        addOptimisticSale(snapshotTotal)
+        clearCart()
+        setIsOpen(false)
+        setIsCheckoutOpen(false) // Forzar cierre del modal
+
+        // 3. Proceso "Fire-and-Forget" (Disparar y Olvidar)
+        // La consulta a Vercel/Supabase viaja por detrás sin detener el navegador
+        processSale(snapshotCart, snapshotTotal, method)
+            .then(() => {
+                // Cuando Vercel finalice (no importa si tarda 2 o 12 segundos),
+                // refrescamos la página invisiblemente para cuadrar el inventario real.
+                router.refresh()
+            })
+            .catch((error) => {
+                console.error("Error silencioso procesando la venta:", error)
+                // Aquí el sistema podría, en un futuro, hacer un rollback de la RAM.
+            })
     }
 
     return (
