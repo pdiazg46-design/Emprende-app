@@ -44,8 +44,8 @@ export async function getAdminStats() {
         }
     })
 
-    // $4.990 CLP per pro user
-    const monthlyRevenue = proUsers * 4990
+    // $15.000 CLP per pro user
+    const monthlyRevenue = proUsers * 15000
 
     return {
         totalUsers,
@@ -139,5 +139,62 @@ export async function grantBasicAccess(userId: string) {
         return { success: true }
     } catch (error) {
         return { success: false, error: "Failed to grant Basic access" }
+    }
+}
+
+export async function getSaaSAnalytics() {
+    await requireAdmin()
+
+    // 1. Get raw chronological data of ALL users
+    const allUsers = await prisma.user.findMany({
+        orderBy: { createdAt: 'asc' },
+        select: {
+            createdAt: true,
+            subscriptionPlan: true,
+            subscriptionStatus: true,
+        }
+    })
+
+    // 2. Setup Monthly Accumulation Array
+    const monthlyDataMap = new Map<string, { month: string, pro: number, basic: number, trial: number }>()
+
+    allUsers.forEach(user => {
+        // Format as "Feb 26", "Mar 26" string logic
+        const date = new Date(user.createdAt)
+        const monthKey = new Intl.DateTimeFormat('es-CL', { month: 'short', year: '2-digit' }).format(date) // e.g., "feb. 26"
+
+        // Capitalize month key
+        const formattedMonth = monthKey.charAt(0).toUpperCase() + monthKey.slice(1)
+
+        if (!monthlyDataMap.has(formattedMonth)) {
+            monthlyDataMap.set(formattedMonth, { month: formattedMonth, pro: 0, basic: 0, trial: 0 })
+        }
+
+        const dataPoint = monthlyDataMap.get(formattedMonth)!
+
+        // Increment logic based on SaaS states
+        if (user.subscriptionStatus === 'ACTIVE') {
+            if (user.subscriptionPlan === 'PRO') {
+                dataPoint.pro += 1
+            } else {
+                dataPoint.basic += 1
+            }
+        } else {
+            // Unpaid / Idle / Trial falls into TRIAL bucket for graphing generic onboarding
+            dataPoint.trial += 1
+        }
+    })
+
+    // 3. Derive Composition Total (for Pie Chart)
+    const composition = {
+        proTotal: allUsers.filter(u => u.subscriptionStatus === 'ACTIVE' && u.subscriptionPlan === 'PRO').length,
+        basicTotal: allUsers.filter(u => u.subscriptionStatus === 'ACTIVE' && u.subscriptionPlan === 'BASIC').length,
+        trialTotal: allUsers.filter(u => u.subscriptionStatus !== 'ACTIVE').length,
+    }
+
+    return {
+        // Convert Map to Recharts Array
+        trendData: Array.from(monthlyDataMap.values()),
+        composition
     }
 }

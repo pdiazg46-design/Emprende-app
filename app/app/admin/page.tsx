@@ -1,5 +1,6 @@
-import { getAllUsers, getAdminStats } from "@/actions/admin-actions"
+import { getAllUsers, getAdminStats, getSaaSAnalytics } from "@/actions/admin-actions"
 import { AdminUserTable } from "./components/AdminUserTable"
+import { SaaSRevenueChart } from "./components/SaaSRevenueChart"
 import { Users, TrendingUp, AlertCircle, DollarSign, LogOut, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
@@ -9,6 +10,7 @@ export const dynamic = 'force-dynamic'
 export default async function AdminDashboardPage() {
     const users = await getAllUsers()
     const stats = await getAdminStats()
+    const saasGraphData = await getSaaSAnalytics()
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -87,6 +89,9 @@ export default async function AdminDashboardPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Graphics Layer B2B */}
+            <SaaSRevenueChart data={saasGraphData} />
 
             {/* Users Table */}
             <AdminUserTable initialUsers={users} />
