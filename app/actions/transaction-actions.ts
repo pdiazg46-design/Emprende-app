@@ -195,7 +195,7 @@ export const getDashboardMetrics = cache(async () => {
 
     const bounds = getChileTimeBounds();
 
-    const [transactionsToday, salesThisWeek, expensesToday, expensesThisWeek, inventory] = await Promise.all([
+    const [transactionsToday, salesToday, salesThisWeek, expensesToday, expensesThisWeek, inventory] = await Promise.all([
         prisma.transaction.findMany({
             where: {
                 userId: user.id,
@@ -203,6 +203,21 @@ export const getDashboardMetrics = cache(async () => {
             },
             orderBy: { createdAt: 'desc' },
             include: { product: true }
+        }),
+        prisma.transaction.aggregate({
+            where: {
+                userId: user.id,
+                type: 'SALE',
+                amount: { gt: 0 },
+                NOT: [
+                    { description: { contains: 'Añadido', mode: 'insensitive' } },
+                    { description: { contains: 'Inventario', mode: 'insensitive' } },
+                    { description: { contains: 'stock', mode: 'insensitive' } },
+                    { description: { startsWith: 'Repuestos', mode: 'insensitive' } }
+                ],
+                createdAt: { gte: bounds.todayStart }
+            },
+            _sum: { amount: true }
         }),
         prisma.transaction.aggregate({
             where: {
@@ -237,7 +252,15 @@ export const getDashboardMetrics = cache(async () => {
         }),
         prisma.product.findMany({
             where: { userId: user.id },
-            orderBy: { name: 'asc' }
+            orderBy: { name: 'asc' },
+            select: {
+                id: true,
+                name: true,
+                price: true,
+                stock: true,
+                minStock: true,
+                cost: true
+            }
         })
     ]);
 
@@ -245,7 +268,7 @@ export const getDashboardMetrics = cache(async () => {
 
     return {
         salesThisWeek: salesThisWeek._sum.amount || 0,
-        salesToday: salesThisWeek._sum.amount || 0,
+        salesToday: salesToday._sum.amount || 0,
         expensesToday: expensesToday._sum.amount || 0,
         expensesThisWeek: expensesThisWeek._sum.amount || 0,
         transactionsToday,
