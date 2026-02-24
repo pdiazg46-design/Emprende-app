@@ -11,7 +11,7 @@ import { CheckoutModal } from "@/components/pos/CheckoutModal"
 import { getPaymentConfig } from "@/actions/user-settings-actions"
 
 export function CartSummary() {
-    const { cart, removeFromCart, clearCart, cartTotal, cartCount } = useCart()
+    const { cart, removeFromCart, clearCart, cartTotal, cartCount, addOptimisticSale } = useCart()
     const [isOpen, setIsOpen] = useState(false)
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
     const [isProcessing, setIsProcessing] = useState(false)
@@ -26,20 +26,31 @@ export function CartSummary() {
 
     if (cartCount === 0) return null
 
-    const handleConfirmSale = async (method: string) => {
-        setIsProcessing(true)
-        try {
-            await processSale(cart, cartTotal, method)
+    const handleConfirmSale = (method: string) => {
+        // 1. Guardar foto de los datos (porque limpiaremos la RAM del carro)
+        const snapshotCart = [...cart]
+        const snapshotTotal = cartTotal
 
-            clearCart()
-            setIsOpen(false)
-            router.refresh()
-        } catch (error) {
-            console.error(error)
-            alert("Error al procesar venta")
-        } finally {
-            setIsProcessing(false)
-        }
+        // 2. Ejecutar Matemáticas de RAM de inmediato (UI Optimista 0ms)
+        addOptimisticSale(snapshotTotal)
+        clearCart()
+        setIsOpen(false)
+        setIsCheckoutOpen(false) // Forzar cierre del modal
+
+        // 3. Proceso "Fire-and-Forget" con Desacople Total del Event Loop
+        // Usamos setTimeout para salir del "Tick" actual de React. 
+        // Esto fuerza a que Next.js DIBUJE en pantalla el modal cerrado INMEDIATAMENTE, 
+        // sin agrupar el cierre visual con la tardanza de la base de datos (Server Action Batching).
+        setTimeout(() => {
+            processSale(snapshotCart, snapshotTotal, method)
+                .then(() => {
+                    // Cuando Vercel finalice, refrescamos la página invisiblemente.
+                    router.refresh()
+                })
+                .catch((error) => {
+                    console.error("Error silencioso procesando la venta:", error)
+                })
+        }, 50)
     }
 
     return (

@@ -105,9 +105,20 @@ export function DesktopSidebar({ user }: { user: any }) {
                 <div className="flex items-center gap-3 pt-2 border-t border-slate-200/60">
                     <div className="flex items-center gap-3 w-full">
                         <UserProfile user={user} />
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-slate-800 truncate">{user?.name || "Usuario"}</p>
-                            <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+                        <div className="flex-1 min-w-0 pr-2">
+                            <p className="text-sm font-bold text-slate-800 truncate mb-0.5">{user?.name || "Usuario"}</p>
+
+                            {user?.subscriptionPlan === 'PRO' ? (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-sm mb-1">
+                                    PRO VIP
+                                </span>
+                            ) : (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-slate-200 text-slate-600 mb-1">
+                                    PLAN BÁSICO
+                                </span>
+                            )}
+
+                            <p className="text-[10px] text-slate-500 truncate">{user?.email}</p>
                         </div>
                     </div>
                 </div>

@@ -39,21 +39,40 @@ export function DesktopLayout({ children, user }: DesktopLayoutProps) {
                         <h3 className="text-4xl font-black text-slate-900 mb-4 leading-tight tracking-tight relative z-10">
                             Business Intelligence <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-600">Premium</span>
                         </h3>
-                        <p className="text-slate-600 font-medium text-lg mb-10 leading-relaxed relative z-10 max-w-lg mx-auto">
-                            El análisis profundo, los informes integrales y la gestión en <strong>Pantalla Completa (PC)</strong> son exclusivos del <strong className="text-slate-900">Plan Emprende PRO</strong>. Sigue vendiendo desde tu celular o sube de nivel.
+                        <p className="text-slate-600 font-medium text-lg mb-6 leading-relaxed relative z-10 max-w-lg mx-auto">
+                            El análisis profundo, los informes integrales y la gestión en <strong>Pantalla Completa (PC)</strong> son exclusivos del <strong className="text-slate-900">Plan Emprende PRO ($15.000/mes)</strong>.
                         </p>
 
-                        <a
-                            href={`https://wa.me/56912345678?text=Hola,%20quiero%20mejorar%20mi%20cuenta%20(${user?.email})%20a%20PRO%20para%20usar%20el%20Escritorio`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full max-w-md mx-auto py-5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl font-black text-base tracking-widest uppercase hover:opacity-90 transition-all shadow-xl shadow-violet-500/20 transform hover:-translate-y-1 flex items-center justify-center gap-3 relative z-10"
-                        >
-                            <Sparkles className="w-6 h-6" />
-                            Mejorar mi Plan Ahora
-                        </a>
+                        <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 mb-8 text-left max-w-md mx-auto relative z-10">
+                            <ul className="space-y-3">
+                                <li className="flex items-center gap-3 text-sm text-slate-700 font-medium">
+                                    <div className="w-6 h-6 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 shrink-0">✓</div>
+                                    Panel de Control Extendido para Computadores.
+                                </li>
+                                <li className="flex items-center gap-3 text-sm text-slate-700 font-medium">
+                                    <div className="w-6 h-6 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 shrink-0">✓</div>
+                                    Inteligencia de Negocio y Control de Gastos.
+                                </li>
+                                <li className="flex items-center gap-3 text-sm text-slate-700 font-medium">
+                                    <div className="w-6 h-6 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 shrink-0">✓</div>
+                                    Amnesia Segura (Reinicio Masivo de BD).
+                                </li>
+                            </ul>
+                        </div>
 
-                        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10 text-sm">
+                        <div className="space-y-3 relative z-10">
+                            <a
+                                href="https://www.mercadopago.cl/subscriptions/checkout?preapproval_plan_id=4cb1a5c9597d4bea924afdc82a1ef778"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full max-w-md mx-auto py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl font-black text-[13px] tracking-widest uppercase hover:opacity-90 transition-all shadow-xl shadow-violet-500/20 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                            >
+                                <Sparkles className="w-5 h-5" />
+                                Suscribirme a PRO por $15.000/mes
+                            </a>
+                        </div>
+
+                        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10 text-xs">
                             <p className="text-slate-400 font-medium">
                                 ¿Solo quieres vender? Desliza esta ventana y regresa a tu celular.
                             </p>

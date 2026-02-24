@@ -16,8 +16,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     throw new Error("Ingresa correo y contraseña");
                 }
 
+                const normalizedEmail = (credentials.email as string).toLowerCase().trim();
+
                 const user = await prisma.user.findUnique({
-                    where: { email: credentials.email as string }
+                    where: { email: normalizedEmail }
                 });
 
                 if (!user || !user.password) {
@@ -36,7 +38,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     email: user.email,
                     role: user.role,
                     subscriptionStatus: user.subscriptionStatus,
-                    subscriptionPlan: user.subscriptionPlan
+                    subscriptionPlan: user.subscriptionPlan,
+                    trialStartsAt: user.trialStartsAt
                 }
             }
         })
@@ -53,6 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.role = user.role
                 token.subscriptionStatus = user.subscriptionStatus
                 token.subscriptionPlan = user.subscriptionPlan
+                token.trialStartsAt = user.trialStartsAt
             }
             return token
         },
@@ -63,6 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 session.user.role = token.role
                 session.user.subscriptionStatus = token.subscriptionStatus
                 session.user.subscriptionPlan = token.subscriptionPlan
+                session.user.trialStartsAt = token.trialStartsAt
             }
             return session
         }

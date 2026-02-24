@@ -2,14 +2,18 @@
 
 import { useState, useEffect } from "react"
 import { DesktopLayout } from "@/components/layout/DesktopLayout"
-import { Save, CreditCard, ShieldCheck, Key, ArrowLeft } from "lucide-react"
+import { Save, CreditCard, ShieldCheck, Key, ArrowLeft, AlertOctagon } from "lucide-react"
 import { updatePaymentConfig, getPaymentConfig } from "@/actions/user-settings-actions"
 import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
+import { DangerWipeModal } from "@/components/settings/DangerWipeModal"
 
 export default function SettingsClient() {
     const router = useRouter()
+    const { data: session } = useSession()
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const [showDangerWipe, setShowDangerWipe] = useState(false)
 
     const [config, setConfig] = useState({
         mpAccessToken: "",
@@ -70,7 +74,7 @@ export default function SettingsClient() {
     if (loading) return <div className="p-10 text-center">Cargando...</div>
 
     return (
-        <DesktopLayout user={{ name: "Usuario" }}>
+        <DesktopLayout user={session?.user || { name: "Cargando..." }}>
             <div className="space-y-6 max-w-4xl mx-auto pb-20">
                 <header className="flex items-center gap-4">
                     <button
@@ -234,6 +238,30 @@ export default function SettingsClient() {
                         </div>
                     )}
 
+                    {/* 4. ZONA DE PELIGRO (PRO ONLY) */}
+                    {(session?.user as any)?.subscriptionPlan === 'PRO' && (
+                        <div className="bg-white rounded-3xl border border-rose-100 shadow-sm overflow-hidden mt-8">
+                            <div className="p-6 border-b border-rose-50 bg-rose-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div>
+                                    <h2 className="text-lg font-black text-rose-700 flex items-center gap-2">
+                                        <AlertOctagon className="w-5 h-5" />
+                                        Zona de Peligro
+                                    </h2>
+                                    <p className="text-xs text-rose-500/80 font-medium mt-1">
+                                        Acciones destructivas e irreversibles sobre tu cuenta.
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowDangerWipe(true)}
+                                    className="px-5 py-2.5 bg-rose-100 text-rose-700 hover:bg-rose-600 hover:text-white rounded-xl font-bold text-sm transition-colors border border-rose-200 hover:border-rose-600 shadow-sm whitespace-nowrap"
+                                >
+                                    Reiniciar Datos desde Cero
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-slate-200 md:relative md:bg-transparent md:border-none md:p-0 z-10">
                         <button
                             type="submit"
@@ -247,6 +275,11 @@ export default function SettingsClient() {
 
                 </form>
             </div>
+
+            <DangerWipeModal
+                isOpen={showDangerWipe}
+                onClose={() => setShowDangerWipe(false)}
+            />
         </DesktopLayout>
     )
 }

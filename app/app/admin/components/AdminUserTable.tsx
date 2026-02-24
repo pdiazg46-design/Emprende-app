@@ -1,39 +1,38 @@
 "use client"
 
 import { useState } from "react"
-import { updateUserStatus, updateUserPlan } from "@/actions/admin-actions"
-import { MoreHorizontal, Check, X, Shield, Lock, CreditCard } from "lucide-react"
+import { grantProAccess, grantBasicAccess } from "@/actions/admin-actions"
+import { MoreHorizontal, Check, X, Shield, Lock, CreditCard, Gift, Smartphone } from "lucide-react"
 
 export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
     const [users, setUsers] = useState(initialUsers)
     const [loading, setLoading] = useState<string | null>(null)
+    const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null)
 
-    const handleStatusChange = async (userId: string, currentStatus: string) => {
-        const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE"
-        setLoading(userId)
-
-        const res = await updateUserStatus(userId, newStatus)
-
+    const handleGrantPro = async (userId: string) => {
+        if (!confirm("¿Estás 100% seguro de regalarle el Plan PRO y activarlo manualmente? No se cobrará por MercadoPago.")) return;
+        setLoading(userId);
+        setActionMenuOpen(null);
+        const res = await grantProAccess(userId);
         if (res.success) {
-            setUsers(users.map(u => u.id === userId ? { ...u, subscriptionStatus: newStatus } : u))
+            setUsers(users.map(u => u.id === userId ? { ...u, subscriptionStatus: 'ACTIVE', subscriptionPlan: 'PRO' } : u))
         } else {
-            alert("Error updating status")
+            alert("Error al otorgar acceso");
         }
-        setLoading(null)
+        setLoading(null);
     }
 
-    const handlePlanChange = async (userId: string, currentPlan: string) => {
-        const newPlan = currentPlan === "PRO" ? "BASIC" : "PRO"
-        setLoading(userId)
-
-        const res = await updateUserPlan(userId, newPlan)
-
+    const handleGrantBasic = async (userId: string) => {
+        if (!confirm("¿Seguro de regalarle el Plan Básico de por vida? Tendrá la App Móvil ilimitada.")) return;
+        setLoading(userId);
+        setActionMenuOpen(null);
+        const res = await grantBasicAccess(userId);
         if (res.success) {
-            setUsers(users.map(u => u.id === userId ? { ...u, subscriptionPlan: newPlan } : u))
+            setUsers(users.map(u => u.id === userId ? { ...u, subscriptionStatus: 'ACTIVE', subscriptionPlan: 'BASIC' } : u))
         } else {
-            alert("Error updating plan")
+            alert("Error al otorgar acceso móvil");
         }
-        setLoading(null)
+        setLoading(null);
     }
 
     return (
@@ -76,30 +75,29 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <button
-                                        onClick={() => handleStatusChange(user.id, user.subscriptionStatus)}
-                                        disabled={loading === user.id || user.role === 'ADMIN'}
-                                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border transition-colors ${user.subscriptionStatus === 'ACTIVE'
-                                                ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
-                                                : user.subscriptionStatus === 'TRIAL'
-                                                    ? 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
-                                                    : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                                    <span
+                                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${user.subscriptionStatus === 'ACTIVE'
+                                            ? 'bg-green-50 text-green-700 border-green-200'
+                                            : user.subscriptionStatus === 'TRIAL'
+                                                ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                                : 'bg-red-50 text-red-700 border-red-200'
                                             }`}
                                     >
                                         {user.subscriptionStatus === 'ACTIVE' && <Check className="w-3 h-3" />}
                                         {user.subscriptionStatus !== 'ACTIVE' && <X className="w-3 h-3" />}
                                         {user.subscriptionStatus}
-                                    </button>
+                                    </span>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <button
-                                        onClick={() => handlePlanChange(user.id, user.subscriptionPlan)}
-                                        disabled={loading === user.id}
-                                        className="flex items-center gap-1 text-slate-600 hover:text-blue-600"
+                                    <span
+                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold shadow-sm ${user.subscriptionPlan === 'PRO'
+                                            ? 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white'
+                                            : 'bg-slate-100 text-slate-600 border border-slate-200'
+                                            }`}
                                     >
-                                        <CreditCard className="w-4 h-4" />
-                                        {user.subscriptionPlan}
-                                    </button>
+                                        <CreditCard className="w-3.5 h-3.5" />
+                                        {user.subscriptionPlan === 'PRO' ? 'PRO VIP' : 'BÁSICO'}
+                                    </span>
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col gap-1 text-xs">
@@ -107,10 +105,38 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
                                         <span>💰 {user._count?.transactions || 0} txs</span>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4">
-                                    <button className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
+                                <td className="px-6 py-4 relative">
+                                    <button onClick={() => setActionMenuOpen(actionMenuOpen === user.id ? null : user.id)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400">
                                         <MoreHorizontal className="w-4 h-4" />
                                     </button>
+
+                                    {actionMenuOpen === user.id && (
+                                        <>
+                                            <div className="fixed inset-0 z-40" onClick={() => setActionMenuOpen(null)} />
+                                            <div className="absolute right-10 top-1/2 -translate-y-1/2 bg-white border border-slate-200 shadow-xl rounded-xl w-64 z-50 py-2">
+
+                                                <div className="p-2">
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1">Padrinazgo (Regalar Accesos)</p>
+                                                    <button
+                                                        onClick={() => handleGrantBasic(user.id)}
+                                                        disabled={loading === user.id}
+                                                        className="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-blue-50 text-blue-700 flex items-center gap-2 rounded-lg"
+                                                    >
+                                                        <Smartphone className="w-3.5 h-3.5" />
+                                                        Regalar App Móvil (De Por Vida)
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleGrantPro(user.id)}
+                                                        disabled={loading === user.id}
+                                                        className="w-full text-left px-3 py-2 text-xs font-semibold hover:bg-violet-50 text-violet-700 flex items-center gap-2 rounded-lg mt-1"
+                                                    >
+                                                        <Gift className="w-3.5 h-3.5" />
+                                                        Regalar Plan PRO VIP (Mensual)
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
                                 </td>
                             </tr>
                         ))}

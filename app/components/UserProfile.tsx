@@ -1,7 +1,7 @@
 'use client'
 
 import { signOut, useSession } from "next-auth/react"
-import { LogOut, Users, RefreshCw, Settings } from "lucide-react"
+import { LogOut, Users, RefreshCw, Settings, Mail } from "lucide-react"
 import { useState } from "react"
 import { AdminUsersModal } from "./AdminUsersModal"
 import { InstallButton } from "./InstallButton"
@@ -47,7 +47,20 @@ export function UserProfile({ user }: UserProfileProps) {
                     <div className="absolute right-0 top-12 md:top-14 z-50 bg-white border border-slate-100 shadow-2xl rounded-2xl p-2 min-w-[200px] animate-in fade-in zoom-in-95 duration-100">
                         <div className="px-3 py-2 border-b border-slate-50 mb-1">
                             <p className="text-[10px] font-black text-slate-800 truncate">{user.name || "Usuario"}</p>
-                            <p className="text-[8px] font-medium text-slate-400 truncate">{user.email}</p>
+                            <p className="text-[8px] font-medium text-slate-400 truncate mb-1.5">{user.email}</p>
+
+                            {/* Subscription Status Pill */}
+                            <div className="flex items-center gap-1.5">
+                                {(session?.user as any)?.subscriptionPlan === 'PRO' ? (
+                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow-sm">
+                                        PRO VIP
+                                    </span>
+                                ) : (
+                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 border border-slate-200">
+                                        PLAN BÁSICO
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
                         <div className="px-1 mt-1">
@@ -91,6 +104,13 @@ export function UserProfile({ user }: UserProfileProps) {
                             >
                                 <Settings className="w-3.5 h-3.5" /> Configuración
                             </button>
+
+                            <a
+                                href="mailto:atsittelecom@gmail.com?subject=Soporte%20App%20Emprende"
+                                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest text-center mb-2 border border-blue-200 shadow-sm"
+                            >
+                                <Mail className="w-3.5 h-3.5" /> Contactar Soporte
+                            </a>
 
                             <InstallButton />
 

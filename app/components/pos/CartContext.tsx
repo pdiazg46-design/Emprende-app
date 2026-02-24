@@ -17,12 +17,17 @@ interface CartContextType {
     clearCart: () => void
     cartTotal: number
     cartCount: number
+    // --- UI Optimista ---
+    optimisticSalesToday: number
+    addOptimisticSale: (amount: number) => void
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
     const [cart, setCart] = useState<CartItem[]>([])
+    // Estado transitorio para sumar a las ventas visuales del Dashboard. Se limpia on unmount o real reload.
+    const [optimisticSalesToday, setOptimisticSalesToday] = useState(0)
 
     // Load from localStorage on mount
     useEffect(() => {
@@ -75,8 +80,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
     const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
 
+    const addOptimisticSale = (amount: number) => {
+        setOptimisticSalesToday(prev => prev + amount)
+    }
+
     return (
-        <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, cartTotal, cartCount }}>
+        <CartContext.Provider value={{
+            cart, addToCart, removeFromCart, clearCart, cartTotal, cartCount,
+            optimisticSalesToday, addOptimisticSale
+        }}>
             {children}
         </CartContext.Provider>
     )

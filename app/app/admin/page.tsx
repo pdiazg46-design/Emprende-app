@@ -1,6 +1,7 @@
 import { getAllUsers, getAdminStats } from "@/actions/admin-actions"
 import { AdminUserTable } from "./components/AdminUserTable"
-import { Users, TrendingUp, AlertCircle, DollarSign, LogOut } from "lucide-react"
+import { Users, TrendingUp, AlertCircle, DollarSign, LogOut, ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 // Force dynamic
 export const dynamic = 'force-dynamic'
@@ -13,9 +14,18 @@ export default async function AdminDashboardPage() {
         <div className="max-w-7xl mx-auto px-4 py-8">
             <header className="mb-8 flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-                        Panel de Control
-                    </h1>
+                    <div className="flex items-center gap-4 mb-2">
+                        <Link
+                            href="/emprende"
+                            className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full transition-colors flex items-center justify-center"
+                            title="Volver a la App Principal"
+                        >
+                            <ArrowLeft className="w-5 h-5" />
+                        </Link>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                            Panel de Control
+                        </h1>
+                    </div>
                     <p className="text-slate-500">
                         Gestión de clientes y suscripciones SaaS.
                     </p>

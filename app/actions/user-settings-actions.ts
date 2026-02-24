@@ -71,3 +71,59 @@ export async function getPaymentConfig() {
 
     return user
 }
+
+export async function requestProUpgrade() {
+    const session = await auth()
+    if (!session?.user?.id) throw new Error("No autorizado")
+
+    try {
+        await prisma.user.update({
+            where: { id: session.user.id },
+            data: { subscriptionStatus: "UPGRADE_REQUESTED" }
+        })
+        return { success: true }
+    } catch (error) {
+        console.error("Error requesting upgrade:", error)
+        throw new Error("No se pudo procesar la solicitud")
+    }
+}
+
+export async function getUserDataCount() {
+    const session = await auth()
+    if (!session?.user?.id) return { products: 0, transactions: 0 }
+
+    const [products, transactions] = await Promise.all([
+        prisma.product.count({ where: { userId: session.user.id } }),
+        prisma.transaction.count({ where: { userId: session.user.id } })
+    ])
+
+    return { products, transactions }
+}
+
+export async function wipeUserData() {
+    const session = await auth()
+    if (!session?.user?.id) throw new Error("No autorizado")
+
+    // Retrieve user to check plan
+    const user = await prisma.user.findUnique({
+        where: { id: session.user.id }
+    })
+
+    if (user?.subscriptionPlan !== 'PRO') {
+        throw new Error("Reinicio Seguro requiere Plan PRO")
+    }
+
+    try {
+        // Run in transaction to ensure atomicity
+        await prisma.$transaction([
+            prisma.product.deleteMany({ where: { userId: session.user.id } }),
+            prisma.transaction.deleteMany({ where: { userId: session.user.id } })
+        ])
+
+        revalidatePath("/emprende")
+        return { success: true }
+    } catch (error) {
+        console.error("Error wiping data:", error)
+        throw new Error("Fallo Crítico al intentar borrar datos.")
+    }
+}

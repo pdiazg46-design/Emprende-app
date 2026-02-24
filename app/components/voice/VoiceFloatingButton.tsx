@@ -8,7 +8,8 @@ import { processVoiceCommand } from "@/app/actions/process-voice"
 import { VoiceHelpModal } from "./VoiceHelpModal"
 import { useCart } from "../pos/CartContext"
 import { useSession } from "next-auth/react"
-import { Sparkles, X } from "lucide-react"
+import { requestProUpgrade } from "@/actions/user-settings-actions"
+import { Sparkles, X, CheckCircle2, Loader2 } from "lucide-react"
 
 interface VoiceFloatingButtonProps {
     onCommand: (intent: any) => void;
@@ -25,6 +26,21 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
     const [recognition, setRecognition] = useState<any>(null)
     const [showHelp, setShowHelp] = useState(false)
     const [showPaywall, setShowPaywall] = useState(false)
+    const [isRequestingUpgrade, setIsRequestingUpgrade] = useState(false)
+    const [upgradeRequested, setUpgradeRequested] = useState((session?.user as any)?.subscriptionStatus === 'UPGRADE_REQUESTED')
+
+    const handleUpgradeRequest = async () => {
+        setIsRequestingUpgrade(true)
+        try {
+            await requestProUpgrade()
+            setUpgradeRequested(true)
+        } catch (error) {
+            console.error(error)
+            alert("No se pudo procesar la solicitud. Intenta nuevamente.")
+        } finally {
+            setIsRequestingUpgrade(false)
+        }
+    }
 
     useEffect(() => {
         if (typeof window !== "undefined" && (window as any).webkitSpeechRecognition) {
@@ -91,45 +107,51 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
             )}>
 
 
-                <div className="pointer-events-auto relative flex items-center gap-4">
+                <div className="pointer-events-auto relative flex items-center gap-3">
                     {/* Help Button (Left of Mic) */}
                     <button
                         onClick={() => setShowHelp(true)}
-                        className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg border border-slate-100 text-slate-400 hover:text-blue-600 hover:scale-110 transition-all hover:shadow-xl"
+                        className={cn(
+                            "w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg border border-slate-100 text-slate-500 hover:text-blue-600 transition-all duration-300",
+                            isListening && "opacity-0 scale-75 pointer-events-none"
+                        )}
                         title="Ejemplos de voz"
                     >
                         <HelpCircle className="w-6 h-6" />
                     </button>
 
-                    {/* Ripple Effect */}
-                    {isListening && (
-                        <div className="absolute left-[3.5rem] rounded-full animate-ping bg-rose-400/30 w-20 h-20 pointer-events-none" />
-                    )}
+                    <div className="relative flex items-center justify-center">
+                        {/* Ripple Effect */}
+                        {isListening && (
+                            <div className="absolute rounded-full animate-ping bg-rose-400/40 w-20 h-20 pointer-events-none" />
+                        )}
 
-                    <button
-                        onClick={toggleListen}
-                        className={cn(
-                            "w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 relative z-10 border-4 border-white",
-                            isListening
-                                ? "bg-[#E63946] scale-110 shadow-rose-500/40" // Rose Red
-                                : isProcessing
-                                    ? "bg-slate-700 shadow-slate-500/40"
-                                    : "bg-[#4379F2] hover:scale-105 active:scale-95 shadow-blue-500/40" // Brand Blue
-                        )}
-                        disabled={isProcessing}
-                    >
-                        {isProcessing ? (
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                        ) : isListening ? (
-                            <div className="space-y-1">
-                                <div className="w-8 h-1 bg-white rounded-full animate-[pulse_1s_ease-in-out_infinite]" />
-                                <div className="w-5 h-1 bg-white rounded-full animate-[pulse_1.5s_ease-in-out_infinite] mx-auto" />
-                                <div className="w-8 h-1 bg-white rounded-full animate-[pulse_0.8s_ease-in-out_infinite]" />
-                            </div>
-                        ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white drop-shadow-sm"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" x2="12" y1="19" y2="22" /></svg>
-                        )}
-                    </button>
+                        <button
+                            onClick={toggleListen}
+                            className={cn(
+                                "w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 relative z-10 border-4 border-white",
+                                isListening
+                                    ? "bg-[#E63946] scale-110 shadow-rose-500/40" // Rose Red
+                                    : isProcessing
+                                        ? "bg-slate-700 shadow-slate-500/40"
+                                        : "bg-[#4379F2] hover:scale-105 active:scale-95 shadow-blue-500/40" // Brand Blue
+                            )}
+                            disabled={isProcessing}
+                        >
+                            {isProcessing ? (
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                            ) : isListening ? (
+                                <div className="space-y-1 block">
+                                    <div className="w-8 h-1 bg-white rounded-full animate-[pulse_1s_ease-in-out_infinite]" />
+                                    <div className="w-5 h-1 bg-white rounded-full animate-[pulse_1.5s_ease-in-out_infinite] mx-auto" />
+                                    <div className="w-8 h-1 bg-white rounded-full animate-[pulse_0.8s_ease-in-out_infinite]" />
+                                </div>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white drop-shadow-sm"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" x2="12" y1="19" y2="22" /></svg>
+                            )}
+                        </button>
+                    </div>
+
                 </div>
             </div>
 
@@ -162,16 +184,36 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
                             Dicta tus ventas y administra tu negocio con nuestra Inteligencia Artificial que ordena todo mágicamente. Esta función es exclusiva del <strong className="text-slate-900">Plan Emprende PRO</strong>.
                         </p>
 
-                        <a
-                            href="https://wa.me/56912345678?text=Hola,%20quiero%20mejorar%20mi%20App%20a%20PRO" // Remplazar con el WS de Patricio
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl font-black text-sm tracking-widest uppercase hover:opacity-90 transition-all shadow-xl shadow-violet-500/20 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 relative z-10"
-                            onClick={() => setShowPaywall(false)}
-                        >
-                            <Sparkles className="w-4 h-4" />
-                            Mejorar a PRO
-                        </a>
+                        {upgradeRequested ? (
+                            <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl mb-4 relative z-10 animate-in fade-in slide-in-from-bottom-2 flex flex-col items-center">
+                                <CheckCircle2 className="w-8 h-8 text-emerald-500 mb-2" />
+                                <p className="text-emerald-800 font-bold text-sm">
+                                    ¡Solicitud Recibida!
+                                </p>
+                                <p className="text-emerald-600 text-xs mt-1">
+                                    Un administrador habilitará el pago en tu Panel muy pronto.
+                                </p>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={handleUpgradeRequest}
+                                disabled={isRequestingUpgrade}
+                                className="w-full py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl font-black text-sm tracking-widest uppercase hover:opacity-90 transition-all shadow-xl shadow-violet-500/20 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 relative z-10 disabled:opacity-70 disabled:hover:translate-y-0"
+                            >
+                                {isRequestingUpgrade ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        Procesando...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Sparkles className="w-4 h-4" />
+                                        Solicitar Mejora a PRO
+                                    </>
+                                )}
+                            </button>
+                        )}
+
                         <button
                             onClick={() => setShowPaywall(false)}
                             className="w-full mt-3 py-3 text-slate-500 font-bold text-sm hover:text-slate-700 transition-colors relative z-10"

@@ -10,7 +10,7 @@ import { MercadoPagoConfig, Preference } from 'mercadopago';
 
 export async function createPaymentPreference(items: { title: string, unit_price: number, quantity: number }[]) {
     const session = await auth()
-    if (!session?.user?.id) throw new Error("No autorizado")
+    if (!session?.user?.id) return { error: "No autorizado" }
 
     // 1. Get User Config
     const user = await prisma.user.findUnique({
@@ -19,7 +19,7 @@ export async function createPaymentPreference(items: { title: string, unit_price
     })
 
     if (!user?.mpAccessToken) {
-        throw new Error("Falta configurar Mercado Pago (Access Token)")
+        return { error: "Falta configurar Mercado Pago (Access Token). Ve a Configuración." }
     }
 
     try {
@@ -30,6 +30,7 @@ export async function createPaymentPreference(items: { title: string, unit_price
         // 3. Create Preference
         // TODO: Replace localhost with real domain in production
         const listItems = items.map(item => ({
+            id: crypto.randomUUID(),
             title: item.title,
             unit_price: Number(item.unit_price),
             quantity: Number(item.quantity),
@@ -60,7 +61,7 @@ export async function createPaymentPreference(items: { title: string, unit_price
     } catch (error: any) {
         console.error("MP Error:", error)
         // Extract MP specific error message if available
-        const mpMessage = error?.cause?.description || error?.message || "Error desconocido en MP"
-        throw new Error(`Error Mercado Pago: ${mpMessage}`)
+        const mpMessage = error?.cause?.description || error?.message || "Error de conexión"
+        return { error: `Mercado Pago rechazó la solicitud: ${mpMessage}` }
     }
 }

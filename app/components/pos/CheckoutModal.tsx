@@ -83,7 +83,10 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
             }))
 
             const result = await createPaymentPreference(items)
-            if (result?.init_point) {
+
+            if (result?.error) {
+                alert(result.error)
+            } else if (result?.init_point) {
                 setQrData(result.init_point)
             }
         } catch (error: any) {

@@ -111,3 +111,33 @@ export async function updateUserPlan(userId: string, plan: string) {
         return { success: false, error: "Failed to update plan" }
     }
 }
+
+export async function grantProAccess(userId: string) {
+    await requireAdmin()
+
+    try {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { subscriptionStatus: 'ACTIVE', subscriptionPlan: 'PRO' }
+        })
+        revalidatePath("/admin")
+        return { success: true }
+    } catch (error) {
+        return { success: false, error: "Failed to grant PRO access" }
+    }
+}
+
+export async function grantBasicAccess(userId: string) {
+    await requireAdmin()
+
+    try {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { subscriptionStatus: 'ACTIVE', subscriptionPlan: 'BASIC' }
+        })
+        revalidatePath("/admin")
+        return { success: true }
+    } catch (error) {
+        return { success: false, error: "Failed to grant Basic access" }
+    }
+}
