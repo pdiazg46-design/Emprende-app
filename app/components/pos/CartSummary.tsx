@@ -37,18 +37,20 @@ export function CartSummary() {
         setIsOpen(false)
         setIsCheckoutOpen(false) // Forzar cierre del modal
 
-        // 3. Proceso "Fire-and-Forget" (Disparar y Olvidar)
-        // La consulta a Vercel/Supabase viaja por detrás sin detener el navegador
-        processSale(snapshotCart, snapshotTotal, method)
-            .then(() => {
-                // Cuando Vercel finalice (no importa si tarda 2 o 12 segundos),
-                // refrescamos la página invisiblemente para cuadrar el inventario real.
-                router.refresh()
-            })
-            .catch((error) => {
-                console.error("Error silencioso procesando la venta:", error)
-                // Aquí el sistema podría, en un futuro, hacer un rollback de la RAM.
-            })
+        // 3. Proceso "Fire-and-Forget" con Desacople Total del Event Loop
+        // Usamos setTimeout para salir del "Tick" actual de React. 
+        // Esto fuerza a que Next.js DIBUJE en pantalla el modal cerrado INMEDIATAMENTE, 
+        // sin agrupar el cierre visual con la tardanza de la base de datos (Server Action Batching).
+        setTimeout(() => {
+            processSale(snapshotCart, snapshotTotal, method)
+                .then(() => {
+                    // Cuando Vercel finalice, refrescamos la página invisiblemente.
+                    router.refresh()
+                })
+                .catch((error) => {
+                    console.error("Error silencioso procesando la venta:", error)
+                })
+        }, 50)
     }
 
     return (
