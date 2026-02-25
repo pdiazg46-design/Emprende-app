@@ -152,12 +152,20 @@ export default async function Home() {
     redirect("/signin")
   }
 
-  // FOMO Logic calculation
-  const subscriptionStatus = (session.user as any).subscriptionStatus;
-  const subscriptionPlan = (session.user as any).subscriptionPlan;
-  const rawTrialStart = (session.user as any).trialStartsAt;
-  const rawCreatedAt = (session.user as any).createdAt;
-  let trialStartsAt = rawTrialStart || rawCreatedAt || new Date().toISOString();
+  // 1. Fetch Fresh User Data from DB (Bypass Cached NextAuth Token for Trial Logic)
+  const dbUser = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { subscriptionPlan: true, subscriptionStatus: true, trialStartsAt: true, createdAt: true, role: true }
+  });
+
+  if (!dbUser) {
+    redirect("/signin");
+  }
+
+  // FOMO Logic calculation (Using Fresh DB Data)
+  const subscriptionStatus = dbUser.subscriptionStatus;
+  const subscriptionPlan = dbUser.subscriptionPlan;
+  const trialStartsAt = dbUser.trialStartsAt || dbUser.createdAt;
 
   const isTrial = String(subscriptionPlan).toUpperCase() === 'BASIC' && String(subscriptionStatus).toUpperCase() === 'TRIAL';
   let daysRemaining = 0;
@@ -171,8 +179,20 @@ export default async function Home() {
     daysRemaining = Math.max(0, 30 - daysSinceStart);
   }
 
+  // Inject fresh Role into session object for the children props safely
+  const activeSession = {
+    ...session,
+    user: {
+      ...session.user,
+      role: dbUser.role,
+      subscriptionPlan: dbUser.subscriptionPlan,
+      subscriptionStatus: dbUser.subscriptionStatus,
+      trialStartsAt: dbUser.trialStartsAt
+    }
+  };
+
   return (
-    <DesktopLayout user={session.user}>
+    <DesktopLayout user={activeSession.user}>
       {/* 
         Añadido Suspense: Al hacer revalidatePath("/"), 
         Next.js retorna instántaneamente el Fallback (Skeleton) al cliente,
@@ -180,7 +200,7 @@ export default async function Home() {
         mientras getDashboardMetrics carga la base de datos de forma paralela en el servidor.
       */}
       <Suspense fallback={<DashboardSkeleton />}>
-        <DashboardContent session={session} isTrial={isTrial} daysRemaining={daysRemaining} />
+        <DashboardContent session={activeSession} isTrial={isTrial} daysRemaining={daysRemaining} />
       </Suspense>
 
       <CartSummary />
