@@ -35,12 +35,13 @@ export async function getAdminStats() {
         }
     })
 
-    // Calculate estimated revenue (simple for now)
+    // Calculate estimated revenue (Padrinazgos OUT)
     const proUsers = await prisma.user.count({
         where: {
             role: "USER",
             subscriptionStatus: "ACTIVE",
-            subscriptionPlan: "PRO"
+            subscriptionPlan: "PRO",
+            notes: { not: "GIFT" }
         }
     })
 
@@ -70,6 +71,7 @@ export async function getAllUsers() {
             subscriptionPlan: true,
             nextPaymentDate: true,
             createdAt: true,
+            notes: true,
             _count: {
                 select: {
                     transactions: true,
@@ -118,7 +120,7 @@ export async function grantProAccess(userId: string) {
     try {
         await prisma.user.update({
             where: { id: userId },
-            data: { subscriptionStatus: 'ACTIVE', subscriptionPlan: 'PRO' }
+            data: { subscriptionStatus: 'ACTIVE', subscriptionPlan: 'PRO', notes: 'GIFT' }
         })
         revalidatePath("/admin")
         return { success: true }
@@ -133,7 +135,7 @@ export async function grantBasicAccess(userId: string) {
     try {
         await prisma.user.update({
             where: { id: userId },
-            data: { subscriptionStatus: 'ACTIVE', subscriptionPlan: 'BASIC' }
+            data: { subscriptionStatus: 'ACTIVE', subscriptionPlan: 'BASIC', notes: 'GIFT' }
         })
         revalidatePath("/admin")
         return { success: true }
@@ -152,6 +154,7 @@ export async function getSaaSAnalytics() {
             createdAt: true,
             subscriptionPlan: true,
             subscriptionStatus: true,
+            notes: true
         }
     })
 
@@ -173,23 +176,23 @@ export async function getSaaSAnalytics() {
         const dataPoint = monthlyDataMap.get(formattedMonth)!
 
         // Increment logic based on SaaS states
-        if (user.subscriptionStatus === 'ACTIVE') {
+        if (user.subscriptionStatus === 'ACTIVE' && user.notes !== 'GIFT') {
             if (user.subscriptionPlan === 'PRO') {
                 dataPoint.pro += 1
             } else {
                 dataPoint.basic += 1
             }
         } else {
-            // Unpaid / Idle / Trial falls into TRIAL bucket for graphing generic onboarding
+            // Unpaid / Idle / Trial / Regalos falls into TRIAL bucket for graphing generic onboarding without financial bias
             dataPoint.trial += 1
         }
     })
 
-    // 3. Derive Composition Total (for Pie Chart)
+    // 3. Derive Composition Total (for Pie Chart) only for Real Money users
     const composition = {
-        proTotal: allUsers.filter(u => u.subscriptionStatus === 'ACTIVE' && u.subscriptionPlan === 'PRO').length,
-        basicTotal: allUsers.filter(u => u.subscriptionStatus === 'ACTIVE' && u.subscriptionPlan === 'BASIC').length,
-        trialTotal: allUsers.filter(u => u.subscriptionStatus !== 'ACTIVE').length,
+        proTotal: allUsers.filter(u => u.subscriptionStatus === 'ACTIVE' && u.subscriptionPlan === 'PRO' && u.notes !== 'GIFT').length,
+        basicTotal: allUsers.filter(u => u.subscriptionStatus === 'ACTIVE' && u.subscriptionPlan === 'BASIC' && u.notes !== 'GIFT').length,
+        trialTotal: allUsers.filter(u => u.subscriptionStatus !== 'ACTIVE' || u.notes === 'GIFT').length,
     }
 
     return {

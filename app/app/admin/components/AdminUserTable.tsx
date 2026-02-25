@@ -15,7 +15,7 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
         setActionMenuOpen(null);
         const res = await grantProAccess(userId);
         if (res.success) {
-            setUsers(users.map(u => u.id === userId ? { ...u, subscriptionStatus: 'ACTIVE', subscriptionPlan: 'PRO' } : u))
+            setUsers(users.map(u => u.id === userId ? { ...u, subscriptionStatus: 'ACTIVE', subscriptionPlan: 'PRO', notes: 'GIFT' } : u))
         } else {
             alert("Error al otorgar acceso");
         }
@@ -28,7 +28,7 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
         setActionMenuOpen(null);
         const res = await grantBasicAccess(userId);
         if (res.success) {
-            setUsers(users.map(u => u.id === userId ? { ...u, subscriptionStatus: 'ACTIVE', subscriptionPlan: 'BASIC' } : u))
+            setUsers(users.map(u => u.id === userId ? { ...u, subscriptionStatus: 'ACTIVE', subscriptionPlan: 'BASIC', notes: 'GIFT' } : u))
         } else {
             alert("Error al otorgar acceso móvil");
         }
@@ -98,15 +98,22 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4">
-                                    <span
-                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black tracking-widest uppercase shadow-sm ${user.subscriptionPlan === 'PRO'
-                                            ? 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white border-none'
-                                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                            }`}
-                                    >
-                                        <CreditCard className="w-3.5 h-3.5" />
-                                        {user.subscriptionPlan === 'PRO' ? 'PRO VIP' : 'PAGO ÚNICO'}
-                                    </span>
+                                    {user.notes === 'GIFT' ? (
+                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black tracking-widest uppercase shadow-sm bg-slate-100 text-slate-500 border border-slate-200">
+                                            <Gift className="w-3.5 h-3.5" />
+                                            REGALO
+                                        </span>
+                                    ) : (
+                                        <span
+                                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black tracking-widest uppercase shadow-sm ${user.subscriptionPlan === 'PRO'
+                                                ? 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white border-none'
+                                                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                                }`}
+                                        >
+                                            <CreditCard className="w-3.5 h-3.5" />
+                                            {user.subscriptionPlan === 'PRO' ? 'PRO VIP' : 'PAGO ÚNICO'}
+                                        </span>
+                                    )}
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col gap-1.5 text-sm font-bold text-slate-900">
