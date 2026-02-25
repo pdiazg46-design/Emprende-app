@@ -7,6 +7,7 @@ declare module "next-auth" {
             role: string
             subscriptionPlan: string
             subscriptionStatus: string
+            trialStartsAt: Date | string
         } & DefaultSession["user"]
     }
 }

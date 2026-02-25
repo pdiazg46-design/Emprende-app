@@ -50,7 +50,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     callbacks: {
         async jwt({ token, user }: any) {
-            // El objeto "user" solo existe la primera vez que inicia sesión (cuando validó credenciales)
+            // 1. Initial Sign-in hydration (Credentials Auth)
             if (user) {
                 token.sub = user.id
                 token.role = user.role
@@ -58,6 +58,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.subscriptionPlan = user.subscriptionPlan
                 token.trialStartsAt = user.trialStartsAt
             }
+
+            // 2. Force Universal Hydration on Token access (Fix Stale Tokens & OAuth missing props)
+            if (token.sub) {
+                const dbUser = await prisma.user.findUnique({
+                    where: { id: token.sub },
+                    select: { subscriptionStatus: true, subscriptionPlan: true, trialStartsAt: true, role: true }
+                })
+                if (dbUser) {
+                    token.role = dbUser.role
+                    token.subscriptionStatus = dbUser.subscriptionStatus
+                    token.subscriptionPlan = dbUser.subscriptionPlan
+                    token.trialStartsAt = dbUser.trialStartsAt
+                }
+            }
+
             return token
         },
         async session({ session, token }: any) {
