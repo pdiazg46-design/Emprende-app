@@ -159,7 +159,7 @@ export default async function Home() {
   const rawCreatedAt = (session.user as any).createdAt;
   let trialStartsAt = rawTrialStart || rawCreatedAt || new Date().toISOString();
 
-  const isTrial = subscriptionPlan === 'BASIC' && subscriptionStatus === 'TRIAL';
+  const isTrial = String(subscriptionPlan).toUpperCase() === 'BASIC' && String(subscriptionStatus).toUpperCase() === 'TRIAL';
   let daysRemaining = 0;
 
   if (isTrial) {
