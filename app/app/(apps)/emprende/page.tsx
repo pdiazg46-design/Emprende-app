@@ -15,6 +15,7 @@ import { SalesCard } from "@/components/dashboard/SalesCard"
 import { ExpenseCard } from "@/components/dashboard/ExpenseCard"
 import { InventoryCard } from "@/components/dashboard/InventoryCard"
 import { RiskManager } from "@/components/dashboard/RiskManager"
+import { IntelligentFOMOBanner } from "@/components/dashboard/IntelligentFOMOBanner"
 import { Suspense } from "react"
 
 // Force dynamic rendering
@@ -63,31 +64,11 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
         </div>
       </header>
 
-      {/* Ajuste de padding para mobile header y/o banner FOMO */}
-      <div className={`md:hidden ${isTrial ? 'h-40' : 'h-28'}`} />
+      {/* Ajuste de padding para mobile header */}
+      <div className="md:hidden h-28" />
 
-      {/* DEBUG TAPE (Temporary) */}
-      <div className="md:hidden fixed z-[999] top-[115px] left-0 right-0 bg-red-600 text-white text-[9px] text-center font-mono py-1 break-all px-2 shadow-xl">
-        DEBUG DB: Plan={String(subscriptionPlan)} | Status={String(subscriptionStatus)} | isTrial={String(isTrial)}
-      </div>
-
-      {/* FOMO Countdown Banner (Global) */}
-      {isTrial && (
-        <div className="fixed top-[80px] md:top-6 left-0 right-0 md:left-auto md:right-8 z-50 md:z-[60] bg-gradient-to-r from-rose-500 to-orange-500 text-white px-4 py-3 md:py-2 md:rounded-2xl shadow-lg border border-rose-400/50 flex items-center justify-between gap-4 animate-in slide-in-from-top duration-500">
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-3 w-3 md:h-2.5 md:w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-full w-full bg-white"></span>
-            </span>
-            <p className="text-xs md:text-[10px] font-black uppercase tracking-wider">
-              Prueba Gratuita
-            </p>
-          </div>
-          <p className="text-sm md:text-xs font-bold bg-white/20 px-3 md:px-2 py-1 md:py-0.5 rounded-lg border border-white/20 whitespace-nowrap">
-            Quedan {daysRemaining} días
-          </p>
-        </div>
-      )}
+      {/* Intelligent FOMO Client Component */}
+      <IntelligentFOMOBanner isTrial={isTrial} daysRemaining={daysRemaining} />
 
       <div className="space-y-8 w-full p-0">
         {/* Welcome Section (Desktop Only) */}
