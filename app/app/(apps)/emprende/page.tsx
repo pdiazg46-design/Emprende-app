@@ -66,6 +66,11 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
       {/* Ajuste de padding para mobile header y/o banner FOMO */}
       <div className={`md:hidden ${isTrial ? 'h-40' : 'h-28'}`} />
 
+      {/* DEBUG TAPE (Temporary) */}
+      <div className="md:hidden fixed z-[999] top-[115px] left-0 right-0 bg-red-600 text-white text-[9px] text-center font-mono py-1 break-all px-2 shadow-xl">
+        DEBUG DB: Plan={String(subscriptionPlan)} | Status={String(subscriptionStatus)} | isTrial={String(isTrial)}
+      </div>
+
       {/* FOMO Countdown Banner (Global) */}
       {isTrial && (
         <div className="fixed top-[80px] md:top-6 left-0 right-0 md:left-auto md:right-8 z-50 md:z-[60] bg-gradient-to-r from-rose-500 to-orange-500 text-white px-4 py-3 md:py-2 md:rounded-2xl shadow-lg border border-rose-400/50 flex items-center justify-between gap-4 animate-in slide-in-from-top duration-500">
