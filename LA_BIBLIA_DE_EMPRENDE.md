@@ -51,6 +51,11 @@ Esta es la configuración de los componentes críticos al estado actual. Cualqui
 - La aplicación ha evolucionado hacia un modelo SaaS. Cuenta con configuraciones de vinculación para *Mercado Pago* con el fin de emitir cobros QR, gestionar planes (`BASIC`, `PRO`, `VIP`) y rastrear la salud de la suscripción del usuario (`subscriptionStatus`, `subscriptionPlan`).
 - Las variables de entorno para esto deben aislarse estrictamente.
 
+### 5. Experiencia de Usuario (UX) Móvil y UI Optimista ("RAM-First")
+- **Layouts Consistentes:** Se erradicó la duplicidad visual entre las rutas `/` y `/emprende`. La aplicación en PWA móvil exige márgenes globales consistentes (`max-w-6xl mx-auto`) y un *header* unificado (logo pequeño, fino) para que al volver de "Configuración" no haya un salto de diseño ("se ve muy ancho").
+- **Alertas y Feedback:** Queda estrictamente prohibido el uso de `alert()` o `confirm()` nativos del navegador que bloquean el hilo principal. Se reemplazaron por botones que cambian de estado (ej. "GUARDANDO...", "¡ÉXITO!") o botones de acción en línea (inline actions).
+- **Actualización Optimista (Inventario/POS):** Las acciones que requieren velocidad extrema (sumar stock, cobrar) usan el patrón "RAM-First". Se actualiza la UI local del usuario instantáneamente modificando el estado temporal en React, y se envía el request a BD (`bulkUpdateStock`, etc) en background (`Fire & Forget`) para que el servidor concilie después.
+
 ---
 
 ## 🛡️ PARTE 4: PROCEDIMIENTOS DE RESOLUCIÓN DE CRISIS
@@ -58,7 +63,8 @@ Esta es la configuración de los componentes críticos al estado actual. Cualqui
 Si al aplicar características nuevas ocurre una regresión masiva o la rama de Vercel (Producción) cae a Estado 500:
 1. **NO se intentan resolver errores sintácticos en la rama principal en caliente** durante más de dos intentos consecutivos.
 2. Si el problema persiste, la instrucción es aplicar un **HARD RESET** al último commit funcional marcado por el usuario en el historial (Ej. el estado estable `7ce63f6`), realizar un `git push --force` limpio de secretos, reconstruir localmente, y notificar al usuario.
-3. El Agente tiene terminal abierto siempre. Todo cambio debe validarse localmente mediante `npm run build` o `npx prisma generate` antes de ejecutar pushes críticos.
+6. El Agente tiene terminal abierto siempre. Todo cambio debe validarse localmente mediante `npm run build` o `npx prisma generate` antes de ejecutar pushes críticos.
+7. **Control de Peso en Repositorio:** Está prohibido pushear archivos binarios masivos (JDKs, `.aab`, bases de datos sqlite infladas) a GitHub, ya que GitHub rechaza commits grandes y bloquea a Vercel. Carpetas de respaldo como `Emprende-Limpio` o salidas de compilación móvil van estricta y obligatoriamente al `.gitignore`. Si ocurre un rechazo por tamaño, se usa `git rm -r --cached <archivo/carpeta>` y un commit de limpieza (`chore`).
 
 ---
-*(Fin del documento fundacional. Fecha de creación base/restauración: Febrero 2026. Al finalizar la lectura, el Agente responderá de forma concisa confirmando la adopción de estas leyes).*
+*(Fin del documento fundacional. Última actualización: Sesión Febrero 2026 - UX Móvil y Optimistic UI. Al finalizar la lectura, el Agente responderá de forma concisa confirmando la adopción de estas leyes).*
