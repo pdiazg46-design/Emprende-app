@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Save, Plus, Package, RefreshCw, Trash2, Pencil } from "lucide-react"
 import { bulkUpdateStock, addProduct, deleteProduct } from "@/actions/transaction-actions"
 import { useRouter } from "next/navigation"
@@ -20,6 +20,13 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const { addToCart } = useCart()
+
+    // RAM-First State (Optimistic UI)
+    const [localInventory, setLocalInventory] = useState<Product[]>(inventory)
+
+    useEffect(() => {
+        setLocalInventory(inventory)
+    }, [inventory])
 
     // State for bulk updates: Map productId -> { price, addStock, name }
     const [updates, setUpdates] = useState<Record<string, { price: number, addStock: number, name?: string }>>({})
@@ -47,9 +54,9 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
 
         setUpdates(prev => {
             const current = prev[id] || {
-                price: inventory.find(p => p.id === id)?.price || 0,
+                price: localInventory.find(p => p.id === id)?.price || 0,
                 addStock: 0,
-                name: inventory.find(p => p.id === id)?.name
+                name: localInventory.find(p => p.id === id)?.name
             };
 
             return {
@@ -86,35 +93,46 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
         }
     }
 
-    const saveSingleUpdate = async (id: string) => {
+    const saveSingleUpdate = (id: string) => {
         const data = updates[id];
         if (!data) return;
 
-        setLoading(true)
-        try {
-            const original = inventory.find(p => p.id === id);
-            if (!original) return;
+        const original = localInventory.find(p => p.id === id);
+        if (!original) return;
 
-            await bulkUpdateStock([{
-                id,
-                price: data.price,
-                addStock: data.addStock,
-                name: data.name
-            }]);
+        // 1. Efecto RAM-First: Calcular nuevos valores
+        const optimisticProduct = {
+            ...original,
+            stock: original.stock + (data.addStock || 0),
+            price: data.price !== undefined ? data.price : original.price,
+            name: data.name || original.name
+        };
 
-            // Limpia solo el estado de este producto para que el input vuelva a vacío y reaparezcan lápiz/basura
-            setUpdates(prev => {
-                const newUpdates = { ...prev };
-                delete newUpdates[id];
-                return newUpdates;
-            });
+        // 2. Aplicar instantáneamente a la UI local
+        setLocalInventory(prev => prev.map(p => p.id === id ? optimisticProduct : p));
 
+        // 3. Limpiar Input y desaparecer botón OK instantáneamente
+        setUpdates(prev => {
+            const newUpdates = { ...prev };
+            delete newUpdates[id];
+            return newUpdates;
+        });
+
+        // 4. Background Sync: Enviar al server sin bloquear la UI (Fire & Forget)
+        bulkUpdateStock([{
+            id,
+            price: data.price,
+            addStock: data.addStock,
+            name: data.name
+        }]).then(() => {
+            // Refresca la tabla y las tarjetas superiores una vez que BD está OK
             router.refresh();
-        } catch (error) {
-            alert("Error al actualizar el producto");
-        } finally {
-            setLoading(false);
-        }
+        }).catch((err) => {
+            console.error("Error optimista:", err);
+            // Revertir si hay error de red
+            setLocalInventory(prev => prev.map(p => p.id === id ? original : p));
+            alert("Error de conexión al guardar en BD. Se han revertido los cambios.");
+        });
     }
 
     const handleDelete = async (id: string) => {
@@ -166,7 +184,7 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
 
     // Show button if ANY stock is added OR ANY price/name is changed
     const hasPendingUpdates = Object.entries(updates).some(([id, u]) => {
-        const original = inventory.find(p => p.id === id);
+        const original = localInventory.find(p => p.id === id);
         if (!original) return false;
         return u.addStock > 0 || u.price !== original.price || (u.name && u.name !== original.name);
     });
@@ -194,7 +212,7 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                        {inventory.map((product) => (
+                        {localInventory.map((product) => (
                             <tr key={product.id} className="hover:bg-slate-50/50 transition-colors group">
                                 <td className="px-0.5 md:px-1 py-1 text-center">
                                     <button
@@ -259,11 +277,10 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                                         {(updates[product.id]?.addStock > 0 || (updates[product.id]?.price !== undefined && updates[product.id]?.price !== product.price)) ? (
                                             <button
                                                 onClick={() => saveSingleUpdate(product.id)}
-                                                disabled={loading}
                                                 className="bg-[#4379F2] text-white px-2 py-1.5 rounded-lg transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center gap-1.5 w-full min-w-[4rem] text-[10px] md:text-xs font-bold animate-in zoom-in-95 duration-200"
                                                 title="Confirmar"
                                             >
-                                                {loading ? <RefreshCw className="w-3 h-3 md:w-3.5 md:h-3.5 animate-spin" /> : <Save className="w-3 h-3 md:w-3.5 md:h-3.5" />}
+                                                <Save className="w-3 h-3 md:w-3.5 md:h-3.5" />
                                                 OK
                                             </button>
                                         ) : (
@@ -309,7 +326,7 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                 </table>
             </div>
 
-            {inventory.length === 0 && (
+            {localInventory.length === 0 && (
                 <div className="p-8 text-center text-slate-400 text-sm">
                     No tienes productos. Usa la última fila para agregar el primero.
                 </div>
