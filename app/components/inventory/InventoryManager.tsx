@@ -86,6 +86,37 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
         }
     }
 
+    const saveSingleUpdate = async (id: string) => {
+        const data = updates[id];
+        if (!data) return;
+
+        setLoading(true)
+        try {
+            const original = inventory.find(p => p.id === id);
+            if (!original) return;
+
+            await bulkUpdateStock([{
+                id,
+                price: data.price,
+                addStock: data.addStock,
+                name: data.name
+            }]);
+
+            // Limpia solo el estado de este producto para que el input vuelva a vacío y reaparezcan lápiz/basura
+            setUpdates(prev => {
+                const newUpdates = { ...prev };
+                delete newUpdates[id];
+                return newUpdates;
+            });
+
+            router.refresh();
+        } catch (error) {
+            alert("Error al actualizar el producto");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     const handleDelete = async (id: string) => {
         if (!confirm("¿Eliminar este producto permanentemente?")) return;
         setLoading(true);
@@ -147,16 +178,6 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                     <Package className="w-5 h-5 text-atsit-blue" />
                     Gestión de Inventario
                 </h2>
-                {hasPendingUpdates && (
-                    <button
-                        onClick={saveUpdates}
-                        disabled={loading}
-                        className="flex items-center gap-2 bg-[#4379F2] text-white px-6 py-3 rounded-xl font-black hover:bg-blue-600 transition-all shadow-xl shadow-blue-500/20 text-sm tracking-wide transform active:scale-95 border border-blue-600/20"
-                    >
-                        {loading ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                        CONFIRMAR INGRESO
-                    </button>
-                )}
             </div>
 
             <div className="p-0 overflow-x-auto">
@@ -235,20 +256,34 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                                 </td>
                                 <td className="px-0 py-1 text-center align-middle">
                                     <div className="flex items-center justify-end gap-0.5 pr-0.5">
-                                        <button
-                                            onClick={() => handleEditProduct(product)}
-                                            className="text-slate-300 hover:text-blue-500 hover:bg-blue-50 p-1 md:p-1.5 rounded-full transition-all"
-                                            title="Editar"
-                                        >
-                                            <Pencil className="w-3 h-3 md:w-4 md:h-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(product.id)}
-                                            className="text-slate-300 hover:text-rose-500 hover:bg-rose-50 p-1 md:p-1.5 rounded-full transition-all"
-                                            title="Eliminar"
-                                        >
-                                            <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
-                                        </button>
+                                        {(updates[product.id]?.addStock > 0 || (updates[product.id]?.price !== undefined && updates[product.id]?.price !== product.price)) ? (
+                                            <button
+                                                onClick={() => saveSingleUpdate(product.id)}
+                                                disabled={loading}
+                                                className="bg-[#4379F2] text-white px-2 py-1.5 rounded-lg transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center gap-1.5 w-full min-w-[4rem] text-[10px] md:text-xs font-bold animate-in zoom-in-95 duration-200"
+                                                title="Confirmar"
+                                            >
+                                                {loading ? <RefreshCw className="w-3 h-3 md:w-3.5 md:h-3.5 animate-spin" /> : <Save className="w-3 h-3 md:w-3.5 md:h-3.5" />}
+                                                OK
+                                            </button>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    onClick={() => handleEditProduct(product)}
+                                                    className="text-slate-300 hover:text-blue-500 hover:bg-blue-50 p-1 md:p-1.5 rounded-full transition-all"
+                                                    title="Editar"
+                                                >
+                                                    <Pencil className="w-3 h-3 md:w-4 md:h-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(product.id)}
+                                                    className="text-slate-300 hover:text-rose-500 hover:bg-rose-50 p-1 md:p-1.5 rounded-full transition-all"
+                                                    title="Eliminar"
+                                                >
+                                                    <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
+                                                </button>
+                                            </>
+                                        )}
                                     </div>
                                 </td>
                             </tr>
