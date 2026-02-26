@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
-import { findBestProductMatch } from "./transaction-actions";
+import { findBestProductMatch } from "@/lib/product-matching";
 
 export async function getProductsForVoiceCart(items: any[]) {
     const session = await auth();
