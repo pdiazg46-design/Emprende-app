@@ -122,43 +122,52 @@ export function CartSummary() {
                     {isOpen && (
                         <div className="flex-1 overflow-y-auto mt-4 space-y-3 pb-40 scrollbar-hide">
                             {cart.map((item) => (
-                                <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100 gap-2">
-                                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                                        <div className="flex items-center bg-white border border-slate-200 rounded-full h-8 overflow-hidden shadow-sm shrink-0">
-                                            <button
-                                                onClick={() => updateQuantity(item.id, -1)}
-                                                className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
-                                                disabled={item.quantity <= 1}
-                                            >
-                                                -
-                                            </button>
-                                            <span className="w-6 text-center text-xs font-black text-slate-700 select-none">
-                                                {item.quantity}
-                                            </span>
-                                            <button
-                                                onClick={() => updateQuantity(item.id, 1)}
-                                                className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
-                                            >
-                                                +
-                                            </button>
-                                        </div>
-                                        <div className="flex-1 min-w-0 pr-1">
-                                            <p className="font-bold text-slate-800 text-sm truncate">{item.name}</p>
-                                            <p className="text-xs text-slate-400 font-medium">
+                                <div key={item.id} className="flex flex-col p-3 bg-slate-50 rounded-2xl border border-slate-100 gap-3">
+                                    <div className="w-full">
+                                        <p className="font-bold text-slate-800 text-sm leading-tight pr-2">{item.name}</p>
+                                    </div>
+
+                                    <div className="flex items-center justify-between w-full border-t border-slate-100 pt-1">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex items-center bg-white border border-slate-200 rounded-full h-8 overflow-hidden shadow-sm shrink-0">
+                                                <button
+                                                    onClick={() => updateQuantity(item.id, -1)}
+                                                    className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                                                    disabled={item.quantity <= 1}
+                                                >
+                                                    -
+                                                </button>
+                                                <span className="w-6 text-center text-xs font-black text-slate-700 select-none">
+                                                    {item.quantity}
+                                                </span>
+                                                <button
+                                                    onClick={() => updateQuantity(item.id, 1)}
+                                                    className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                            <p className="text-xs text-slate-400 font-medium whitespace-nowrap hidden sm:block">
                                                 ${item.price.toLocaleString("es-CL")} c/u
                                             </p>
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-3 shrink-0">
-                                        <p className="font-black text-slate-900 text-sm">
-                                            ${(item.price * item.quantity).toLocaleString("es-CL")}
-                                        </p>
-                                        <button
-                                            onClick={() => removeFromCart(item.id)}
-                                            className="text-slate-300 hover:text-red-500 transition-colors p-1 flex-shrink-0"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
+
+                                        <div className="flex items-center gap-3 shrink-0">
+                                            <div className="text-right">
+                                                <p className="font-black text-slate-900 text-sm leading-none">
+                                                    ${(item.price * item.quantity).toLocaleString("es-CL")}
+                                                </p>
+                                                <p className="text-[10px] text-slate-400 font-medium sm:hidden mt-0.5">
+                                                    ${item.price.toLocaleString("es-CL")} c/u
+                                                </p>
+                                            </div>
+                                            <button
+                                                onClick={() => removeFromCart(item.id)}
+                                                className="text-slate-300 hover:text-red-500 transition-colors p-1 flex-shrink-0"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
