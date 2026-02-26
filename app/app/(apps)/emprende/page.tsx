@@ -45,27 +45,33 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
   return (
     <>
       {/* Header Mobile (Solo visible en md:hidden) */}
-      <header className="md:hidden fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-xl z-30 px-4 py-4 border-b border-slate-100 flex items-center justify-between shadow-sm transition-all duration-300">
-        <div className="relative w-20 h-20 transition-transform hover:scale-105 active:scale-95 shrink-0">
+      <header className="md:hidden fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md z-30 h-16 border-b border-slate-100 flex items-center justify-between px-4">
+        {/* Logo Left - Bigger */}
+        <div className="relative w-24 h-full py-2">
           <Image
-            src="/logo.png"
+            src="/logo-atsit.png"
             alt="AT-SIT Logo"
             fill
             className="object-contain object-left"
             priority
           />
         </div>
-        <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center">
-          <h1 className="text-2xl font-black text-[#4379F2] tracking-tight leading-none text-center">Emprende</h1>
-          <p className="text-[8px] font-bold text-slate-400 tracking-wider uppercase mt-0.5 whitespace-nowrap">Tu visión, nuestra tecnología</p>
+
+        {/* Title Center - Blue & Absolute */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <h1 className="text-xl font-black text-[#4379F2] uppercase tracking-widest leading-none">
+            Emprende
+          </h1>
         </div>
-        <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 overflow-hidden shrink-0 z-10">
+
+        <div className="flex items-center gap-2">
+          {/* User Profile - Right (Interactive) */}
           <UserProfile user={session.user} />
         </div>
       </header>
 
       {/* Ajuste de padding para mobile header */}
-      <div className="md:hidden h-28" />
+      <div className="md:hidden h-16" />
 
       {/* Intelligent FOMO Client Component */}
       <IntelligentFOMOBanner isTrial={isTrial} daysRemaining={daysRemaining} />
@@ -88,26 +94,17 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
 
 
 
-        {/* Mobile: Vertical List Layout */}
-        <section className="grid grid-cols-1 gap-3 md:hidden">
-          <SalesCard amount={salesToday} variant="mobile-horizontal" />
-          <ExpenseCard amount={expensesThisWeek || 0} variant="mobile-horizontal" />
-          <InventoryCard
-            totalValue={totalStockValue || 0}
-            totalItems={inventory?.reduce((acc: any, item: any) => acc + (item.stock || 0), 0) || 0}
-            totalProducts={inventory?.length || 0}
-            variant="mobile-horizontal"
-          />
-        </section>
-
-        {/* Desktop: Old Cards Layout */}
-        <section className="hidden md:grid md:grid-cols-3 gap-6">
+        {/* Resumen Diario & Inventario (Unificado Mobile y Desktop) */}
+        <section className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
           <SalesCard amount={salesToday} />
+
           <ExpenseCard amount={expensesThisWeek || 0} />
+
           <InventoryCard
             totalValue={totalStockValue || 0}
             totalItems={inventory?.reduce((acc: any, item: any) => acc + (item.stock || 0), 0) || 0}
             totalProducts={inventory?.length || 0}
+            className="col-span-2 md:col-span-1"
           />
         </section>
 
