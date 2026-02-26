@@ -77,7 +77,7 @@ export function CartSummary() {
             {/* Floating Bar / Sheet */}
             <div className={cn(
                 "fixed bottom-0 left-0 right-0 z-40 bg-white shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 rounded-t-[2rem]",
-                isOpen ? "h-[70vh]" : "h-24 md:h-auto md:bottom-8 md:right-8 md:left-auto md:w-96 md:rounded-[2rem]"
+                isOpen ? "h-[90vh]" : "h-24 md:h-auto md:bottom-8 md:right-8 md:left-auto md:w-96 md:rounded-[2rem]"
             )}>
                 {/* Handle for dragging (visual only) */}
                 <div
@@ -122,8 +122,8 @@ export function CartSummary() {
                     {isOpen && (
                         <div className="flex-1 overflow-y-auto mt-4 space-y-3 pb-40 scrollbar-hide">
                             {cart.map((item) => (
-                                <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
-                                    <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+                                <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100 gap-2">
+                                    <div className="flex items-center gap-3 flex-1 min-w-0">
                                         <div className="flex items-center bg-white border border-slate-200 rounded-full h-8 overflow-hidden shadow-sm shrink-0">
                                             <button
                                                 onClick={() => updateQuantity(item.id, -1)}
@@ -142,14 +142,14 @@ export function CartSummary() {
                                                 +
                                             </button>
                                         </div>
-                                        <div>
-                                            <p className="font-bold text-slate-800 text-sm line-clamp-1">{item.name}</p>
+                                        <div className="flex-1 min-w-0 pr-1">
+                                            <p className="font-bold text-slate-800 text-sm truncate">{item.name}</p>
                                             <p className="text-xs text-slate-400 font-medium">
                                                 ${item.price.toLocaleString("es-CL")} c/u
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 shrink-0">
                                         <p className="font-black text-slate-900 text-sm">
                                             ${(item.price * item.quantity).toLocaleString("es-CL")}
                                         </p>
