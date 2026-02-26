@@ -44,8 +44,28 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
 
   return (
     <>
-      <RiskManager />
+      {/* Header Mobile (Solo visible en md:hidden) */}
+      <header className="md:hidden fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-xl z-30 px-4 py-4 border-b border-slate-100 flex items-center justify-between shadow-sm transition-all duration-300">
+        <div className="relative w-20 h-20 transition-transform hover:scale-105 active:scale-95 shrink-0">
+          <Image
+            src="/logo.png"
+            alt="AT-SIT Logo"
+            fill
+            className="object-contain object-left"
+            priority
+          />
+        </div>
+        <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center">
+          <h1 className="text-2xl font-black text-[#4379F2] tracking-tight leading-none text-center">Emprende</h1>
+          <p className="text-[8px] font-bold text-slate-400 tracking-wider uppercase mt-0.5 whitespace-nowrap">Tu visión, nuestra tecnología</p>
+        </div>
+        <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 overflow-hidden shrink-0 z-10">
+          <UserProfile user={session.user} />
+        </div>
+      </header>
 
+      {/* Ajuste de padding para mobile header */}
+      <div className="md:hidden h-28" />
 
       {/* Intelligent FOMO Client Component */}
       <IntelligentFOMOBanner isTrial={isTrial} daysRemaining={daysRemaining} />
