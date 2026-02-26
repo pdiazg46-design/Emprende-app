@@ -371,7 +371,7 @@ export async function bulkUpdateStock(updates: { id: string; price?: number; add
 }
 
 // HELPER: Product Matching Logic (Synchronous & RAM-Cached)
-function findBestProductMatch(description: string, allProducts: any[]) {
+export function findBestProductMatch(description: string, allProducts: any[]) {
     const normalize = (str: string) => str.toLowerCase().trim()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 

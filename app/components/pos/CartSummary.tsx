@@ -11,7 +11,7 @@ import { CheckoutModal } from "@/components/pos/CheckoutModal"
 import { getPaymentConfig } from "@/actions/user-settings-actions"
 
 export function CartSummary() {
-    const { cart, removeFromCart, clearCart, cartTotal, cartCount, addOptimisticSale } = useCart()
+    const { cart, removeFromCart, clearCart, cartTotal, cartCount, addOptimisticSale, clearOptimisticTransactions, updateQuantity } = useCart()
     const [isOpen, setIsOpen] = useState(false)
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
     const [isProcessing, setIsProcessing] = useState(false)
@@ -49,6 +49,8 @@ export function CartSummary() {
                 })
                 .catch((error) => {
                     console.error("Error silencioso procesando la venta:", error)
+                    alert("Error al procesar la venta: " + (error.message || "Fallo desconocido"));
+                    clearOptimisticTransactions();
                 })
         }, 50)
     }
@@ -118,15 +120,30 @@ export function CartSummary() {
 
                     {/* Expanded Content */}
                     {isOpen && (
-                        <div className="flex-1 overflow-y-auto mt-4 space-y-3 pb-24 scrollbar-hide">
+                        <div className="flex-1 overflow-y-auto mt-4 space-y-3 pb-40 scrollbar-hide">
                             {cart.map((item) => (
                                 <div key={item.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-xs font-black text-slate-500">
-                                            {item.quantity}x
+                                    <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+                                        <div className="flex items-center bg-white border border-slate-200 rounded-full h-8 overflow-hidden shadow-sm shrink-0">
+                                            <button
+                                                onClick={() => updateQuantity(item.id, -1)}
+                                                className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                                                disabled={item.quantity <= 1}
+                                            >
+                                                -
+                                            </button>
+                                            <span className="w-6 text-center text-xs font-black text-slate-700 select-none">
+                                                {item.quantity}
+                                            </span>
+                                            <button
+                                                onClick={() => updateQuantity(item.id, 1)}
+                                                className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+                                            >
+                                                +
+                                            </button>
                                         </div>
                                         <div>
-                                            <p className="font-bold text-slate-800 text-sm">{item.name}</p>
+                                            <p className="font-bold text-slate-800 text-sm line-clamp-1">{item.name}</p>
                                             <p className="text-xs text-slate-400 font-medium">
                                                 ${item.price.toLocaleString("es-CL")} c/u
                                             </p>
@@ -138,7 +155,7 @@ export function CartSummary() {
                                         </p>
                                         <button
                                             onClick={() => removeFromCart(item.id)}
-                                            className="text-slate-300 hover:text-red-500 transition-colors p-1"
+                                            className="text-slate-300 hover:text-red-500 transition-colors p-1 flex-shrink-0"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </button>

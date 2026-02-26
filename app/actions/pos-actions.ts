@@ -26,7 +26,8 @@ export async function processSale(cart: CartItem[], total: number, paymentMethod
         const product = productsMap.get(item.id);
 
         if (!product) {
-            throw new Error(`Producto no encontrado: ${item.name}`);
+            // Este es un producto genérico o introducido manualmente/por voz que no existe en BD
+            continue;
         }
 
         if (product.stock < item.quantity) {
@@ -39,12 +40,17 @@ export async function processSale(cart: CartItem[], total: number, paymentMethod
     const dbOperations = [];
 
     for (const item of cart) {
-        dbOperations.push(
-            prisma.product.update({
-                where: { id: item.id },
-                data: { stock: { decrement: item.quantity } }
-            })
-        );
+        const product = productsMap.get(item.id);
+        const isManual = item.isManual || !product;
+
+        if (!isManual) {
+            dbOperations.push(
+                prisma.product.update({
+                    where: { id: item.id },
+                    data: { stock: { decrement: item.quantity } }
+                })
+            );
+        }
 
         dbOperations.push(
             prisma.transaction.create({
@@ -56,7 +62,7 @@ export async function processSale(cart: CartItem[], total: number, paymentMethod
                     description: `Venta POS: ${item.quantity}x ${item.name}`,
                     paymentMethod: paymentMethod,
                     groupId: transactionGroupId,
-                    productId: item.id
+                    productId: isManual ? null : item.id
                 }
             })
         );

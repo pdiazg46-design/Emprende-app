@@ -13,6 +13,7 @@ export interface CartItem {
 interface CartContextType {
     cart: CartItem[]
     addToCart: (item: Omit<CartItem, "id"> & { id?: string }) => void
+    updateQuantity: (id: string, delta: number) => void
     removeFromCart: (id: string) => void
     clearCart: () => void
     cartTotal: number
@@ -71,6 +72,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         })
     }
 
+    const updateQuantity = (id: string, delta: number) => {
+        setCart(prev => prev.map(item => {
+            if (item.id === id) {
+                const newQuantity = Math.max(1, item.quantity + delta) // Prevent going below 1
+                return { ...item, quantity: newQuantity }
+            }
+            return item
+        }))
+    }
+
     const removeFromCart = (id: string) => {
         setCart(prev => prev.filter(item => item.id !== id))
     }
@@ -108,7 +119,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <CartContext.Provider value={{
-            cart, addToCart, removeFromCart, clearCart, cartTotal, cartCount,
+            cart, addToCart, updateQuantity, removeFromCart, clearCart, cartTotal, cartCount,
             optimisticSalesToday, addOptimisticSale,
             optimisticTransactions, clearOptimisticTransactions
         }}>

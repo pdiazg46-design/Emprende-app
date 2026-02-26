@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
+import { findBestProductMatch } from "./transaction-actions";
 
 export async function getProductsForVoiceCart(items: any[]) {
     const session = await auth();
@@ -16,8 +17,7 @@ export async function getProductsForVoiceCart(items: any[]) {
     for (const item of items) {
         let foundProduct = null;
         if (item.product && item.product.toLowerCase() !== "venta general" && item.product.toLowerCase() !== "venta") {
-            foundProduct = allProducts.find((p: any) => p.name.toLowerCase() === item.product.toLowerCase())
-                || allProducts.find((p: any) => p.name.toLowerCase().includes(item.product.toLowerCase()));
+            foundProduct = findBestProductMatch(item.product, allProducts);
         }
 
         if (foundProduct) {
