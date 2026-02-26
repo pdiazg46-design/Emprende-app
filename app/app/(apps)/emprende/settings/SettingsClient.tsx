@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { DesktopLayout } from "@/components/layout/DesktopLayout"
-import { Save, CreditCard, ShieldCheck, Key, ArrowLeft, AlertOctagon } from "lucide-react"
+import { Save, CreditCard, ShieldCheck, Key, ArrowLeft, AlertOctagon, CheckCircle } from "lucide-react"
 import { updatePaymentConfig, getPaymentConfig } from "@/actions/user-settings-actions"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
@@ -13,6 +13,8 @@ export default function SettingsClient() {
     const { data: session } = useSession()
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const [isSaved, setIsSaved] = useState(false)
+    const [saveError, setSaveError] = useState(false)
     const [showDangerWipe, setShowDangerWipe] = useState(false)
 
     const [config, setConfig] = useState({
@@ -59,14 +61,16 @@ export default function SettingsClient() {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault()
         setSaving(true)
+        setSaveError(false)
         try {
             await updatePaymentConfig(config)
-            alert("Configuración guardada exitosamente")
-            router.refresh()
-            router.push("/emprende") // Redirect to main dashboard (correct path)
+            setIsSaved(true)
+            setTimeout(() => {
+                router.refresh()
+                router.push("/emprende") // Redirect to main dashboard
+            }, 1200)
         } catch (error) {
-            alert("Error al guardar")
-        } finally {
+            setSaveError(true)
             setSaving(false)
         }
     }
@@ -265,11 +269,23 @@ export default function SettingsClient() {
                     <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-slate-200 md:relative md:bg-transparent md:border-none md:p-0 z-10">
                         <button
                             type="submit"
-                            disabled={saving}
-                            className="w-full bg-[#4379F2] text-white py-4 rounded-xl font-black text-lg shadow-xl shadow-blue-500/20 hover:bg-blue-600 transition-all flex items-center justify-center gap-2"
+                            disabled={saving || isSaved}
+                            className={`w-full text-white py-4 rounded-xl font-black text-[15px] sm:text-lg shadow-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 ${isSaved ? 'bg-emerald-500 shadow-emerald-500/20' :
+                                    saveError ? 'bg-rose-500 shadow-rose-500/20' :
+                                        'bg-[#4379F2] shadow-blue-500/20'
+                                }`}
                         >
-                            {saving ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save className="w-5 h-5" />}
-                            {saving ? "GUARDANDO..." : "GUARDAR CAMBIOS"}
+                            {saving && !isSaved ? (
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            ) : isSaved ? (
+                                <CheckCircle className="w-5 h-5" />
+                            ) : (
+                                <Save className="w-5 h-5" />
+                            )}
+
+                            {isSaved ? "¡CONFIGURACIÓN GUARDADA!" :
+                                saveError ? "ERROR AL GUARDAR" :
+                                    saving ? "GUARDANDO..." : "GUARDAR CAMBIOS"}
                         </button>
                     </div>
 
