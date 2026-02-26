@@ -1,7 +1,0 @@
-node_modules\
-.next\
-.git\
-.cache\
-Emprende-Limpio\
-android\
-ios\
