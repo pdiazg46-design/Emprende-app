@@ -76,7 +76,7 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
       {/* Intelligent FOMO Client Component */}
       <IntelligentFOMOBanner isTrial={isTrial} daysRemaining={daysRemaining} />
 
-      <div className="space-y-8 w-full p-0">
+      <div className="space-y-8 max-w-6xl mx-auto">
         {/* Welcome Section (Desktop Only) */}
         <div className="hidden md:flex mb-8 items-center justify-between">
           <div>
