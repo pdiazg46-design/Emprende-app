@@ -45,28 +45,7 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
   return (
     <>
       <RiskManager />
-      {/* Header Mobile (Solo visible en md:hidden) */}
-      <header className="md:hidden fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-xl z-30 px-4 py-4 border-b border-slate-100 flex items-center justify-between shadow-sm transition-all duration-300">
-        <div className="relative w-20 h-20 transition-transform hover:scale-105 active:scale-95 shrink-0">
-          <Image
-            src="/logo.png"
-            alt="AT-SIT Logo"
-            fill
-            className="object-contain object-left"
-            priority
-          />
-        </div>
-        <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center">
-          <h1 className="text-2xl font-black text-[#4379F2] tracking-tight leading-none text-center">Emprende</h1>
-          <p className="text-[8px] font-bold text-slate-400 tracking-wider uppercase mt-0.5 whitespace-nowrap">Tu visión, nuestra tecnología</p>
-        </div>
-        <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 overflow-hidden shrink-0 z-10">
-          <UserProfile user={session.user} />
-        </div>
-      </header>
 
-      {/* Ajuste de padding para mobile header */}
-      <div className="md:hidden h-28" />
 
       {/* Intelligent FOMO Client Component */}
       <IntelligentFOMOBanner isTrial={isTrial} daysRemaining={daysRemaining} />
@@ -87,14 +66,7 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
           )}
         </div>
 
-        {/* Admin Fast Access (Mobile) - Just below header */}
-        <div className="md:hidden mb-6 flex justify-center">
-          {(session.user as any).role === 'ADMIN' && (
-            <a href="/admin" className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg shadow-slate-900/20 active:scale-95 transition-transform w-full justify-center">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" /> Ingresar a Consola VIP
-            </a>
-          )}
-        </div>
+
 
         {/* Mobile: Vertical List Layout */}
         <section className="grid grid-cols-1 gap-3 md:hidden">
