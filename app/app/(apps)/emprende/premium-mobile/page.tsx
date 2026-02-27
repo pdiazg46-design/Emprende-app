@@ -91,7 +91,7 @@ export default async function PremiumMobilePaywall() {
 
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-slate-100">
+                <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col items-center gap-4">
                     <a
                         href={`https://wa.me/56912345678?text=Hola,%20ya%20pagué%20el%20plan%20y%20necesito%20activación%20para:%20${email}`}
                         target="_blank"
@@ -100,6 +100,13 @@ export default async function PremiumMobilePaywall() {
                     >
                         ¿Ya pagaste y sigues bloqueado? Avísame
                         <ChevronRight className="w-3 h-3" />
+                    </a>
+
+                    <a
+                        href="/api/manual-logout"
+                        className="text-[10px] font-bold text-slate-300 hover:text-slate-500 uppercase tracking-widest underline decoration-slate-200 underline-offset-4"
+                    >
+                        Cerrar Sesión (Refrescar)
                     </a>
                 </div>
 

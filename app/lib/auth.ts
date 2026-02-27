@@ -59,6 +59,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.trialStartsAt = user.trialStartsAt
             }
 
+            // 2. Real-time DB sync for SaaS (Soluciona el problema de "Sesión Estancada" post-pago o regalo Admin)
+            if (token.sub) {
+                try {
+                    const freshUser = await prisma.user.findUnique({
+                        where: { id: token.sub as string },
+                        select: { role: true, subscriptionStatus: true, subscriptionPlan: true, trialStartsAt: true }
+                    })
+                    if (freshUser) {
+                        token.role = freshUser.role
+                        token.subscriptionStatus = freshUser.subscriptionStatus
+                        token.subscriptionPlan = freshUser.subscriptionPlan
+                        token.trialStartsAt = freshUser.trialStartsAt
+                    }
+                } catch (e) {
+                    // Silencioso en caso de desconexión breve, NextAuth retiene el token en memoria caché
+                    console.error("JWT sync error:", e)
+                }
+            }
+
             return token
         },
         async session({ session, token }: any) {

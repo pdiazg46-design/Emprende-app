@@ -99,9 +99,9 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
                                 </td>
                                 <td className="px-6 py-4">
                                     {user.notes === 'GIFT' ? (
-                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black tracking-widest uppercase shadow-sm bg-slate-100 text-slate-500 border border-slate-200">
+                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black tracking-widest uppercase shadow-sm border ${user.subscriptionPlan === 'PRO' ? 'bg-violet-50 text-violet-700 border-violet-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
                                             <Gift className="w-3.5 h-3.5" />
-                                            REGALO
+                                            {user.subscriptionPlan === 'PRO' ? 'REGALO VIP' : 'REGALO BÁSICO'}
                                         </span>
                                     ) : (
                                         <span
