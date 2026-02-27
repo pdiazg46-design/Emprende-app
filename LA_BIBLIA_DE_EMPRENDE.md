@@ -12,7 +12,7 @@
 1. **Estabilidad primero:** Si el proyecto está en un estado 100% estable ("La Versión Dorada"), no se sacrifica la estabilidad por experimentar. Si algo se rompe, el protocolo exige *revertir* primero y *diagnosticar* después, en lugar de encadenar parches ciegos.
 2. **Control Humano Absoluto:** El usuario (Pdiaz) posee la visión de negocio. La IA actúa como operador técnico. La IA no cambiará flujos de experiencia de usuario ni eliminará pantallas sin autorización explícita.
 3. **Mantenimiento Cotidiano (Actualización de esta Biblia):** Al final de cada sesión de desarrollo exitosa donde se haya integrado una nueva versión funcional o módulo, el agente de IA **debe** proponer actualizar este documento (`LA_BIBLIA_DE_EMPRENDE.md`) para reflejar la "nueva normalidad".
-4. **Despliegues Automáticos y Certidumbre (La Regla del Push Obligatorio):** Está estrictamente prohibido que el Agente IA informe al usuario que "una mejora ha sido aplicada" si esto solo ocurrió en los archivos locales. TODO fin de ciclo lógico requiere OBLIGATORIAMENTE ejecutar un `git add`, `git commit` y un exitoso `git push`. Solo con el código en GitHub (y consecuentemente transitando a Producción en Vercel) se puede notificar al usuario que la funcionalidad está terminada.
+4. **Despliegues Automáticos y Certidumbre (La Regla del Push Obligatorio):** Está estrictamente prohibido que el Agente IA informe al usuario que "una mejora ha sido aplicada" si esto solo ocurrió en los archivos locales. TODO fin de ciclo lógico requiere OBLIGATORIAMENTE ejecutar un `npm run build` o `npx prisma generate` local y exitoso para verificar CERO ERRORES de antemano. Solo entonces se hace un `git add .`, un `git commit` semántico y un `git push`. **REGLA DE ORO:** Bajo ningún aspecto y jamás, la IA creará "scripts automáticos que hacen push a ciegas". Todo push se hace tras la verificación humana y testeo local de la IA. Solo con el código transitando a Vercel se notifica completitud.
 
 ---
 
@@ -58,9 +58,11 @@ Esta es la configuración de los componentes críticos al estado actual. Cualqui
 - **Actualización Optimista (Inventario/POS):** Las acciones que requieren velocidad extrema (sumar stock, cobrar) usan el patrón "RAM-First". Se actualiza la UI local del usuario instantáneamente modificando el estado temporal en React, y se envía el request a BD (`bulkUpdateStock`, etc) en background (`Fire & Forget`) para que el servidor concilie después.
 
 ### 6. Preparación y Despliegue en Google Play Store (Estado Actual)
-- **Status Legal/Administrativo:** 100% COMPLETADO (Febrero 2026). La aplicación `com.emprende.app` tiene aprobadas todas las declaraciones (Seguridad de Datos, IARC "PEGI 3", Modelo Freemium, Políticas de Privacidad URL vinculada a Vercel, y Auditoría de IDs publicitarios).
-- **Dualidad de Proyectos (Estrategia B2B):** La cuenta de AT-SIT posee dos perfiles: `com.finanzafacil.app` (Borrador/Gratuita futuro) y `com.emprende.app` (Actual/Monetizable). Conviven sin conflicto.
-- **Pendiente Técnico para Lanzamiento:** El código fuente web está listo y sincronizado con Capacitor. Falta resolver un error local del compilador de Android (`gradlew bundleRelease`) relacionado con la limpieza de caracteres especiales (`\xEF\xBB\xBF` BOM) en `build.gradle` para ensamblar el archivo final `.aab`.
+- **Status Legal/Administrativo:** 100% COMPLETADO (Febrero 2026). La aplicación `com.emprende.app` tiene aprobadas todas las declaraciones.
+- **Flujo de Actualización Dual (Vercel vs Play Store):**
+  - **95% de los casos (Web):** Hacemos push y Vercel despliega. Como la aplicación usa Capacitor PWA, al abrir el celular Android de los usuarios se descargará la URL actualizada sin que tengamos que hacer nada en la Play Store.
+  - **5% de los casos (Nativo):** Sólo crearemos y subiremos un nuevo paquete a la Play Store cuando modifiquemos *features nativas* (Capacitor Plugins, Push Notifications, íconos de sistema). 
+- **Compilador AAB Completado:** Ya superamos los problemas del BOM de Java 21 y `gradle`. El flujo correcto de compilación es: 1. `npm run build`, 2. `npx cap sync android` (sella la web en el código base nativo), 3. entrar a `\android` y correr `.\gradlew.bat bundleRelease` para generar el archivo Android App Bundle.
 - **Artefactos Locales:** El usuario cuenta con un documento maestro (`play_store_prep.md`) con textos ASO para la Ficha de Tienda y dimensiones de imágenes necesarias.
 
 ---
@@ -71,7 +73,7 @@ Si al aplicar características nuevas ocurre una regresión masiva o la rama de 
 1. **NO se intentan resolver errores sintácticos en la rama principal en caliente** durante más de dos intentos consecutivos.
 2. Si el problema persiste, la instrucción es aplicar un **HARD RESET** al último commit funcional marcado por el usuario en el historial (Ej. el estado estable `7ce63f6`), realizar un `git push --force` limpio de secretos, reconstruir localmente, y notificar al usuario.
 6. El Agente tiene terminal abierto siempre. Todo cambio debe validarse localmente mediante `npm run build` o `npx prisma generate` antes de ejecutar pushes críticos.
-7. **Control de Peso en Repositorio:** Está prohibido pushear archivos binarios masivos (JDKs, `.aab`, bases de datos sqlite infladas) a GitHub, ya que GitHub rechaza commits grandes y bloquea a Vercel. Carpetas de respaldo como `Emprende-Limpio` o salidas de compilación móvil van estricta y obligatoriamente al `.gitignore`. Si ocurre un rechazo por tamaño, se usa `git rm -r --cached <archivo/carpeta>` y un commit de limpieza (`chore`).
+7. **Control Estricto de Commits y Binarios (Peligro de Bloqueo en Vercel):** Queda TERRIBLEMENTE PROHIBIDO incluir en los commits rastreados por Git archivos generados como `.aab`, `.apk`, carpetas del JDK (`jdk-21`), `.jar`, `.zip` o ejecutables `.exe/dll/7z`. En Febrero 2026, un commit accidental del entorno Java (350+ MB) ocasionó el rebote de la cola de subidas en GitHub, dejando a Vercel ahogado y estancado. Hubo que ejecutar una purga histórica radical con `bfg.repo-cleaner` y aplicar `git push -f`. **Regla:** El `.gitignore` es intocable y sagrado. Antes de hacer `git add .`, la IA está OBLIGADA a verificar el estado e ignorar la "basura" binaria y los archivos `.aab` de Android. Solo se sube código fuente.
 
 ---
 *(Fin del documento fundacional. Última actualización: Sesión Febrero 2026 - Certificación Play Store Console y UX Móvil. Al finalizar la lectura, el Agente responderá de forma concisa confirmando la adopción de estas leyes).*
