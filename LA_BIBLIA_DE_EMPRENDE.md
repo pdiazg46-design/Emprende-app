@@ -12,6 +12,7 @@
 1. **Estabilidad primero:** Si el proyecto está en un estado 100% estable ("La Versión Dorada"), no se sacrifica la estabilidad por experimentar. Si algo se rompe, el protocolo exige *revertir* primero y *diagnosticar* después, en lugar de encadenar parches ciegos.
 2. **Control Humano Absoluto:** El usuario (Pdiaz) posee la visión de negocio. La IA actúa como operador técnico. La IA no cambiará flujos de experiencia de usuario ni eliminará pantallas sin autorización explícita.
 3. **Mantenimiento Cotidiano (Actualización de esta Biblia):** Al final de cada sesión de desarrollo exitosa donde se haya integrado una nueva versión funcional o módulo, el agente de IA **debe** proponer actualizar este documento (`LA_BIBLIA_DE_EMPRENDE.md`) para reflejar la "nueva normalidad".
+4. **Despliegues Automáticos y Certidumbre (La Regla del Push Obligatorio):** Está estrictamente prohibido que el Agente IA informe al usuario que "una mejora ha sido aplicada" si esto solo ocurrió en los archivos locales. TODO fin de ciclo lógico requiere OBLIGATORIAMENTE ejecutar un `git add`, `git commit` y un exitoso `git push`. Solo con el código en GitHub (y consecuentemente transitando a Producción en Vercel) se puede notificar al usuario que la funcionalidad está terminada.
 
 ---
 
@@ -56,6 +57,12 @@ Esta es la configuración de los componentes críticos al estado actual. Cualqui
 - **Alertas y Feedback:** Queda estrictamente prohibido el uso de `alert()` o `confirm()` nativos del navegador que bloquean el hilo principal. Se reemplazaron por botones que cambian de estado (ej. "GUARDANDO...", "¡ÉXITO!") o botones de acción en línea (inline actions).
 - **Actualización Optimista (Inventario/POS):** Las acciones que requieren velocidad extrema (sumar stock, cobrar) usan el patrón "RAM-First". Se actualiza la UI local del usuario instantáneamente modificando el estado temporal en React, y se envía el request a BD (`bulkUpdateStock`, etc) en background (`Fire & Forget`) para que el servidor concilie después.
 
+### 6. Preparación y Despliegue en Google Play Store (Estado Actual)
+- **Status Legal/Administrativo:** 100% COMPLETADO (Febrero 2026). La aplicación `com.emprende.app` tiene aprobadas todas las declaraciones (Seguridad de Datos, IARC "PEGI 3", Modelo Freemium, Políticas de Privacidad URL vinculada a Vercel, y Auditoría de IDs publicitarios).
+- **Dualidad de Proyectos (Estrategia B2B):** La cuenta de AT-SIT posee dos perfiles: `com.finanzafacil.app` (Borrador/Gratuita futuro) y `com.emprende.app` (Actual/Monetizable). Conviven sin conflicto.
+- **Pendiente Técnico para Lanzamiento:** El código fuente web está listo y sincronizado con Capacitor. Falta resolver un error local del compilador de Android (`gradlew bundleRelease`) relacionado con la limpieza de caracteres especiales (`\xEF\xBB\xBF` BOM) en `build.gradle` para ensamblar el archivo final `.aab`.
+- **Artefactos Locales:** El usuario cuenta con un documento maestro (`play_store_prep.md`) con textos ASO para la Ficha de Tienda y dimensiones de imágenes necesarias.
+
 ---
 
 ## 🛡️ PARTE 4: PROCEDIMIENTOS DE RESOLUCIÓN DE CRISIS
@@ -67,4 +74,4 @@ Si al aplicar características nuevas ocurre una regresión masiva o la rama de 
 7. **Control de Peso en Repositorio:** Está prohibido pushear archivos binarios masivos (JDKs, `.aab`, bases de datos sqlite infladas) a GitHub, ya que GitHub rechaza commits grandes y bloquea a Vercel. Carpetas de respaldo como `Emprende-Limpio` o salidas de compilación móvil van estricta y obligatoriamente al `.gitignore`. Si ocurre un rechazo por tamaño, se usa `git rm -r --cached <archivo/carpeta>` y un commit de limpieza (`chore`).
 
 ---
-*(Fin del documento fundacional. Última actualización: Sesión Febrero 2026 - UX Móvil y Optimistic UI. Al finalizar la lectura, el Agente responderá de forma concisa confirmando la adopción de estas leyes).*
+*(Fin del documento fundacional. Última actualización: Sesión Febrero 2026 - Certificación Play Store Console y UX Móvil. Al finalizar la lectura, el Agente responderá de forma concisa confirmando la adopción de estas leyes).*

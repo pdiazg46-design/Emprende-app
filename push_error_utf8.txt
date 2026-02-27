@@ -1,0 +1,67 @@
+﻿git : remote: 
+warning: File Emprende
+-Limpio/app/android/jd
+k-21/jdk-21.0.10+7/lib
+/src.zip is 50.52 MB; 
+this is larger than 
+GitHub's recommended 
+maximum file size of 
+50.00 MB        
+En línea: 1 Carácter: 
+1
++ git push origin 
+main 2> push_error.txt
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (remote: wa   
+ rning...0.00 MB      
+      :String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+remote: error: Trace: 
+0352bece3181630c93674e
+76dc541f3aa098b37b1088
+551c3c3af5b8e937abe3  
+      
+remote: error: See 
+https://gh.io/lfs for 
+more information.     
+   
+remote: error: File Em
+prende-Limpio/app/andr
+oid/jdk-21.zip is 
+191.66 MB; this 
+exceeds GitHub's file 
+size limit of 100.00 
+MB        
+remote: error: File Em
+prende-Limpio/app/andr
+oid/jdk-21/jdk-21.0.10
++7/lib/modules is 
+134.33 MB; this 
+exceeds GitHub's file 
+size limit of 100.00 
+MB        
+remote: error: GH001: 
+Large files detected. 
+You may want to try 
+Git Large File 
+Storage - https://git-
+lfs.github.com.       
+ 
+To https://github.com/
+pdiazg46-design/Empren
+de-app.git
+ ! [remote rejected] 
+main -> main 
+(pre-receive hook 
+declined)
+error: failed to push 
+some refs to 'https://
+github.com/pdiazg46-de
+sign/Emprende-app.git'

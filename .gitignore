@@ -47,3 +47,23 @@ yarn-error.log*
 *.sln
 *.sw?
 .env*.local
+
+# Android & Build Files
+*.aab
+/app/android/app/build/
+/app/android/.gradle/
+/Emprende-Limpio/
+
+# Huge Binaries & JRE/JDK
+*.jar
+*.zip
+*.jmod
+ct.sym
+modules
+/app/android/jdk*/
+*.7z
+*.dll
+*.exe
+*.dylib
+*.lib
+*.a

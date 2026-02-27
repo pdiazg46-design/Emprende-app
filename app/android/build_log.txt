@@ -1,0 +1,28 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Configuration on demand is an incubating feature.
+
+[Incubating] Problems report is available at: file:///C:/Users/pdiaz/Desarrollos/Emprende/app/android/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file 'C:\Users\pdiaz\Desarrollos\Emprende\app\android\app\build.gradle' line: 1
+
+* What went wrong:
+Could not compile build file 'C:\Users\pdiaz\Desarrollos\Emprende\app\android\app\build.gradle'.
+> startup failed:
+  build file 'C:\Users\pdiaz\Desarrollos\Emprende\app\android\app\build.gradle': 1: Unexpected character: '?' @ line 1, column 1.
+     ?apply plugin: 'com.android.application'
+     ^
+  
+  1 error
+
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 12s

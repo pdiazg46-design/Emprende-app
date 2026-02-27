@@ -1,0 +1,10 @@
+finanza.db
+finanza.db-journal
+.next
+node_modules
+
+android
+electron
+dist
+out
+Emprende-Limpio
