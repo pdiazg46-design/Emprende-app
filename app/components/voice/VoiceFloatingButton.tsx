@@ -43,14 +43,19 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
     }
 
     useEffect(() => {
-        if (typeof window !== "undefined" && (window as any).webkitSpeechRecognition) {
-            const r = new (window as any).webkitSpeechRecognition()
+        const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+        if (typeof window !== "undefined" && SpeechRecognition) {
+            const r = new SpeechRecognition()
             r.continuous = false
             r.interimResults = false
             r.lang = "es-CL"
 
             r.onstart = () => setIsListening(true)
-            r.onend = () => setIsListening(false)
+            r.onend = () => {
+                // Safari a veces corta silenciosamente. Aseguramos que el UI se apague.
+                setIsListening(false)
+            }
             r.onresult = async (event: any) => {
                 const text = event.results[0][0].transcript
                 setTranscript(text)
@@ -72,7 +77,13 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
             }
             r.onerror = (event: any) => {
                 console.error("Speech recognition error", event.error)
+                // En móviles, "no-speech" o "network" son comunes si hay ruido o mala señal.
                 setIsListening(false)
+                setIsProcessing(false)
+                if (event.error !== 'no-speech') {
+                    // Solo alertar si no es un simple silencio.
+                    console.warn(`Voz falló con error: ${event.error}.`);
+                }
             }
 
             setRecognition(r)
