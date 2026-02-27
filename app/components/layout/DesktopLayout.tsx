@@ -40,7 +40,7 @@ export function DesktopLayout({ children, user }: DesktopLayoutProps) {
                             Business Intelligence <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-fuchsia-600">Premium</span>
                         </h3>
                         <p className="text-slate-600 font-medium text-lg mb-6 leading-relaxed relative z-10 max-w-lg mx-auto">
-                            El análisis profundo, los informes integrales y la gestión en <strong>Pantalla Completa (PC)</strong> son exclusivos del <strong className="text-slate-900">Plan Emprende PRO ($15.000/mes)</strong>.
+                            El análisis profundo, los informes integrales y la gestión en <strong>Pantalla Completa (PC)</strong> son exclusivos del <strong className="text-slate-900">Plan Emprende PRO ($9.990/mes)</strong>.
                         </p>
 
                         <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 mb-8 text-left max-w-md mx-auto relative z-10">
@@ -68,7 +68,7 @@ export function DesktopLayout({ children, user }: DesktopLayoutProps) {
                                 className="w-full max-w-md mx-auto py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl font-black text-[13px] tracking-widest uppercase hover:opacity-90 transition-all shadow-xl shadow-violet-500/20 transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
                             >
                                 <Sparkles className="w-5 h-5" />
-                                Suscribirme a PRO por $15.000/mes
+                                Suscribirme a PRO por $9.990/mes
                             </a>
                         </div>
 

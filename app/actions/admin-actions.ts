@@ -45,8 +45,8 @@ export async function getAdminStats() {
         }
     })
 
-    // $15.000 CLP per pro user
-    const monthlyRevenue = proUsers * 15000
+    // $9.990 CLP per pro user
+    const monthlyRevenue = proUsers * 9990
 
     return {
         totalUsers,

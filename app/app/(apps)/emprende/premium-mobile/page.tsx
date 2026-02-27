@@ -85,7 +85,7 @@ export default async function PremiumMobilePaywall() {
                             rel="noopener noreferrer"
                             className="w-full py-3.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-black text-xs tracking-widest uppercase hover:opacity-90 shadow-lg shadow-violet-500/20 transition-transform active:scale-95 flex items-center justify-center gap-2"
                         >
-                            Suscribirme a PRO por $15.000/mes
+                            Suscribirme a PRO por $9.990/mes
                         </a>
                     </div>
 
