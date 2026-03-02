@@ -101,7 +101,9 @@ export function TransactionList({ transactions }: { transactions: Transaction[] 
                     const isGroup = group.items.length > 1
                     const firstTx = group.items[0]
                     const isSale = group.type === 'SALE';
-                    const isInventory = group.type === 'INVENTORY_IN';
+                    const isInventoryIn = group.type === 'INVENTORY_IN';
+                    const isInventoryOut = group.type === 'INVENTORY_OUT';
+                    const isInventory = isInventoryIn || isInventoryOut;
 
                     const shortId = group.id.slice(-4).toUpperCase();
 
@@ -121,10 +123,10 @@ export function TransactionList({ transactions }: { transactions: Transaction[] 
                         sign = "+";
                     } else if (isInventory) {
                         iconContent = <Package className="w-5 h-5" />;
-                        colorClass = "text-blue-600";
-                        bgClass = "bg-blue-50";
-                        typeLabel = "Inventario";
-                        sign = "+";
+                        colorClass = isInventoryIn ? "text-blue-600" : "text-amber-600";
+                        bgClass = isInventoryIn ? "bg-blue-50" : "bg-amber-50";
+                        typeLabel = isInventoryIn ? "Ingreso Inv." : "Ajuste Inv.";
+                        sign = isInventoryIn ? "+" : "-";
                     }
 
                     return (
@@ -183,8 +185,8 @@ export function TransactionList({ transactions }: { transactions: Transaction[] 
 
                                 <div className={`flex flex-col items-end ${colorClass}`}>
                                     {isInventory ? (
-                                        <span className="text-xs font-bold bg-blue-100/50 px-2 py-1 rounded-lg whitespace-nowrap">
-                                            +{group.items.reduce((sum, i) => sum + i.quantity, 0)}
+                                        <span className={`text-xs font-bold ${isInventoryIn ? 'bg-blue-100/50' : 'bg-amber-100/50'} px-2 py-1 rounded-lg whitespace-nowrap`}>
+                                            {sign}{group.items.reduce((sum, i) => sum + i.quantity, 0)}
                                         </span>
                                     ) : (
                                         <span className="privacy-sensitive text-sm sm:text-base font-black tracking-tight whitespace-nowrap">{sign}${group.totalAmount.toLocaleString('es-CL')}</span>
