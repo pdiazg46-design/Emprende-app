@@ -13,14 +13,14 @@ interface Product {
     price: number
     cost: number
     stock: number
-    minStock: number
+    minStock?: number
 }
 
 interface EditProductModalProps {
     isOpen: boolean
     onClose: () => void
     product: Product | null
-    onSave: (id: string, name: string, price: number, minStock: number, cost: number) => Promise<void>
+    onSave: (id: string, name: string, price: number, minStock: number, cost: number, stockOperation: number) => Promise<void>
 }
 
 export function EditProductModal({ isOpen, onClose, product, onSave }: EditProductModalProps) {
@@ -28,6 +28,8 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
     const [priceDisplay, setPriceDisplay] = useState("")
     const [costDisplay, setCostDisplay] = useState("")
     const [minStock, setMinStock] = useState("")
+    const [stockInitial, setStockInitial] = useState("")
+    const [stockAdjustment, setStockAdjustment] = useState("")
     const [loading, setLoading] = useState(false)
 
     const isNew = product?.id === 'new';
@@ -39,8 +41,10 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
             setPriceDisplay(product.id === 'new' ? "" : formatNumber(product.price))
             setCostDisplay(product.id === 'new' ? "" : formatNumber(product.cost || 0))
             setMinStock(product.id === 'new' ? "5" : (product.minStock?.toString() || "5"))
+            setStockInitial(product.id === 'new' ? "" : product.stock.toString())
+            setStockAdjustment("")
         }
-    }, [isOpen, product]) // Keep dependency but ensure logic inside is stable
+    }, [isOpen, product])
 
     const formatNumber = (num: number | string) => {
         if (!num && num !== 0) return ""
@@ -60,6 +64,14 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
         setCostDisplay(formatNumber(clean))
     }
 
+    const isValid = Boolean(
+        name.trim() &&
+        priceDisplay.trim() &&
+        costDisplay.trim() &&
+        minStock.trim() &&
+        (!isNew || stockInitial.trim())
+    );
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!product) return
@@ -67,10 +79,13 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
         const cleanPrice = parseInt(priceDisplay.replace(/\./g, "")) || 0
         const cleanCost = parseInt(costDisplay.replace(/\./g, "")) || 0
         const cleanMinStock = parseInt(minStock) || 0
+        const cleanStock = isNew
+            ? parseInt(stockInitial) || 0
+            : parseInt(stockAdjustment.replace(/[^\d-]/g, '').replace(/(?!^)-/g, '')) || 0;
 
         setLoading(true)
         try {
-            await onSave(product.id, name, cleanPrice, cleanMinStock, cleanCost)
+            await onSave(product.id, name, cleanPrice, cleanMinStock, cleanCost, cleanStock)
             // Do not close here, let parent handle it or close on success if parent doesn't throw
             onClose()
         } catch (error) {
@@ -82,80 +97,108 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white/95 backdrop-blur-xl border-slate-200 shadow-2xl rounded-t-2xl sm:rounded-2xl w-full sm:w-[95vw] fixed bottom-0 sm:bottom-auto sm:top-[50%] sm:-translate-y-1/2 translate-y-0 top-auto left-1/2 -translate-x-1/2 flex flex-col">
                 <DialogHeader>
-                    <DialogTitle>{isNew ? "Nuevo Producto" : "Editar Producto"}</DialogTitle>
+                    <DialogTitle className="sr-only">
+                        {isNew ? "Nuevo Producto" : "Editar Producto"}
+                    </DialogTitle>
                 </DialogHeader>
+                <div className="w-full flex justify-center pt-3 pb-1 shrink-0 bg-transparent">
+                    <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
+                </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="name">Nombre del Producto</Label>
-                        <Input
-                            id="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Ej: Bebida 1.5L"
-                            className="font-medium"
-                            autoFocus={isNew}
-                        />
+                <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
+                    <div className="px-4 py-4 space-y-4 flex-grow overflow-y-auto">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Nombre del Producto</Label>
+                            <Input
+                                id="name"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                placeholder="Ej: Bebida 1.5L"
+                                className="font-medium"
+                                autoFocus={isNew}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="price">Precio Venta</Label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
+                                    <Input
+                                        id="price"
+                                        value={priceDisplay}
+                                        onChange={handlePriceChange}
+                                        className="pl-7 font-bold text-lg"
+                                        inputMode="numeric"
+                                        placeholder="0"
+                                        onFocus={(e) => e.target.select()}
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="cost" className="text-slate-600">Costo Unitario</Label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                                    <Input
+                                        id="cost"
+                                        value={costDisplay}
+                                        onChange={handleCostChange}
+                                        className="pl-7 font-bold text-lg text-slate-600 border-slate-200"
+                                        inputMode="numeric"
+                                        placeholder="0"
+                                        onFocus={(e) => e.target.select()}
+                                    />
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="price">Precio Venta</Label>
-                            <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
+                    {/* Fila 3: Acciones + Stock Inicial y Stock Mínimo súper compactos */}
+                    <div className="flex items-end justify-between gap-1 pt-1 pb-3 px-4 shrink-0">
+                        <Button type="button" variant="ghost" onClick={onClose} className="px-2 font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 h-9 rounded-lg text-xs shrink-0 w-20">
+                            Cancelar
+                        </Button>
+
+                        {isNew ? (
+                            <div className="space-y-0.5 w-16">
+                                <Label htmlFor="stock" className="text-[9px] font-bold text-blue-600 uppercase tracking-tight text-center block w-full">Stock</Label>
                                 <Input
-                                    id="price"
-                                    value={priceDisplay}
-                                    onChange={handlePriceChange}
-                                    className="pl-7 font-bold text-lg"
+                                    id="stock"
+                                    value={stockInitial}
+                                    onChange={(e) => setStockInitial(e.target.value.replace(/\D/g, ""))}
+                                    className="font-bold text-sm text-blue-700 bg-blue-50/50 border-blue-200 focus:border-blue-400 focus:ring-blue-400 h-9 transition-colors text-center px-1"
                                     inputMode="numeric"
                                     placeholder="0"
                                     onFocus={(e) => e.target.select()}
                                 />
                             </div>
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="cost" className="text-slate-600">Costo Unitario</Label>
-                            <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
-                                <Input
-                                    id="cost"
-                                    value={costDisplay}
-                                    onChange={handleCostChange}
-                                    className="pl-7 font-bold text-lg text-slate-600 border-slate-200"
-                                    inputMode="numeric"
-                                    placeholder="0"
-                                    onFocus={(e) => e.target.select()}
-                                />
-                            </div>
-                        </div>
-                    </div>
+                        ) : null}
 
-                    <div className="grid grid-cols-1 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="minStock" className="text-amber-600 font-bold">Alerta Stock Bajo</Label>
+                        <div className="space-y-0.5 w-16">
+                            <Label htmlFor="minStock" className="text-[9px] font-bold text-amber-600 uppercase tracking-tight text-center block w-full">
+                                Alerta
+                            </Label>
                             <Input
                                 id="minStock"
                                 value={minStock}
                                 onChange={(e) => setMinStock(e.target.value.replace(/\D/g, ""))}
-                                className="font-bold text-lg text-amber-600 border-amber-200 focus:border-amber-500 focus:ring-amber-500"
+                                className="font-bold text-sm text-amber-700 bg-amber-50/50 border-amber-200 focus:border-amber-400 focus:ring-amber-400 h-9 transition-colors text-center px-1"
                                 inputMode="numeric"
                                 placeholder="5"
+                                onFocus={(e) => e.target.select()}
                             />
                         </div>
-                    </div>
 
-                    <DialogFooter className="pt-4 flex flex-col gap-2 sm:flex-row">
-                        <Button type="submit" disabled={loading} className="bg-[#4379F2] hover:bg-blue-600 font-bold w-full sm:w-auto">
-                            {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            {isNew ? "Crear Producto" : "Guardar Cambios"}
+                        <Button
+                            type="submit"
+                            disabled={loading || !isValid}
+                            className="px-2 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs shadow-md shadow-blue-500/20 h-9 rounded-lg transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 shrink-0 w-20"
+                        >
+                            {loading ? <Loader2 className="w-3 h-3 animate-spin mx-auto" /> : (isNew ? "Crear" : "Guardar")}
                         </Button>
-                        <Button type="button" variant="outline" onClick={onClose} className="w-full sm:w-auto mt-2 sm:mt-0">
-                            Cancelar
-                        </Button>
-                    </DialogFooter>
+                    </div>
                 </form>
             </DialogContent>
         </Dialog>

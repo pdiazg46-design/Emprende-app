@@ -152,25 +152,25 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
         setEditingProduct(product)
     }
 
-    const handleSaveEdit = async (id: string, name: string, price: number, minStock: number, cost: number) => {
+    const handleSaveEdit = async (id: string, name: string, price: number, minStock: number, cost: number, stockOperation: number) => {
         try {
             if (id === 'new') {
-                console.log("Creating new product...", { name, price, minStock, cost });
+                console.log("Creating new product...", { name, price, minStock, cost, stock: stockOperation });
                 await addProduct({
                     name,
                     price,
                     cost,
-                    stock: 0,
+                    stock: stockOperation,
                     minStock
                 })
             } else {
-                console.log("Saving edit...", { id, name, price, minStock, cost });
+                console.log("Saving edit...", { id, name, price, minStock, cost, addStock: stockOperation });
                 await bulkUpdateStock([{
                     id,
                     name,
                     price,
                     cost,
-                    addStock: 0,
+                    addStock: stockOperation,
                     minStock
                 }])
             }
