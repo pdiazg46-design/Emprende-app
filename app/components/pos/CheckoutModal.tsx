@@ -49,7 +49,15 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
 
         if (method === 'SUMUP') {
             if (window.innerWidth < 768) {
-                window.location.href = `sumupmerchant://pay/1.0?amount=${total}&currency=CLP&title=Venta%20POS&callback=http://localhost:3000/emprende/pos`
+                // Formatting total to ensure it doesn't have thousand separators, and adding .00 if SumUp requires it for CLP?
+                // Actually, if total is a number like 12000, `${total}` is "12000". SumUp might interpret "12000" as 120.00 in some currencies, but in CLP it should be 12000.
+                // If it showed 12, then total was passed as "12.000" string, or SumUp expects something else.
+                // Let's pass it strictly as an integer string if it's CLP, or maybe use Math.round(total)
+                // Wait, if it passed $12, it might be because sumupmerchant://pay/1.0?amount=12000 is being parsed as 12.000 by SumUp.
+                // Let's check: For CLP, SumUp actually requires decimal? No, CLP doesn't have decimals.
+                // Oh! "amount: The monetary amount to be charged. Note: it must always contain the decimal part, even if the currency does not require it." YES. So 12000 must be sent as `12000.00`.
+                const sumupAmount = Number(total).toFixed(2);
+                window.location.href = `sumupmerchant://pay/1.0?amount=${sumupAmount}&currency=CLP&title=Venta%20POS&callback=http://localhost:3000/emprende/pos`
             } else {
                 onConfirmSale('SUMUP')
                 onClose()

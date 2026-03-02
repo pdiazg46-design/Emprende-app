@@ -27,6 +27,9 @@ export function CartSummary() {
     if (cartCount === 0) return null
 
     const handleConfirmSale = (method: string) => {
+        if (isProcessing) return;
+        setIsProcessing(true);
+
         // 1. Guardar foto de los datos (porque limpiaremos la RAM del carro)
         const snapshotCart = [...cart]
         const snapshotTotal = cartTotal
@@ -38,9 +41,6 @@ export function CartSummary() {
         setIsCheckoutOpen(false) // Forzar cierre del modal
 
         // 3. Proceso "Fire-and-Forget" con Desacople Total del Event Loop
-        // Usamos setTimeout para salir del "Tick" actual de React. 
-        // Esto fuerza a que Next.js DIBUJE en pantalla el modal cerrado INMEDIATAMENTE, 
-        // sin agrupar el cierre visual con la tardanza de la base de datos (Server Action Batching).
         setTimeout(() => {
             processSale(snapshotCart, snapshotTotal, method)
                 .then(() => {
@@ -52,6 +52,9 @@ export function CartSummary() {
                     alert("Error al procesar la venta: " + (error.message || "Fallo desconocido"));
                     clearOptimisticTransactions();
                 })
+                .finally(() => {
+                    setIsProcessing(false);
+                });
         }, 50)
     }
 
