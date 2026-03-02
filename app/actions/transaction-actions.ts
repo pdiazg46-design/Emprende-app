@@ -337,7 +337,7 @@ export async function bulkUpdateStock(updates: { id: string; price?: number; add
             if (update.minStock !== undefined) data.minStock = update.minStock;
             if (update.cost !== undefined) data.cost = update.cost;
 
-            if (update.addStock && update.addStock > 0) {
+            if (update.addStock && update.addStock !== 0) {
                 data.stock = { increment: update.addStock };
             }
 
@@ -347,13 +347,13 @@ export async function bulkUpdateStock(updates: { id: string; price?: number; add
                     data
                 });
 
-                if (update.addStock && update.addStock > 0) {
+                if (update.addStock && update.addStock !== 0) {
                     await prisma.transaction.create({
                         data: {
                             userId: session.user.id,
-                            type: 'INVENTORY_IN',
+                            type: update.addStock > 0 ? 'INVENTORY_IN' : 'INVENTORY_OUT',
                             amount: 0,
-                            quantity: update.addStock,
+                            quantity: Math.abs(update.addStock),
                             description: updatedProduct.name,
                             productId: updatedProduct.id,
                         }

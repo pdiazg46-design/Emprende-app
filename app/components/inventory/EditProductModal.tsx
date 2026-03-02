@@ -98,7 +98,7 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white/95 backdrop-blur-xl border-slate-200 shadow-2xl rounded-2xl w-[96vw] fixed top-[10vh] sm:top-[50%] sm:-translate-y-1/2 left-1/2 -translate-x-1/2 flex flex-col z-[100] max-h-[85vh]">
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white/95 backdrop-blur-xl border-slate-200 shadow-2xl rounded-2xl w-[94vw] fixed top-[15dvh] sm:top-[50%] sm:-translate-y-1/2 left-1/2 -translate-x-1/2 flex flex-col z-[100] max-h-[80dvh]">
                 <DialogHeader>
                     <DialogTitle className="sr-only">
                         {isNew ? "Nuevo Producto" : "Editar Producto"}
@@ -106,7 +106,7 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
                 </DialogHeader>
                 <div className="w-full flex justify-center pt-2 pb-1 shrink-0 bg-transparent relative">
                     <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
-                    <span className="absolute right-4 top-2 text-[8px] text-slate-300 font-mono">v.1d</span>
+                    <span className="absolute right-4 top-2 text-[8px] text-slate-300 font-mono">v.1e</span>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
