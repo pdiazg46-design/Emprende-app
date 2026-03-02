@@ -29,6 +29,7 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
     const [costDisplay, setCostDisplay] = useState("")
     const [minStock, setMinStock] = useState("")
     const [stockInitial, setStockInitial] = useState("")
+    const [stockAdjustment, setStockAdjustment] = useState("")
     const [loading, setLoading] = useState(false)
 
     const isNew = product?.id === 'new';
@@ -41,6 +42,7 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
             setCostDisplay(product.id === 'new' ? "" : formatNumber(product.cost || 0))
             setMinStock(product.id === 'new' ? "5" : (product.minStock?.toString() || "5"))
             setStockInitial(product.id === 'new' ? "" : product.stock.toString())
+            setStockAdjustment("")
         }
     }, [isOpen, product])
 
@@ -67,7 +69,7 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
         priceDisplay.trim() &&
         costDisplay.trim() &&
         minStock.trim() &&
-        stockInitial.trim()
+        (isNew ? stockInitial.trim() : true)
     );
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -77,7 +79,9 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
         const cleanPrice = parseInt(priceDisplay.replace(/\./g, "")) || 0
         const cleanCost = parseInt(costDisplay.replace(/\./g, "")) || 0
         const cleanMinStock = parseInt(minStock) || 0
-        const cleanStock = parseInt(stockInitial) || 0
+        const cleanStock = isNew
+            ? parseInt(stockInitial) || 0
+            : parseInt(stockAdjustment.replace(/[^\d-]/g, '').replace(/(?!^)-/g, '')) || 0;
 
         setLoading(true)
         try {
@@ -94,7 +98,7 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white/95 backdrop-blur-xl border-slate-200 shadow-2xl rounded-2xl w-[96vw] fixed top-8 sm:top-[50%] sm:-translate-y-1/2 left-1/2 -translate-x-1/2 flex flex-col z-[100]">
+            <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-white/95 backdrop-blur-xl border-slate-200 shadow-2xl rounded-2xl w-[96vw] fixed top-[10vh] sm:top-[50%] sm:-translate-y-1/2 left-1/2 -translate-x-1/2 flex flex-col z-[100] max-h-[85vh]">
                 <DialogHeader>
                     <DialogTitle className="sr-only">
                         {isNew ? "Nuevo Producto" : "Editar Producto"}
@@ -102,7 +106,7 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
                 </DialogHeader>
                 <div className="w-full flex justify-center pt-2 pb-1 shrink-0 bg-transparent relative">
                     <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
-                    <span className="absolute right-4 top-2 text-[8px] text-slate-300 font-mono">v.1c</span>
+                    <span className="absolute right-4 top-2 text-[8px] text-slate-300 font-mono">v.1d</span>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
@@ -160,17 +164,30 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
                         </Button>
 
                         <div className="space-y-0.5 w-[65px]">
-                            <Label htmlFor="stock" className="text-[9px] font-bold text-blue-600 uppercase tracking-tight text-center block w-full">Stock</Label>
-                            <Input
-                                id="stock"
-                                value={stockInitial}
-                                onChange={(e) => setStockInitial(e.target.value.replace(/\D/g, ""))}
-                                className="font-bold text-sm text-blue-700 bg-blue-50/50 border-blue-200 focus:border-blue-400 focus:ring-blue-400 h-8 transition-colors text-center px-1"
-                                inputMode="numeric"
-                                placeholder="0"
-                                onFocus={(e) => e.target.select()}
-                                disabled={!isNew}
-                            />
+                            <Label htmlFor="stock" className="text-[9px] font-bold text-blue-600 uppercase tracking-tight text-center block w-full">
+                                {isNew ? "Stock" : "Ajuste"}
+                            </Label>
+                            {isNew ? (
+                                <Input
+                                    id="stock"
+                                    value={stockInitial}
+                                    onChange={(e) => setStockInitial(e.target.value.replace(/\D/g, ""))}
+                                    className="font-bold text-sm text-blue-700 bg-blue-50/50 border-blue-200 focus:border-blue-400 focus:ring-blue-400 h-8 transition-colors text-center px-1"
+                                    inputMode="numeric"
+                                    placeholder="0"
+                                    onFocus={(e) => e.target.select()}
+                                />
+                            ) : (
+                                <Input
+                                    id="stockAdj"
+                                    value={stockAdjustment}
+                                    onChange={(e) => setStockAdjustment(e.target.value.replace(/[^\d-]/g, '').replace(/(?!^)-/g, ''))}
+                                    className="font-bold text-sm text-blue-700 bg-blue-50/50 border-blue-200 focus:border-blue-400 focus:ring-blue-400 h-8 transition-colors text-center px-1"
+                                    inputMode="text"
+                                    placeholder="+/-"
+                                    onFocus={(e) => e.target.select()}
+                                />
+                            )}
                         </div>
 
                         <div className="space-y-0.5 w-[65px]">

@@ -164,13 +164,13 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                     minStock
                 })
             } else {
-                console.log("Saving edit...", { id, name, price, minStock, cost });
+                console.log("Saving edit...", { id, name, price, minStock, cost, addStock: stockOperation });
                 await bulkUpdateStock([{
                     id,
                     name,
                     price,
                     cost,
-                    addStock: 0,
+                    addStock: stockOperation,
                     minStock
                 }])
             }
