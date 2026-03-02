@@ -100,8 +100,9 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
                         {isNew ? "Nuevo Producto" : "Editar Producto"}
                     </DialogTitle>
                 </DialogHeader>
-                <div className="w-full flex justify-center pt-3 pb-1 shrink-0 bg-transparent">
+                <div className="w-full flex justify-center pt-3 pb-1 shrink-0 bg-transparent relative">
                     <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
+                    <span className="absolute right-4 top-2 text-[8px] text-slate-300 font-mono">v.1b</span>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
