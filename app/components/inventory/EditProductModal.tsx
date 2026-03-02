@@ -29,7 +29,6 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
     const [costDisplay, setCostDisplay] = useState("")
     const [minStock, setMinStock] = useState("")
     const [stockInitial, setStockInitial] = useState("")
-    const [stockAdjustment, setStockAdjustment] = useState("")
     const [loading, setLoading] = useState(false)
 
     const isNew = product?.id === 'new';
@@ -42,7 +41,6 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
             setCostDisplay(product.id === 'new' ? "" : formatNumber(product.cost || 0))
             setMinStock(product.id === 'new' ? "5" : (product.minStock?.toString() || "5"))
             setStockInitial(product.id === 'new' ? "" : product.stock.toString())
-            setStockAdjustment("")
         }
     }, [isOpen, product])
 
@@ -69,7 +67,7 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
         priceDisplay.trim() &&
         costDisplay.trim() &&
         minStock.trim() &&
-        (!isNew || stockInitial.trim())
+        stockInitial.trim()
     );
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -79,12 +77,11 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
         const cleanPrice = parseInt(priceDisplay.replace(/\./g, "")) || 0
         const cleanCost = parseInt(costDisplay.replace(/\./g, "")) || 0
         const cleanMinStock = parseInt(minStock) || 0
-        const cleanStock = isNew
-            ? parseInt(stockInitial) || 0
-            : parseInt(stockAdjustment.replace(/[^\d-]/g, '').replace(/(?!^)-/g, '')) || 0;
+        const cleanStock = parseInt(stockInitial) || 0
 
         setLoading(true)
         try {
+            // Pasamos cleanStock como stockOperation, asumiendo que el componente superior validará
             await onSave(product.id, name, cleanPrice, cleanMinStock, cleanCost, cleanStock)
             // Do not close here, let parent handle it or close on success if parent doesn't throw
             onClose()
@@ -155,28 +152,27 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
                         </div>
                     </div>
 
-                    {/* Fila 3: Acciones + Stock Inicial y Stock Mínimo súper compactos */}
-                    <div className="flex items-end justify-between gap-1 pt-1 pb-3 px-4 shrink-0">
-                        <Button type="button" variant="ghost" onClick={onClose} className="px-2 font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 h-9 rounded-lg text-xs shrink-0 w-20">
+                    {/* Fila 3: Acciones + Stock Inicial y Stock Mínimo SÍ o SÍ */}
+                    <div className="flex items-end justify-between gap-1 pt-2 pb-4 px-4 shrink-0 bg-white border-t border-slate-100/50 mt-1">
+                        <Button type="button" variant="ghost" onClick={onClose} className="px-1 font-bold text-slate-500 hover:text-slate-700 hover:bg-slate-100 h-9 rounded-lg text-xs shrink-0 w-16 sm:w-20">
                             Cancelar
                         </Button>
 
-                        {isNew ? (
-                            <div className="space-y-0.5 w-16">
-                                <Label htmlFor="stock" className="text-[9px] font-bold text-blue-600 uppercase tracking-tight text-center block w-full">Stock</Label>
-                                <Input
-                                    id="stock"
-                                    value={stockInitial}
-                                    onChange={(e) => setStockInitial(e.target.value.replace(/\D/g, ""))}
-                                    className="font-bold text-sm text-blue-700 bg-blue-50/50 border-blue-200 focus:border-blue-400 focus:ring-blue-400 h-9 transition-colors text-center px-1"
-                                    inputMode="numeric"
-                                    placeholder="0"
-                                    onFocus={(e) => e.target.select()}
-                                />
-                            </div>
-                        ) : null}
+                        <div className="space-y-0.5 w-[70px]">
+                            <Label htmlFor="stock" className="text-[9px] font-bold text-blue-600 uppercase tracking-tight text-center block w-full">Stock</Label>
+                            <Input
+                                id="stock"
+                                value={stockInitial}
+                                onChange={(e) => setStockInitial(e.target.value.replace(/\D/g, ""))}
+                                className="font-bold text-sm text-blue-700 bg-blue-50/50 border-blue-200 focus:border-blue-400 focus:ring-blue-400 h-9 transition-colors text-center px-1"
+                                inputMode="numeric"
+                                placeholder="0"
+                                onFocus={(e) => e.target.select()}
+                                disabled={!isNew}
+                            />
+                        </div>
 
-                        <div className="space-y-0.5 w-16">
+                        <div className="space-y-0.5 w-[70px]">
                             <Label htmlFor="minStock" className="text-[9px] font-bold text-amber-600 uppercase tracking-tight text-center block w-full">
                                 Alerta
                             </Label>
@@ -194,7 +190,7 @@ export function EditProductModal({ isOpen, onClose, product, onSave }: EditProdu
                         <Button
                             type="submit"
                             disabled={loading || !isValid}
-                            className="px-2 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs shadow-md shadow-blue-500/20 h-9 rounded-lg transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 shrink-0 w-20"
+                            className={`px-1 text-white font-black text-xs shadow-md h-9 rounded-lg transition-all active:scale-95 disabled:opacity-50 shrink-0 w-[70px] sm:w-20 ${isNew ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20' : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20'}`}
                         >
                             {loading ? <Loader2 className="w-3 h-3 animate-spin mx-auto" /> : (isNew ? "Crear" : "Guardar")}
                         </Button>
