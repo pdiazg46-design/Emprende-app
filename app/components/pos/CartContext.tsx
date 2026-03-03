@@ -24,6 +24,8 @@ interface CartContextType {
     optimisticTransactions: any[]
     addOptimisticSale: (amount: number, cartSnapshot: CartItem[], method: string) => void
     clearOptimisticTransactions: () => void
+    catalogRAM: any[] // Caché de productos en memoria para voz instantánea
+    setCatalog: (products: any[]) => void // Función para inyectar desde el servidor/InventoryManager
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -33,6 +35,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     // Estado transitorio para sumar a las ventas visuales del Dashboard. Se limpia on unmount o real reload.
     const [optimisticSalesToday, setOptimisticSalesToday] = useState(0)
     const [optimisticTransactions, setOptimisticTransactions] = useState<any[]>([])
+
+    // Caché de Productos para búsquedas en 0ms
+    const [catalogRAM, setCatalogState] = useState<any[]>([])
+
+    const setCatalog = (products: any[]) => {
+        setCatalogState(products)
+    }
 
     // Load from localStorage on mount
     useEffect(() => {
@@ -136,7 +145,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         <CartContext.Provider value={{
             cart, addToCart, replaceCartItem, updateQuantity, removeFromCart, clearCart, cartTotal, cartCount,
             optimisticSalesToday, addOptimisticSale,
-            optimisticTransactions, clearOptimisticTransactions
+            optimisticTransactions, clearOptimisticTransactions,
+            catalogRAM, setCatalog
         }}>
             {children}
         </CartContext.Provider>

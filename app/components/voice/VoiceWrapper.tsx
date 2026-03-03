@@ -9,11 +9,12 @@ import { TriangleAlert } from "lucide-react"
 import { useVoicePreferences } from "./VoicePreferencesContext"
 import { ManualExpenseFallback } from "../dashboard/ManualExpenseFallback"
 import { useCart } from "../pos/CartContext"
+import { findBestProductMatch } from "@/lib/product-matching"
 
 export function VoiceWrapper() {
     const router = useRouter()
     const { isVoiceEnabled } = useVoicePreferences()
-    const { addToCart, replaceCartItem, cart } = useCart()
+    const { addToCart, replaceCartItem, cart, catalogRAM } = useCart()
     const [feedback, setFeedback] = useState<{ type: 'success' | 'error' | 'neutral', message: string } | null>(null)
 
     if (!isVoiceEnabled) return <ManualExpenseFallback />; // Fallback a Gasto Manual
@@ -44,19 +45,28 @@ export function VoiceWrapper() {
                     const tempItems = itemsToProcess.map((item: any) => {
                         const tempId = 'opt-voice-' + crypto.randomUUID();
                         const isQty = item.isQuantity !== undefined ? item.isQuantity : true;
-
-                        // Si es cantidad, el precio lo desconocemos (va a 0 optimista). 
-                        // Si no es cantidad, asumimos que dictó el monto total.
-                        const tempPrice = isQty ? 0 : Number(item.amount);
                         const tempQty = isQty ? Number(item.amount) : 1;
+
+                        // INYECCIÓN CERO LATENCIA (RAM-First Inteligente)
+                        // Cruzamos de inmediato el audio procesado con la memoria del teléfono
+                        const ramProduct = findBestProductMatch(item.product || "Venta General", catalogRAM || []);
+
+                        let tempPrice = isQty ? 0 : Number(item.amount);
+                        let displayName = item.product || "Buscando...";
+
+                        if (ramProduct) {
+                            // MAGIA: El teléfono ya sabe cuánto cuesta. Zero Latency absolute.
+                            tempPrice = ramProduct.price;
+                            displayName = ramProduct.name;
+                        }
 
                         const optimisticItem = {
                             id: tempId,
-                            name: item.product || "Buscando...",
+                            name: displayName,
                             price: tempPrice,
                             quantity: tempQty,
                             isManual: false,
-                            isOptimistic: true // Bandera para UI
+                            isOptimistic: !ramProduct // Si no lo encontró en RAM, se queda parpadeando esperando a Vercel
                         };
 
                         addToCart(optimisticItem);

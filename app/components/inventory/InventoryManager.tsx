@@ -19,14 +19,15 @@ interface Product {
 export function InventoryManager({ inventory }: { inventory: Product[] }) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
-    const { addToCart } = useCart()
+    const { addToCart, setCatalog } = useCart()
 
     // RAM-First State (Optimistic UI)
     const [localInventory, setLocalInventory] = useState<Product[]>(inventory)
 
     useEffect(() => {
         setLocalInventory(inventory)
-    }, [inventory])
+        setCatalog(inventory) // Alimentar la RAM global para el VoiceWrapper en 0ms
+    }, [inventory, setCatalog])
 
     // State for bulk updates: Map productId -> { price, addStock, name }
     const [updates, setUpdates] = useState<Record<string, { price: number, addStock: number, name?: string }>>({})
