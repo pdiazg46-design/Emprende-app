@@ -8,37 +8,41 @@ async function createOGImage() {
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
 
-    // Fondo oscuro institucional (Slate 900)
-    ctx.fillStyle = '#1e293b';
+    // 1. Fondo Blanco Corporativo
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
 
-    // Borde inferior sutil (Slate 700 o azul primario)
-    ctx.fillStyle = '#3b82f6'; // Azul moderno
-    ctx.fillRect(0, height - 10, width, 10);
+    // 2. Cargar logotipo transparente de la luna
+    const publicDir = path.join(__dirname, 'public');
+    const image = await loadImage(path.join(publicDir, 'icon-512.png'));
 
-    // Texto o Branding principal
-    ctx.fillStyle = '#ffffff';
+    // 3. Dibujar logo centrado y con protección de márgenes de WhatsApp (600x600 centrales)
+    const logoSize = 300;
+    const logoX = (width - logoSize) / 2;
+    const logoY = (height / 2) - 180;
+    ctx.drawImage(image, logoX, logoY, logoSize, logoSize);
+
+    // 4. Texto debajo del logo
+    ctx.fillStyle = '#0f172a'; // slate-900
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    ctx.font = 'bold 110px Arial';
-    ctx.fillText('EMPRENDE', width / 2, height / 2 - 40);
+    ctx.font = 'bold 80px Arial';
+    ctx.fillText('EMPRENDE', width / 2, height / 2 + 150);
 
-    ctx.font = '45px Arial';
-    ctx.fillStyle = '#94a3b8'; // text-slate-400
-    ctx.fillText('SaaS & POS Ecosystem', width / 2, height / 2 + 50);
+    ctx.font = '35px Arial';
+    ctx.fillStyle = '#64748b'; // slate-500
+    ctx.fillText('Tu punto de venta y gestión de negocios', width / 2, height / 2 + 220);
 
-    ctx.font = '30px Arial';
-    ctx.fillStyle = '#cbd5e1'; // text-slate-300
-    ctx.fillText('Punto de Venta \u2022 Inventario \u2022 Inteligencia Artificial', width / 2, height / 2 + 130);
+    // 5. Borde inferior decorativo azul para anclaje visual
+    ctx.fillStyle = '#3b82f6';
+    ctx.fillRect(0, height - 12, width, 12);
 
+    // Guardar
     const buffer = canvas.toBuffer('image/png');
-    const outDir = path.join(__dirname, 'public');
-    if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
-
-    const outPath = path.join(outDir, 'opengraph-image.png');
+    const outPath = path.join(publicDir, 'opengraph-image.png');
     fs.writeFileSync(outPath, buffer);
-    console.log(`Creado Open Graph Image en: ${outPath}`);
+    console.log(`Creado Open Graph con Ícono en: ${outPath}`);
 }
 
 createOGImage().catch(console.error);
