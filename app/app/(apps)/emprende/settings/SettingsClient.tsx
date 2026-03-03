@@ -7,6 +7,7 @@ import { updatePaymentConfig, getPaymentConfig } from "@/actions/user-settings-a
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { DangerWipeModal } from "@/components/settings/DangerWipeModal"
+import { Calculator } from "lucide-react"
 
 export default function SettingsClient() {
     const router = useRouter()
@@ -16,6 +17,7 @@ export default function SettingsClient() {
     const [isSaved, setIsSaved] = useState(false)
     const [saveError, setSaveError] = useState(false)
     const [showDangerWipe, setShowDangerWipe] = useState(false)
+    const [f29Active, setF29Active] = useState(false)
 
     const [config, setConfig] = useState({
         mpAccessToken: "",
@@ -28,7 +30,8 @@ export default function SettingsClient() {
         accountType: "",
         accountNumber: "",
         accountHolder: "",
-        accountEmail: ""
+        accountEmail: "",
+        ppmRate: 1.0
     })
 
     useEffect(() => {
@@ -47,8 +50,10 @@ export default function SettingsClient() {
                         accountType: data.accountType || "",
                         accountNumber: data.accountNumber || "",
                         accountHolder: data.accountHolder || "",
-                        accountEmail: data.accountEmail || ""
+                        accountEmail: data.accountEmail || "",
+                        ppmRate: data.ppmRate || 1.0
                     })
+                    setF29Active(data.f29Active || false)
                 }
             } catch (e) {
                 console.error("Failed to load settings", e)
@@ -242,6 +247,42 @@ export default function SettingsClient() {
                         </div>
                     )}
 
+                    {/* AUTOGESTIÓN TRIBUTARIA (SOLO SI F29 ESTA ACTIVO) */}
+                    {f29Active && (
+                        <div className="bg-white rounded-3xl border border-indigo-100 shadow-sm overflow-hidden animate-in fade-in slide-in-from-top-4">
+                            <div className="p-6 border-b border-indigo-50 bg-indigo-50/30 flex justify-between items-center">
+                                <div>
+                                    <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
+                                        <Calculator className="w-5 h-5 text-indigo-600" />
+                                        Autogestión Tributaria (F29)
+                                    </h2>
+                                    <p className="text-xs text-slate-500 mt-1">Configura la tasa de Pagos Provisionales Mensuales acordada con tu contador.</p>
+                                </div>
+                            </div>
+                            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-xs font-bold text-slate-500 uppercase flex justify-between">
+                                        <span>Tasa PPM (%)</span>
+                                        <span className="text-indigo-600">{config.ppmRate}%</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        max="10"
+                                        value={config.ppmRate}
+                                        onChange={(e) => setConfig({ ...config, ppmRate: Number(e.target.value) })}
+                                        className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm"
+                                        placeholder="Ej: 1.5"
+                                    />
+                                    <p className="text-[10px] text-slate-400 mt-1 leading-tight">
+                                        Este porcentaje se descontará virtualmente de la Venta Neta mensual para el simulador de impuestos. Ej: Las Pymes nuevas suelen usar 0.25%.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* 4. ZONA DE PELIGRO (PRO ONLY) */}
                     {(session?.user as any)?.subscriptionPlan === 'PRO' && (
                         <div className="bg-white rounded-3xl border border-rose-100 shadow-sm overflow-hidden mt-8">
@@ -271,8 +312,8 @@ export default function SettingsClient() {
                             type="submit"
                             disabled={saving || isSaved}
                             className={`w-full text-white py-4 rounded-xl font-black text-[15px] sm:text-lg shadow-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 ${isSaved ? 'bg-emerald-500 shadow-emerald-500/20' :
-                                    saveError ? 'bg-rose-500 shadow-rose-500/20' :
-                                        'bg-[#4379F2] shadow-blue-500/20'
+                                saveError ? 'bg-rose-500 shadow-rose-500/20' :
+                                    'bg-[#4379F2] shadow-blue-500/20'
                                 }`}
                         >
                             {saving && !isSaved ? (

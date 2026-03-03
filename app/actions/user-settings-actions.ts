@@ -17,6 +17,7 @@ export async function updatePaymentConfig(data: {
     accountNumber?: string
     accountHolder?: string
     accountEmail?: string
+    ppmRate?: number
 }) {
     const session = await auth()
     if (!session?.user?.id) {
@@ -37,7 +38,8 @@ export async function updatePaymentConfig(data: {
                 accountType: data.accountType,
                 accountNumber: data.accountNumber,
                 accountHolder: data.accountHolder,
-                accountEmail: data.accountEmail
+                accountEmail: data.accountEmail,
+                ppmRate: data.ppmRate
             }
         })
         revalidatePath("/emprende/settings")
@@ -65,7 +67,9 @@ export async function getPaymentConfig() {
             accountType: true,
             accountNumber: true,
             accountHolder: true,
-            accountEmail: true
+            accountEmail: true,
+            f29Active: true,
+            ppmRate: true
         }
     })
 
