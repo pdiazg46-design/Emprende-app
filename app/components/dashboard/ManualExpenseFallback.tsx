@@ -21,6 +21,7 @@ export function ManualExpenseFallback({
     const [amount, setAmount] = useState("")
     const [desc, setDesc] = useState("")
     const [type, setType] = useState<'SALE' | 'EXPENSE'>('SALE')
+    const [taxType, setTaxType] = useState<string>("VALE")
 
     const isModalOpen = isOpen !== undefined ? isOpen : localOpen;
     const closeModal = onClose || (() => setLocalOpen(false));
@@ -40,7 +41,8 @@ export function ManualExpenseFallback({
             await addTransaction({
                 type: 'EXPENSE',
                 amount: Number(amount),
-                description: desc || "Gasto Manual"
+                description: desc || "Gasto Manual",
+                taxDocumentType: taxType
             })
             router.refresh()
         }
@@ -105,6 +107,22 @@ export function ManualExpenseFallback({
                                     <TrendingDown className="w-4 h-4" /> Gasto
                                 </button>
                             </div>
+
+                            {type === 'EXPENSE' && (
+                                <div className="animate-in slide-in-from-top-2 duration-300">
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-4 mb-1 block">Tipo de Documento (Contable)</label>
+                                    <select
+                                        value={taxType}
+                                        onChange={(e) => setTaxType(e.target.value)}
+                                        className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-sm font-bold text-slate-700 outline-none focus:border-rose-300 transition-colors"
+                                    >
+                                        <option value="VALE">Vale/Ticket (Sin Valor Legal)</option>
+                                        <option value="FACTURA">Factura (Suma Crédito IVA)</option>
+                                        <option value="HONORARIO">Boleta de Honorarios (Suma Retención)</option>
+                                        <option value="BOLETA">Boleta Electrónica</option>
+                                    </select>
+                                </div>
+                            )}
 
                             <div>
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-4 mb-1 block">Monto Total ($)</label>

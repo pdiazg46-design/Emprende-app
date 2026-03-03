@@ -22,6 +22,8 @@ model User {
   role               String        @default("USER")
   subscriptionStatus String        @default("TRIAL")
   subscriptionPlan   String        @default("BASIC")
+  f29Active          Boolean       @default(false)
+  ppmRate            Float         @default(1.0)
   mpPreapprovalId    String?
   nextPaymentDate    DateTime?     @default(now())
   notes              String?
@@ -100,6 +102,7 @@ model Transaction {
   amount        Int
   quantity      Int      @default(1)
   paymentMethod String?
+  taxDocumentType String?
   description   String?
   date          DateTime @default(now())
   groupId       String?

@@ -72,6 +72,8 @@ export async function getAllUsers() {
             nextPaymentDate: true,
             createdAt: true,
             notes: true,
+            f29Active: true,
+            ppmRate: true,
             _count: {
                 select: {
                     transactions: true,
@@ -111,6 +113,21 @@ export async function updateUserPlan(userId: string, plan: string) {
         return { success: true }
     } catch (error) {
         return { success: false, error: "Failed to update plan" }
+    }
+}
+
+export async function updateUserF29(userId: string, f29Active: boolean, ppmRate: number) {
+    await requireAdmin()
+
+    try {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { f29Active, ppmRate }
+        })
+        revalidatePath("/admin")
+        return { success: true }
+    } catch (error) {
+        return { success: false, error: "Failed to update F29 configuration" }
     }
 }
 

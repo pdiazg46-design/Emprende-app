@@ -17,6 +17,7 @@ export function DesktopSidebar({ user }: { user: any }) {
         { name: "Dashboard", href: "/emprende", icon: LayoutDashboard },
         { name: "Ventas", href: "/emprende/ventas", icon: TrendingUp },
         { name: "Gastos", href: "/emprende/gastos", icon: TrendingDown },
+        { name: "Auto F29", href: "/emprende/f29", icon: ShieldCheck },
         { name: "Configuración", href: "/emprende/settings", icon: Settings },
     ];
 

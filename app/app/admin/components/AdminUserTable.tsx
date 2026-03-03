@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { grantProAccess, grantBasicAccess } from "@/actions/admin-actions"
+import { grantProAccess, grantBasicAccess, updateUserF29 } from "@/actions/admin-actions"
 import { MoreHorizontal, Check, X, Shield, Lock, CreditCard, Gift, Smartphone } from "lucide-react"
 
 export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
@@ -35,6 +35,35 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
         setLoading(null);
     }
 
+    const handleToggleF29 = async (user: any) => {
+        const newValue = !user.f29Active;
+        let newPpm = user.ppmRate || 1.0;
+
+        if (newValue) {
+            const ppmInput = prompt(`Activar Motor F29: Introduce la tasa PPM para ${user.name || 'el negocio'}. (Ej: 1.5 para 1.5%)`, String(newPpm));
+            if (ppmInput === null) return; // Canceló el prompt
+            const parsed = parseFloat(ppmInput.replace(',', '.'));
+            if (isNaN(parsed) || parsed < 0) {
+                alert("Tasa inválida. Debe ser un número.");
+                return;
+            }
+            newPpm = parsed;
+        } else {
+            if (!confirm(`¿Estás seguro de desactivar el Motor Tributario F29 para ${user.name || 'este usuario'}?`)) return;
+        }
+
+        setLoading(user.id);
+        setActionMenuOpen(null);
+
+        const res = await updateUserF29(user.id, newValue, newPpm);
+        if (res.success) {
+            setUsers(users.map(u => u.id === user.id ? { ...u, f29Active: newValue, ppmRate: newPpm } : u));
+        } else {
+            alert(res.error || "Error al actualizar la configuración tributaria");
+        }
+        setLoading(null);
+    }
+
     return (
         <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
             <div className="overflow-x-auto max-h-[600px] scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
@@ -46,6 +75,7 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
                             <th className="px-6 py-4">Ingreso</th>
                             <th className="px-6 py-4">Estado</th>
                             <th className="px-6 py-4">Plan (B2B)</th>
+                            <th className="px-6 py-4">Tributario (F29)</th>
                             <th className="px-6 py-4">Uso</th>
                             <th className="px-6 py-4">Acciones</th>
                         </tr>
@@ -116,6 +146,17 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
+                                    <span
+                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black tracking-widest uppercase shadow-sm ${user.f29Active
+                                            ? 'bg-blue-600 text-white border-none'
+                                            : 'bg-slate-100 text-slate-400 border border-slate-200'
+                                            }`}
+                                    >
+                                        <Shield className="w-3.5 h-3.5" />
+                                        {user.f29Active ? `ON (${user.ppmRate}%)` : 'OFF'}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4">
                                     <div className="flex flex-col gap-1.5 text-sm font-bold text-slate-900">
                                         <span>📦 {user._count?.products || 0} Prod.</span>
                                         <span>💰 {user._count?.transactions || 0} Txs</span>
@@ -148,6 +189,17 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
                                                     >
                                                         <Gift className="w-3.5 h-3.5" />
                                                         Regalar Plan PRO VIP (Mensual)
+                                                    </button>
+                                                    <div className="my-2 border-t border-slate-100"></div>
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1">Poderes Nivel Dios</p>
+                                                    <button
+                                                        onClick={() => handleToggleF29(user)}
+                                                        disabled={loading === user.id}
+                                                        className={`w-full text-left px-3 py-2 text-xs font-semibold flex items-center gap-2 rounded-lg 
+                                                            ${user.f29Active ? 'hover:bg-red-50 text-red-700' : 'hover:bg-blue-50 text-blue-700'}`}
+                                                    >
+                                                        <Shield className="w-3.5 h-3.5" />
+                                                        {user.f29Active ? "Apagar Motor Tributario" : "Encender Motor F29 (VIP)"}
                                                     </button>
                                                 </div>
                                             </div>
