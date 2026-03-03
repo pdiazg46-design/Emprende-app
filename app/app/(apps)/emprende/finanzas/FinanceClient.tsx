@@ -47,7 +47,9 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
                         <option value="today">Día de Hoy (Caja Diaria)</option>
                         <option value="week">Última Semana</option>
                         <option value="month">Este Mes</option>
+                        <option value="last_month">Mes Anterior</option>
                         <option value="year">Este Año</option>
+                        <option value="last_year">Año Anterior</option>
                     </select>
                 </header>
 

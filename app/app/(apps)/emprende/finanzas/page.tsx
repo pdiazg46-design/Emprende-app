@@ -9,7 +9,7 @@ export default async function FinanzasPage({
 }: {
     searchParams: { timeframe?: string }
 }) {
-    const tf = (searchParams.timeframe as 'today' | 'week' | 'month' | 'year') || 'month';
+    const tf = (searchParams.timeframe as 'today' | 'week' | 'month' | 'last_month' | 'year' | 'last_year') || 'month';
     const insights = await getFinanceInsights(tf);
 
     if (!insights) {

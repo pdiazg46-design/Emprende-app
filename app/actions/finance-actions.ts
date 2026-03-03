@@ -26,10 +26,16 @@ function getChileTimeBounds(baseDate: Date = new Date()) {
     const yearStart = new Date(Date.UTC(year, 0, 1, tzOffsetHours, 0, 0, 0));
     const yearEnd = new Date(Date.UTC(year, 11, 31, tzOffsetHours + 23, 59, 59, 999));
 
-    return { todayStart, weekStart, weekEnd, monthStart, monthEnd, yearStart, yearEnd, chileTime };
+    const lastMonthStart = new Date(Date.UTC(year, month - 1, 1, tzOffsetHours, 0, 0, 0));
+    const lastMonthEnd = new Date(Date.UTC(year, month, 0, tzOffsetHours + 23, 59, 59, 999));
+
+    const lastYearStart = new Date(Date.UTC(year - 1, 0, 1, tzOffsetHours, 0, 0, 0));
+    const lastYearEnd = new Date(Date.UTC(year - 1, 11, 31, tzOffsetHours + 23, 59, 59, 999));
+
+    return { todayStart, weekStart, weekEnd, monthStart, monthEnd, lastMonthStart, lastMonthEnd, yearStart, yearEnd, lastYearStart, lastYearEnd, chileTime };
 }
 
-export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' | 'year' = 'week') {
+export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' | 'last_month' | 'year' | 'last_year' = 'week') {
     const session = await auth()
     if (!session?.user?.id) return null
 
@@ -44,9 +50,15 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
         } else if (timeframe === 'month') {
             startDate = bounds.monthStart;
             endDate = bounds.monthEnd;
+        } else if (timeframe === 'last_month') {
+            startDate = bounds.lastMonthStart;
+            endDate = bounds.lastMonthEnd;
         } else if (timeframe === 'year') {
             startDate = bounds.yearStart;
             endDate = bounds.yearEnd;
+        } else if (timeframe === 'last_year') {
+            startDate = bounds.lastYearStart;
+            endDate = bounds.lastYearEnd;
         }
 
         const sales = await prisma.transaction.findMany({
