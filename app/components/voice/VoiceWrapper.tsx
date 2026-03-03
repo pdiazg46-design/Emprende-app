@@ -13,7 +13,7 @@ import { useCart } from "../pos/CartContext"
 export function VoiceWrapper() {
     const router = useRouter()
     const { isVoiceEnabled } = useVoicePreferences()
-    const { addToCart } = useCart()
+    const { addToCart, replaceCartItem, cart } = useCart()
     const [feedback, setFeedback] = useState<{ type: 'success' | 'error' | 'neutral', message: string } | null>(null)
 
     if (!isVoiceEnabled) return <ManualExpenseFallback />; // Fallback a Gasto Manual
@@ -33,30 +33,52 @@ export function VoiceWrapper() {
         console.log("Comando recibido:", intent)
 
         try {
-            if (intent.type === 'SALE') {
+            if (intent.type === 'SALE' || intent.type === 'MULTI_SALE') {
                 try {
-                    // Normalizar al esquema MULTI_SALE crudo para usar la misma tubería de pre-fetching
-                    const items = [{ product: intent.product || "Venta General", amount: intent.amount || 1, isQuantity: intent.isQuantity }];
-                    const cartItems = await getProductsForVoiceCart(items);
+                    // RAM-First Optimistic UI Update
+                    const itemsToProcess = intent.type === 'SALE'
+                        ? [{ product: intent.product || "Venta General", amount: intent.amount || 1, isQuantity: intent.isQuantity }]
+                        : intent.items;
 
-                    cartItems.forEach(item => addToCart(item));
-                    showFeedback('success', "🛒 Producto agregado al carrito. ¡Procede al Cobro!");
+                    // 1. Inyectar temporalmente en el carrito
+                    const tempItems = itemsToProcess.map((item: any) => {
+                        const tempId = 'opt-voice-' + crypto.randomUUID();
+                        const isQty = item.isQuantity !== undefined ? item.isQuantity : true;
+
+                        // Si es cantidad, el precio lo desconocemos (va a 0 optimista). 
+                        // Si no es cantidad, asumimos que dictó el monto total.
+                        const tempPrice = isQty ? 0 : Number(item.amount);
+                        const tempQty = isQty ? Number(item.amount) : 1;
+
+                        const optimisticItem = {
+                            id: tempId,
+                            name: item.product || "Buscando...",
+                            price: tempPrice,
+                            quantity: tempQty,
+                            isManual: false,
+                            isOptimistic: true // Bandera para UI
+                        };
+
+                        addToCart(optimisticItem);
+                        return { originalIntent: item, tempId, optimisticItem };
+                    });
+
+                    showFeedback('success', "🛒 Procesando comando de voz...");
+
+                    // 2. Resolver en Background sin bloquear
+                    getProductsForVoiceCart(itemsToProcess).then((realCartItems) => {
+                        // Reemplazar cada item temporal con su versión real de la BD
+                        realCartItems.forEach((realItem, index) => {
+                            const tempId = tempItems[index].tempId;
+                            replaceCartItem(tempId, realItem);
+                        });
+                        showFeedback('success', "✅ Productos listos en el carrito.");
+                    }).catch((err) => {
+                        showFeedback('error', "❌ Error al sincronizar voz: " + (err.message || "Desc"));
+                    });
+
                 } catch (err: any) {
                     showFeedback('error', "❌ " + (err.message || "Error al agregar producto."));
-                }
-            }
-            else if (intent.type === 'MULTI_SALE') {
-                try {
-                    const cartItems = await getProductsForVoiceCart(intent.items);
-                    cartItems.forEach(item => addToCart(item));
-                    showFeedback('success', "🛒 Productos agregados al carrito. ¡Procede al Cobro!");
-                } catch (err: any) {
-                    console.error("Error fetching multi-sale items:", err);
-                    const errorMessage = err.message && err.message.length < 100
-                        ? err.message
-                        : "Error inesperado al buscar productos.";
-
-                    showFeedback('error', "❌ " + errorMessage);
                 }
             }
             else if (intent.type === 'EXPENSE') {

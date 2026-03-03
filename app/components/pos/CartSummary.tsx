@@ -125,9 +125,24 @@ export function CartSummary() {
                     {isOpen && (
                         <div className="flex-1 overflow-y-auto mt-4 space-y-3 pb-40 scrollbar-hide">
                             {cart.map((item) => (
-                                <div key={item.id} className="flex flex-col p-3 bg-slate-50 rounded-2xl border border-slate-100 gap-3">
-                                    <div className="w-full">
-                                        <p className="font-bold text-slate-800 text-sm leading-tight pr-2">{item.name}</p>
+                                <div key={item.id} className={cn(
+                                    "flex flex-col p-3 rounded-2xl border gap-3 transition-colors",
+                                    item.isOptimistic
+                                        ? "bg-slate-100/50 border-slate-200 animate-pulse ring-1 ring-blue-500/20"
+                                        : "bg-slate-50 border-slate-100"
+                                )}>
+                                    <div className="w-full flex items-center justify-between">
+                                        <p className={cn(
+                                            "font-bold text-sm leading-tight pr-2",
+                                            item.isOptimistic ? "text-slate-500" : "text-slate-800"
+                                        )}>
+                                            {item.name}
+                                        </p>
+                                        {item.isOptimistic && (
+                                            <span className="text-[10px] uppercase font-black tracking-widest text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full">
+                                                Buscando...
+                                            </span>
+                                        )}
                                     </div>
 
                                     <div className="flex items-center justify-between w-full border-t border-slate-100 pt-1">
@@ -146,27 +161,29 @@ export function CartSummary() {
                                                 <button
                                                     onClick={() => updateQuantity(item.id, 1)}
                                                     className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+                                                    disabled={item.isOptimistic}
                                                 >
                                                     +
                                                 </button>
                                             </div>
                                             <p className="text-xs text-slate-400 font-medium whitespace-nowrap hidden sm:block">
-                                                ${item.price.toLocaleString("es-CL")} c/u
+                                                {item.isOptimistic ? "---" : `$${item.price.toLocaleString("es-CL")} c/u`}
                                             </p>
                                         </div>
 
                                         <div className="flex items-center gap-3 shrink-0">
                                             <div className="text-right">
                                                 <p className="font-black text-slate-900 text-sm leading-none">
-                                                    ${(item.price * item.quantity).toLocaleString("es-CL")}
+                                                    {item.isOptimistic ? "..." : `$${(item.price * item.quantity).toLocaleString("es-CL")}`}
                                                 </p>
                                                 <p className="text-[10px] text-slate-400 font-medium sm:hidden mt-0.5">
-                                                    ${item.price.toLocaleString("es-CL")} c/u
+                                                    {item.isOptimistic ? "---" : `$${item.price.toLocaleString("es-CL")} c/u`}
                                                 </p>
                                             </div>
                                             <button
                                                 onClick={() => removeFromCart(item.id)}
                                                 className="text-slate-300 hover:text-red-500 transition-colors p-1 flex-shrink-0"
+                                                disabled={item.isOptimistic}
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>

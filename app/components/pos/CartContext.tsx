@@ -8,11 +8,13 @@ export interface CartItem {
     quantity: number
     price: number
     isManual?: boolean // If added manually or by voice
+    isOptimistic?: boolean // RAM-First flag
 }
 
 interface CartContextType {
     cart: CartItem[]
     addToCart: (item: Omit<CartItem, "id"> & { id?: string }) => void
+    replaceCartItem: (tempId: string, realItem: CartItem) => void
     updateQuantity: (id: string, delta: number) => void
     removeFromCart: (id: string) => void
     clearCart: () => void
@@ -72,6 +74,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         })
     }
 
+    // Funcionalidad RAM-First: Reemplaza un item temporal (optimista) por el definitivo de la BD
+    const replaceCartItem = (tempId: string, realItem: CartItem) => {
+        setCart((prev) => {
+            return prev.map(item => {
+                if (item.id === tempId) {
+                    // Mantenemos la cantidad actual por si el usuario la modificó mientras cargaba
+                    return { ...realItem, quantity: item.quantity, isOptimistic: false }
+                }
+                return item
+            })
+        })
+    }
+
     const updateQuantity = (id: string, delta: number) => {
         setCart(prev => prev.map(item => {
             if (item.id === id) {
@@ -119,7 +134,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <CartContext.Provider value={{
-            cart, addToCart, updateQuantity, removeFromCart, clearCart, cartTotal, cartCount,
+            cart, addToCart, replaceCartItem, updateQuantity, removeFromCart, clearCart, cartTotal, cartCount,
             optimisticSalesToday, addOptimisticSale,
             optimisticTransactions, clearOptimisticTransactions
         }}>
