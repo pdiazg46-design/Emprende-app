@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Tu punto de venta y gestión de negocios inteligente. Haz crecer tu emprendimiento al siguiente nivel.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icon-192.jpg?v=final",
+    icon: "/favicon-optico.png?v=mega",
     apple: "/apple-icon.png?v=solid7",
   },
   openGraph: {
