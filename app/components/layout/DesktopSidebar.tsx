@@ -25,8 +25,8 @@ export function DesktopSidebar({ user }: { user: any }) {
             <div className="p-6 border-b border-slate-100 flex flex-col items-center gap-4 text-center">
                 <div className="relative h-32 w-auto aspect-square mb-2 mx-auto">
                     <Image
-                        src="/logo-atsit.png"
-                        alt="AT-SIT"
+                        src="/icon-512.png"
+                        alt="Emprende Logo"
                         width={128}
                         height={128}
                         className="h-full w-full object-contain"
