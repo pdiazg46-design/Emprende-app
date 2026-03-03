@@ -30,10 +30,10 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
                             <ArrowLeft className="w-6 h-6 text-slate-700" />
                         </button>
                         <div>
-                            <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
                                 Inteligencia Financiera
                             </h1>
-                            <p className="text-slate-500 font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
                                 Conciliación de Pagos, Comisiones y Cajas.
                             </p>
                         </div>
