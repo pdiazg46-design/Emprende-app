@@ -86,12 +86,15 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
         let totalVentaSumUp = 0; // SUMUP Bruto
         let totalVentaMP = 0; // MERCADO_PAGO Bruto
         let totalVentaOtros = 0; // null o indefinido (se asume efectivo por compatibilidad antigua)
+        let legacyTxCount = 0; // Para alertar a la UI sobre compatibilidad vieja
 
         // Comisiones fijas (en Chile, promedio para tarjeta de crédito/débito)
         const SUMUP_FEE_RATE = 0.0345; // 2.9% + IVA = 3.45% aprox
         const MP_FEE_RATE = 0.0356; // 2.99% + IVA = 3.56% aprox
 
         const liquidaciones = sales.map(s => {
+            if (!s.paymentMethod) legacyTxCount++;
+
             const method = s.paymentMethod || 'CASH'; // fallback
             let fee = 0;
             let percent = 0;
@@ -149,7 +152,8 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
                 cash: totalCajaEfectivo + totalVentaOtros, // Unificamos legacy con efectivo
                 transfer: totalBancoTransferencia,
                 sumup: { gross: totalVentaSumUp, fee: sumupFee, net: sumupNet },
-                mp: { gross: totalVentaMP, fee: mpFee, net: mpNet }
+                mp: { gross: totalVentaMP, fee: mpFee, net: mpNet },
+                legacyCount: legacyTxCount
             },
             history: liquidaciones // para la tabla detallada
         }

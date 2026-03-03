@@ -2,7 +2,7 @@
 
 import { DesktopLayout } from "@/components/layout/DesktopLayout"
 import { useSession } from "next-auth/react"
-import { ArrowLeft, Wallet, Building2, TrendingDown, Percent, CreditCard, SmartphoneNfc, Banknote, ShieldAlert } from "lucide-react"
+import { ArrowLeft, Wallet, Building2, TrendingDown, Percent, CreditCard, SmartphoneNfc, Banknote, ShieldAlert, History } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
@@ -11,6 +11,7 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
     const router = useRouter()
 
     const { ventaBrutaTotal, dineroRealEnBanco, dineroCajaFisica, comisionesCobradas, breakdown, history } = initialData
+    const legacyCount = breakdown?.legacyCount || 0;
 
     const formatMoney = (val: number) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(Math.round(val))
 
@@ -53,6 +54,19 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
                         <option value="last_year">Año Anterior</option>
                     </select>
                 </header>
+
+                {/* ALERTA DE DATOS HISTORICOS (LEGACY) */}
+                {legacyCount > 0 && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex gap-4 mt-4 animate-in fade-in slide-in-from-top-4">
+                        <History className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
+                        <div>
+                            <h4 className="font-bold text-amber-900 text-sm">Transacciones Antiguas Detectadas ({legacyCount})</h4>
+                            <p className="text-xs text-amber-800 leading-relaxed mt-1">
+                                En este período hay ventas registradas antes de que la App soportara la separación de Tarjetas. Por defecto, todas estas ventas se han sumado a tu <b>Caja / Efectivo</b> asumiendo 0% de comisión.
+                            </p>
+                        </div>
+                    </div>
+                )}
 
                 {/* KPI GRID */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
