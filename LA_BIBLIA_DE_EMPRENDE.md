@@ -48,15 +48,17 @@ Esta es la configuración de los componentes críticos al estado actual. Cualqui
 - Existe una barra intermitente de escucha inteligente ("Control Total") diseñada para registrar ingresos o buscar productos en el carrito simplemente mediante lenguaje natural (Ej: "Vendí 2 pantalones negros").
 - Depende críticamente de Server Actions estrictos (`actions/process-voice.ts` y relacionados) acoplados al `CartContext`.
 
-### 4. Transformación SaaS y Cobros (Mercado Pago)
-- La aplicación ha evolucionado hacia un modelo SaaS. Cuenta con configuraciones de vinculación para *Mercado Pago* con el fin de emitir cobros QR, gestionar planes (`BASIC`, `PRO`, `VIP`) y rastrear la salud de la suscripción del usuario (`subscriptionStatus`, `subscriptionPlan`).
-- Las variables de entorno para esto deben aislarse estrictamente.
+### 4. Transformación SaaS y Inteligencia VIP (F29 & Finanzas)
+- El modelo SaaS (Basic, Pro, VIP) bloquea accesos en Desktop (`DesktopLayout`) e inyecta Paywalls.
+- **Motor Tributario F29 (Solo VIP):** Se implementó un simulador matemático que calcula automáticamente el IVA Débito (Ventas), IVA Crédito (Compras con Facturas) y un PPM manual configurable. El SuperAdmin controla la activación (`f29Active`) de cada cliente.
+- **Inteligencia de Pasarelas (Estricta Separación de Caja Fija):** Los flujos financieros (`/emprende/finanzas`) deben mapear exactamente si un ingreso fue con plástico (SumUp/MercadoPago, donde aplican comisiones automáticas del 3.45%/3.56%) vs si fue `CASH`/Transferencia (0% de fuga, Caja Física real).
 
 ### 5. Experiencia de Usuario (UX) Móvil y UI Optimista ("RAM-First")
 - **Layouts Consistentes:** Se erradicó la duplicidad visual entre las rutas `/` y `/emprende`. La aplicación en PWA móvil exige márgenes globales consistentes (`max-w-6xl mx-auto`) y un *header* unificado (logo pequeño, fino) para que al volver de "Configuración" no haya un salto de diseño ("se ve muy ancho").
 - **Alertas y Feedback:** Queda estrictamente prohibido el uso de `alert()` o `confirm()` nativos del navegador que bloquean el hilo principal. Se reemplazaron por botones que cambian de estado (ej. "GUARDANDO...", "¡ÉXITO!") o botones de acción en línea (inline actions).
 - **Actualización Optimista (Inventario/POS):** Las acciones que requieren velocidad extrema (sumar stock, cobrar) usan el patrón "RAM-First". Se actualiza la UI local del usuario instantáneamente modificando el estado temporal en React, y se envía el request a BD (`bulkUpdateStock`, etc) en background (`Fire & Forget`) para que el servidor concilie después.
 - **🚨 LEY ABSOLUTA DE UI EN PWAs ANDROID (El Problema del Teclado Superpuesto):** En Android, cuando la App se instala como PWA, **el teclado virtual NO redimensiona el viewport**, sino que se sobrepone (Overlay). **Jamás** anclar Modales o Formularios a la base de la pantalla (`bottom-0`). Todo Modal de ingreso de datos debe estar anclado a la parte superior usando un margen seguro como `top-[15dvh]` y estar fuertemente compactado en alturas (`h-8`, `h-9`) para asegurar que el teclado físico pase por debajo sin ocultar los botones de "Guardar" ni chocar con el "Status Bar" del teléfono.
+- **🚨 EL SÍNDROME DEL FLEXBOX APLASTANTE Y DESBORDE MÓVIL (Overflow-X Ghosting):** Al diseñar para móviles, si un título muy grande no puede envolverse (`whitespace-nowrap`) y desborda el ancho general (`100vw`), Tailwind destruye el Layout estirando el Canvas invisible. Esto provoca que componentes ocultos en móvil (ej. el menú izquierdo `DesktopSidebar`) vuelvan a aparecer "aplastando" la pantalla. Todo contenedor flexible *root* en móvil **CÓDIGO DE LEY:** debe llevar `overflow-x-hidden w-full max-w-[100vw] text-wrap min-w-0`, y a los logos o íconos flex en cabeceras se les **DEBE blindar** con la clase `shrink-0` para evitar que el renderizado de Next.js los vuelva ovalados al recuperar vistas cacheadas. Asimismo, el registro del usuario exige doble verificación de clave y el botón (Eye/EyeOff) para asegurar cero fricción.
 - **La Trampa del "Ajuste Negativo" en Prisma:** Al restar inventario, el input debe ser estrictamente `type="text"` o `inputMode="text"` con limpieza Regex para permitir escribir el símbolo menos (`-`). Adicionalmente, el backend (ej. `bulkUpdateStock`) DEBE permitir explícitamente valores negativos (`addStock !== 0`) e insertarlos en la tabla `Transaction` como `INVENTORY_OUT`, transformando su cantidad visual a `Math.abs(amount)` para mantener la cordura del historial, sin que el sistema lo banée pensando que es un Gasto Financiero de $0.
 - **El Protocolo de la Caché Fantasma (PWA):** Si Vercel compila exitosamente, pero el celular no muestra los cambios tras matar la App, se DEBE inyectar un "Tracker de Versión Físico" en el componente afectado (ej. un `v.1e` microscópico). Si el tracker no cambia, el usuario debe **Desinstalar la PWA físicamente del inicio de Android**, abrir el navegador Chrome original, verificar el tracker, y **Reinstalar la PWA** para obligar al Service Worker a soltar el caché.
 
@@ -70,7 +72,7 @@ Esta es la configuración de los componentes críticos al estado actual. Cualqui
 
 ---
 
-## 🛡️ PARTE 4: PROCEDIMIENTOS DE RESOLUCIÓN DE CRISIS
+## 🛡️ PARTE 4: PROCEDIMIENTOS DE RESOLUCIÓN DE CRISIS!
 
 Si al aplicar características nuevas ocurre una regresión masiva o la rama de Vercel (Producción) cae a Estado 500:
 1. **NO se intentan resolver errores sintácticos en la rama principal en caliente** durante más de dos intentos consecutivos.

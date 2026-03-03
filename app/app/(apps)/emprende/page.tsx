@@ -12,6 +12,7 @@ import { DesktopLayout } from "@/components/layout/DesktopLayout"
 import { RecentActivitySection } from "@/components/RecentActivitySection"
 import { CartSummary } from "@/components/pos/CartSummary"
 import { UserProfile } from "@/components/UserProfile"
+import { PrivacyToggle } from "@/components/PrivacyToggle"
 import { SalesCard } from "@/components/dashboard/SalesCard"
 import { ExpenseCard } from "@/components/dashboard/ExpenseCard"
 import { InventoryCard } from "@/components/dashboard/InventoryCard"
@@ -46,11 +47,11 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
     <>
       {/* Header Mobile (Solo visible en md:hidden) */}
       <header className="md:hidden fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md z-30 h-16 border-b border-slate-100 flex items-center justify-between px-4">
-        {/* Logo Left - Bigger */}
-        <div className="relative w-10 h-10 shrink-0">
+        {/* Logo Left - AT-SIT */}
+        <div className="relative w-16 h-8 shrink-0">
           <Image
-            src="/icon-512.png"
-            alt="Emprende Logo"
+            src="/logo-atsit.png"
+            alt="AT-SIT Logo"
             fill
             className="object-contain object-left"
             priority
@@ -65,7 +66,7 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
         </div>
 
         <div className="flex items-center gap-2">
-          {/* User Profile - Right (Interactive) */}
+          <PrivacyToggle />
           <UserProfile user={session.user} />
         </div>
       </header>
