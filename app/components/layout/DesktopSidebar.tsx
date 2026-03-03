@@ -23,13 +23,13 @@ export function DesktopSidebar({ user }: { user: any }) {
     return (
         <aside className="w-64 bg-white border-r border-slate-200 flex flex-col h-screen fixed left-0 top-0 z-40 hidden md:flex">
             <div className="p-6 border-b border-slate-100 flex flex-col items-center gap-4 text-center">
-                <div className="relative w-24 h-24 mb-2 mx-auto flex items-center justify-center">
+                <div className="relative w-40 h-20 mb-2 mx-auto flex items-center justify-center">
                     <Image
-                        src="/icon-512.png"
-                        alt="Emprende Logo"
-                        width={96}
-                        height={96}
-                        className="object-contain"
+                        src="/logo-atsit.png"
+                        alt="AT-SIT Logo"
+                        width={160}
+                        height={80}
+                        className="object-contain w-full h-full"
                         priority
                     />
                 </div>
