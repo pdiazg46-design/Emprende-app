@@ -1,7 +1,7 @@
 'use client'
 
 import { signOut, useSession } from "next-auth/react"
-import { LogOut, Users, RefreshCw, Settings, Mail, Calculator } from "lucide-react"
+import { LogOut, Users, RefreshCw, Settings, Mail, Calculator, Wallet } from "lucide-react"
 import { useState } from "react"
 import { AdminUsersModal } from "./AdminUsersModal"
 import { InstallButton } from "./InstallButton"
@@ -103,6 +103,16 @@ export function UserProfile({ user }: UserProfileProps) {
                                 className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-blue-50/50 text-indigo-700 hover:bg-blue-100 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest text-center mb-2 border border-blue-200 shadow-sm"
                             >
                                 <Calculator className="w-3.5 h-3.5" /> Auto F29
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    setIsOpen(false)
+                                    window.location.href = "/emprende/finanzas"
+                                }}
+                                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest text-center mb-2 border border-emerald-200 shadow-sm"
+                            >
+                                <Wallet className="w-3.5 h-3.5" /> Inteligencia Financiera
                             </button>
 
                             <button
