@@ -19,8 +19,8 @@ async function generateZoomedFavicon() {
 
     // Zoom para matar el padding blanco propio de la imagen original
     // en icon-512.png la luna tenía mucho espacio alrededor.
-    // Vamos a escalar a 1.6 de su tamaño para que los bordes de la luna toquen los bordes de la imagen
-    const zoomFactor = 1.6;
+    // Aplicamos un calibrado exacto de 1.25 para que los bordes toquen la caja sin amputar la luna
+    const zoomFactor = 1.25;
     const drawSize = size * zoomFactor;
 
     // Al aumentar el tamaño, debemos dibujar la imagen con origen negativo 
