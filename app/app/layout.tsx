@@ -7,10 +7,26 @@ const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 
 export const metadata: Metadata = {
   title: "Emprende",
-  description: "Simplifica tus finanzas y gana libertad.",
+  description: "Tu punto de venta y gestión de negocios inteligente. Haz crecer tu emprendimiento al siguiente nivel.",
   manifest: "/manifest.json",
   icons: {
     apple: "/pwa-icon.png?v=perfect6",
+  },
+  openGraph: {
+    title: "Emprende SaaS & POS",
+    description: "Tu punto de venta y gestión de negocios inteligente.",
+    url: "https://emprende-atsit.vercel.app",
+    siteName: "Emprende",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Emprende Dashboard",
+      },
+    ],
+    locale: "es_CL",
+    type: "website",
   },
   appleWebApp: {
     capable: true,
