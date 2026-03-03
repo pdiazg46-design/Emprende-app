@@ -47,10 +47,10 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
       {/* Header Mobile (Solo visible en md:hidden) */}
       <header className="md:hidden fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md z-30 h-16 border-b border-slate-100 flex items-center justify-between px-4">
         {/* Logo Left - Bigger */}
-        <div className="relative w-24 h-full py-2">
+        <div className="relative w-12 h-12 py-1">
           <Image
-            src="/logo-atsit.png"
-            alt="AT-SIT Logo"
+            src="/icon-512.png"
+            alt="Emprende Logo"
             fill
             className="object-contain object-left"
             priority
