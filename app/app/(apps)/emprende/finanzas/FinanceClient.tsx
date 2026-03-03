@@ -16,6 +16,7 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
 
     const handleTimeframeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         router.push(`/emprende/finanzas?timeframe=${e.target.value}`)
+        router.refresh()
     }
 
     return (
