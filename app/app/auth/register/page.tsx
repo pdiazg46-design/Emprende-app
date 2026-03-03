@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic';
 
 import { useState } from "react"
-import { KeyRound, Mail, User, Loader2, ArrowRight } from "lucide-react"
+import { KeyRound, Mail, User, Loader2, ArrowRight, Eye, EyeOff, CheckCircle2 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -13,6 +13,8 @@ export default function Register() {
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
     const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
@@ -21,6 +23,12 @@ export default function Register() {
         e.preventDefault()
         setIsLoading(true)
         setError("")
+
+        if (password !== confirmPassword) {
+            setError("Las contraseñas no coinciden. Revisa bien antes de continuar.")
+            setIsLoading(false)
+            return
+        }
 
         const formData = new FormData();
         formData.append("name", name);
@@ -114,14 +122,51 @@ export default function Register() {
                                     <KeyRound className="w-5 h-5" />
                                 </div>
                                 <input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Crea una clave segura"
                                     minLength={6}
                                     required
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-sm font-medium focus:border-blue-500 focus:bg-white transition-all outline-none text-slate-700"
+                                    className="w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-sm font-medium focus:border-blue-500 focus:bg-white transition-all outline-none text-slate-700"
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-blue-500 focus:outline-none transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="relative text-left">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-4 mb-1 block">Confirmar Contraseña</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                    <CheckCircle2 className="w-5 h-5" />
+                                </div>
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="Repite tu contraseña"
+                                    minLength={6}
+                                    required
+                                    className={`w-full pl-12 pr-12 py-4 bg-slate-50 border-2 rounded-2xl text-sm font-medium transition-all outline-none text-slate-700 focus:bg-white ${confirmPassword && confirmPassword !== password
+                                            ? 'border-red-300 focus:border-red-500'
+                                            : confirmPassword && confirmPassword === password
+                                                ? 'border-emerald-300 focus:border-emerald-500'
+                                                : 'border-slate-100 focus:border-blue-500'
+                                        }`}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-blue-500 focus:outline-none transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
                             </div>
                         </div>
 
