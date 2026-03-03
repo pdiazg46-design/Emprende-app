@@ -115,22 +115,22 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
             <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
 
             <div className="relative bg-white w-full max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-10 md:zoom-in-95 duration-300 max-h-[90vh] flex flex-col">
-                <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+                <div className="p-4 md:p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                     <h2 className="text-xl font-black text-slate-800">Finalizar Venta</h2>
                     <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
                         <X className="w-5 h-5 text-slate-500" />
                     </button>
                 </div>
 
-                <div className="p-6 space-y-6 overflow-y-auto">
+                <div className="p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
                     {/* Cart Details */}
-                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 max-h-40 overflow-y-auto space-y-2">
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Detalle de la compra</p>
+                    <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 max-h-32 md:max-h-40 overflow-y-auto space-y-1.5">
+                        <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Detalle de la compra</p>
                         {cart.map((item: any, idx: number) => (
-                            <div key={idx} className="flex justify-between items-center text-sm">
-                                <div className="flex items-center gap-2">
+                            <div key={idx} className="flex justify-between items-center text-xs md:text-sm">
+                                <div className="flex items-center gap-1.5 md:gap-2">
                                     <span className="font-bold text-slate-500">{item.quantity}x</span>
-                                    <span className="text-slate-700 truncate max-w-[140px]">{item.name}</span>
+                                    <span className="text-slate-700 truncate max-w-[140px] leading-tight">{item.name}</span>
                                 </div>
                                 <span className="font-mono text-slate-900">${(item.price * item.quantity).toLocaleString('es-CL')}</span>
                             </div>
@@ -138,26 +138,26 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
                     </div>
 
                     {/* Total Display */}
-                    <div className="text-center space-y-1">
-                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Total a Pagar</p>
-                        <p className="text-5xl font-black text-slate-900 tracking-tighter">
+                    <div className="text-center space-y-0.5">
+                        <p className="text-xs md:text-sm font-bold text-slate-400 uppercase tracking-widest">Total a Pagar</p>
+                        <p className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">
                             ${total.toLocaleString('es-CL')}
                         </p>
                     </div>
 
                     {/* Method Selection */}
                     {!qrData ? (
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 gap-2 md:gap-3">
                             {showCash && (
                                 <button
                                     onClick={() => setMethod('CASH')}
-                                    className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${method === 'CASH'
+                                    className={`p-3 md:p-4 rounded-xl border-2 flex flex-col items-center gap-1.5 md:gap-2 transition-all ${method === 'CASH'
                                         ? 'border-green-500 bg-green-50 text-green-700'
                                         : 'border-slate-100 hover:border-slate-300 text-slate-500'
                                         }`}
                                 >
-                                    <Banknote className="w-6 h-6" />
-                                    <span className="text-xs font-bold">Efectivo</span>
+                                    <Banknote className="w-5 h-5 md:w-6 md:h-6" />
+                                    <span className="text-[11px] md:text-xs font-bold">Efectivo</span>
                                 </button>
                             )}
 
@@ -167,39 +167,39 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
                                         setMethod('MP')
                                         generateMPLink()
                                     }}
-                                    className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${method === 'MP'
+                                    className={`p-3 md:p-4 rounded-xl border-2 flex flex-col items-center gap-1.5 md:gap-2 transition-all ${method === 'MP'
                                         ? 'border-blue-500 bg-blue-50 text-blue-700'
                                         : 'border-slate-100 hover:border-slate-300 text-slate-500'
                                         }`}
                                 >
-                                    {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Smartphone className="w-6 h-6" />}
-                                    <span className="text-xs font-bold">Mercado Pago</span>
+                                    {loading ? <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" /> : <Smartphone className="w-5 h-5 md:w-6 md:h-6" />}
+                                    <span className="text-[11px] md:text-xs font-bold">Mercado Pago</span>
                                 </button>
                             )}
 
                             {showSumUp && (
                                 <button
                                     onClick={() => setMethod('SUMUP')}
-                                    className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${method === 'SUMUP'
+                                    className={`p-3 md:p-4 rounded-xl border-2 flex flex-col items-center gap-1.5 md:gap-2 transition-all ${method === 'SUMUP'
                                         ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
                                         : 'border-slate-100 hover:border-slate-300 text-slate-500'
                                         }`}
                                 >
-                                    <CreditCard className="w-6 h-6" />
-                                    <span className="text-xs font-bold">Debito/Credito</span>
+                                    <CreditCard className="w-5 h-5 md:w-6 md:h-6" />
+                                    <span className="text-[11px] md:text-xs font-bold leading-tight text-center">Crédito/Débito</span>
                                 </button>
                             )}
 
                             {showTransfer && (
                                 <button
                                     onClick={() => setMethod('TRANSFER')}
-                                    className={`p-4 rounded-xl border-2 flex flex-col items-center gap-2 transition-all ${method === 'TRANSFER'
+                                    className={`p-3 md:p-4 rounded-xl border-2 flex flex-col items-center gap-1.5 md:gap-2 transition-all ${method === 'TRANSFER'
                                         ? 'border-orange-500 bg-orange-50 text-orange-700'
                                         : 'border-slate-100 hover:border-slate-300 text-slate-500'
                                         }`}
                                 >
-                                    <ArrowRightLeft className="w-6 h-6" />
-                                    <span className="text-xs font-bold">Transferencia</span>
+                                    <ArrowRightLeft className="w-5 h-5 md:w-6 md:h-6" />
+                                    <span className="text-[11px] md:text-xs font-bold">Transferencia</span>
                                 </button>
                             )}
                         </div>
@@ -258,12 +258,12 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
                     {(method === 'CASH' || method === 'SUMUP') && (
                         <button
                             onClick={handleConfirm}
-                            className={`w-full py-4 rounded-xl font-black text-lg shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 ${method === 'CASH'
+                            className={`w-full py-3 md:py-4 rounded-xl font-black text-base md:text-lg shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 ${method === 'CASH'
                                 ? 'bg-green-500 text-white shadow-green-500/20 hover:bg-green-600'
                                 : 'bg-indigo-600 text-white shadow-indigo-500/20 hover:bg-indigo-700'
                                 }`}
                         >
-                            <Check className="w-6 h-6" />
+                            <Check className="w-5 h-5 md:w-6 md:h-6" />
                             CONFIRMAR VENTA
                         </button>
                     )}
