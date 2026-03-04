@@ -54,7 +54,7 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
                 <div>
                     <h2 className="text-xl font-black mb-1" style={{ color: '#0f172a' }}>Reporte Analítico F29</h2>
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border" style={{ backgroundColor: '#f1f5f9', borderColor: '#e2e8f0' }}>
-                        <strong className="font-bold text-xs" style={{ color: '#334155' }}>🗓 Período: {monthName} {year}</strong>
+                        <strong className="font-bold text-xs uppercase tracking-widest" style={{ color: '#334155' }}>Período: {monthName} {year}</strong>
                     </div>
                 </div>
             </div>
@@ -62,7 +62,7 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
             {/* Resumen Ventas */}
             <div className="mb-6">
                 <h3 className="text-sm font-bold border-b pb-1.5 mb-3 flex items-center gap-2" style={{ color: '#0f172a', borderColor: '#e2e8f0' }}>
-                    📈 1. Registros de Ventas e Ingresos
+                    1. Registros de Ventas e Ingresos
                 </h3>
                 <div className="grid grid-cols-3 gap-3">
                     <div className="p-3 rounded-xl border" style={{ backgroundColor: '#f8fafc', borderColor: '#e2e8f0' }}>
@@ -83,22 +83,22 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
             {/* Resumen Compras */}
             <div className="mb-6">
                 <h3 className="text-sm font-bold border-b pb-1.5 mb-3 flex items-center gap-2" style={{ color: '#0f172a', borderColor: '#e2e8f0' }}>
-                    🧾 2. Compras y Retenciones
+                    2. Compras y Retenciones
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 rounded-xl border flex justify-between items-center" style={{ backgroundColor: '#ecfdf5', borderColor: '#a7f3d0' }}>
-                        <div>
+                    <div className="p-3 rounded-xl border" style={{ backgroundColor: '#ecfdf5', borderColor: '#a7f3d0' }}>
+                        <div className="flex justify-between items-start mb-1">
                             <p className="text-[10px] font-bold uppercase" style={{ color: '#047857' }}>IVA Crédito (Compras)</p>
-                            <p className="text-lg font-black" style={{ color: '#047857' }}>- ${data.ivaCredito.toLocaleString('es-CL')}</p>
+                            <span className="text-[8px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider block" style={{ backgroundColor: '#a7f3d0', color: '#065f46', lineHeight: 1 }}>Aprobadas</span>
                         </div>
-                        <span className="text-[8px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider" style={{ backgroundColor: '#a7f3d0', color: '#065f46' }}>Aprobadas</span>
+                        <p className="text-lg font-black" style={{ color: '#047857' }}>- ${data.ivaCredito.toLocaleString('es-CL')}</p>
                     </div>
-                    <div className="p-3 rounded-xl border flex justify-between items-center" style={{ backgroundColor: '#fff7ed', borderColor: '#fed7aa' }}>
-                        <div>
+                    <div className="p-3 rounded-xl border" style={{ backgroundColor: '#fff7ed', borderColor: '#fed7aa' }}>
+                        <div className="flex justify-between items-start mb-1">
                             <p className="text-[10px] font-bold uppercase" style={{ color: '#c2410c' }}>Retención Honorarios</p>
-                            <p className="text-lg font-black" style={{ color: '#c2410c' }}>+ ${data.retencionHonorarios.toLocaleString('es-CL')}</p>
+                            <span className="text-[8px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider block" style={{ backgroundColor: '#fed7aa', color: '#9a3412', lineHeight: 1 }}>15.25%</span>
                         </div>
-                        <span className="text-[8px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider" style={{ backgroundColor: '#fed7aa', color: '#9a3412' }}>15.25%</span>
+                        <p className="text-lg font-black" style={{ color: '#c2410c' }}>+ ${data.retencionHonorarios.toLocaleString('es-CL')}</p>
                     </div>
                 </div>
             </div>
@@ -106,7 +106,7 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
             {/* Cuadro Resumen Final */}
             <div className="mb-4">
                 <h3 className="text-sm font-bold border-b pb-1.5 mb-3 flex items-center gap-2" style={{ color: '#0f172a', borderColor: '#e2e8f0' }}>
-                    📑 3. Liquidación Resumen para TGR
+                    3. Liquidación Resumen para TGR
                 </h3>
 
                 <div className="border rounded-xl overflow-hidden" style={{ backgroundColor: '#f8fafc', borderColor: '#e2e8f0' }}>
@@ -118,7 +118,7 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
 
                         {data.remanenteIva > 0 && (
                             <div className="flex justify-between items-center p-2 rounded-lg border" style={{ backgroundColor: '#d1fae5', borderColor: '#a7f3d0' }}>
-                                <span className="font-bold text-xs flex items-center gap-1.5" style={{ color: '#065f46' }}>ℹ Remanente Crédito</span>
+                                <span className="font-bold text-xs" style={{ color: '#065f46' }}>Remanente Crédito</span>
                                 <span className="font-black text-sm" style={{ color: '#065f46' }}>${data.remanenteIva.toLocaleString('es-CL')}</span>
                             </div>
                         )}
