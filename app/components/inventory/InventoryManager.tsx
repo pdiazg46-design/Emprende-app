@@ -199,132 +199,131 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                 </h2>
             </div>
 
-            <div className="p-0 overflow-x-auto">
-                <table className="w-full text-xs md:text-sm text-left">
-                    <thead className="text-[10px] md:text-xs text-slate-400 uppercase bg-slate-50 font-bold border-b border-slate-100">
-                        <tr>
-                            <th className="px-0.5 md:px-1 py-1 w-8 md:w-10 text-center text-atsit-blue">
-                                <Plus className="w-3 h-3 md:w-4 md:h-4 mx-auto" />
-                            </th>
-                            <th className="px-1 py-1 w-auto min-w-[80px] md:min-w-[120px]">Producto</th>
-                            <th className="px-0.5 py-1 w-8 md:w-10 text-center">Stock</th>
-                            <th className="px-0.5 py-1 w-10 md:w-12 text-center bg-blue-50/50 text-atsit-blue">Input</th>
-                            <th className="px-0.5 py-1 w-12 md:w-16 text-center">Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                        {localInventory.map((product) => (
-                            <tr key={product.id} className="hover:bg-slate-50/50 transition-colors group">
-                                <td className="px-0.5 md:px-1 py-0.5 text-center">
-                                    <button
-                                        onClick={() => {
-                                            if (product.stock <= 0) {
-                                                alert("No hay stock disponible");
-                                                return;
-                                            }
-                                            addToCart({
-                                                name: product.name,
-                                                price: product.price,
-                                                quantity: 1,
-                                                id: product.id
-                                            })
-                                        }}
-                                        className="bg-blue-600 text-white hover:bg-blue-700 p-1 md:p-1.5 rounded-lg transition-all shadow-sm shadow-blue-500/30 flex items-center justify-center mx-auto active:scale-90"
-                                        title="Agregar a Venta"
-                                        disabled={product.stock <= 0}
-                                    >
-                                        <Plus className="w-3 h-3 md:w-4 md:h-4" />
-                                    </button>
-                                </td>
-                                <td className="px-1 py-0.5">
-                                    <div className="flex flex-col">
-                                        <span className="font-bold text-slate-700 text-[11px] md:text-sm line-clamp-1 leading-tight uppercase">
-                                            {product.name}
-                                        </span>
-                                        <span className="font-bold text-slate-500 text-[10px] md:text-xs leading-none mt-0.5">
-                                            ${formatNumber(product.price)}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td className="px-0.5 py-0.5 text-center align-middle">
-                                    <div className="flex items-center justify-center">
-                                        <span className={`px-1 rounded-lg font-black text-sm md:text-lg flex items-center justify-center min-w-[2rem] h-8 md:h-10 shadow-sm border ${product.stock <= 0
-                                            ? "bg-rose-100 text-rose-700 border-rose-200"
-                                            : product.stock <= (product.minStock || 5)
-                                                ? "bg-amber-100 text-amber-700 border-amber-200"
-                                                : "bg-slate-50 text-slate-800 border-slate-200"
-                                            }`}>
-                                            {product.stock}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td className="px-0.5 py-0.5 text-center bg-blue-50/10 align-middle">
-                                    <div className="flex items-center justify-center">
-                                        <div className="relative w-full max-w-[2.5rem] md:max-w-[3rem]">
-                                            <input
-                                                type="text"
-                                                inputMode="numeric"
-                                                placeholder="+"
-                                                className="w-full h-7 md:h-8 px-0.5 bg-white border border-slate-200 rounded-lg font-bold text-center text-slate-900 focus:border-atsit-blue outline-none transition-all placeholder:text-slate-300 caret-atsit-blue shadow-sm text-sm"
-                                                onFocus={(e) => e.target.select()}
-                                                value={updates[product.id]?.addStock || ""}
-                                                onChange={(e) => handleUpdateChange(product.id, 'addStock', e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-0 py-0.5 text-center align-middle">
-                                    <div className="flex items-center justify-end gap-0.5 pr-0.5">
-                                        {(updates[product.id]?.addStock > 0 || (updates[product.id]?.price !== undefined && updates[product.id]?.price !== product.price)) ? (
-                                            <button
-                                                onClick={() => saveSingleUpdate(product.id)}
-                                                className="bg-[#4379F2] text-white px-2 py-1.5 rounded-lg transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center gap-1.5 w-full min-w-[4rem] text-[10px] md:text-xs font-bold animate-in zoom-in-95 duration-200"
-                                                title="Confirmar"
-                                            >
-                                                <Save className="w-3 h-3 md:w-3.5 md:h-3.5" />
-                                                OK
-                                            </button>
-                                        ) : (
-                                            <>
-                                                <button
-                                                    onClick={() => handleEditProduct(product)}
-                                                    className="text-slate-300 hover:text-blue-500 hover:bg-blue-50 p-1 md:p-1.5 rounded-full transition-all"
-                                                    title="Editar"
-                                                >
-                                                    <Pencil className="w-3 h-3 md:w-4 md:h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(product.id)}
-                                                    className="text-slate-300 hover:text-rose-500 hover:bg-rose-50 p-1 md:p-1.5 rounded-full transition-all"
-                                                    title="Eliminar"
-                                                >
-                                                    <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
+            {/* Cabeceras simuladas para desktop (ocultas en mobile para simplificar) */}
+            <div className="hidden xl:grid grid-cols-2 gap-4 px-5 py-2 bg-slate-50 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase">
+                <div className="flex justify-between items-center pr-2">
+                    <span className="flex-1 ml-10">Producto</span>
+                    <div className="flex gap-4 items-center pl-2">
+                        <span className="w-8 text-center">Stock</span>
+                        <span className="w-12 text-center text-atsit-blue">Input</span>
+                        <span className="w-16 text-center">Acción</span>
+                    </div>
+                </div>
+                <div className="flex justify-between items-center pr-2">
+                    <span className="flex-1 ml-10">Producto</span>
+                    <div className="flex gap-4 items-center pl-2">
+                        <span className="w-8 text-center">Stock</span>
+                        <span className="w-12 text-center text-atsit-blue">Input</span>
+                        <span className="w-16 text-center">Acción</span>
+                    </div>
+                </div>
+            </div>
 
-                        {/* Row to add new product - Button Only */}
-                        <tr className="bg-slate-50 border-t-2 border-slate-100 border-dashed">
-                            <td colSpan={5} className="px-2 py-3">
+            <div className="p-2 md:p-4 overflow-y-auto">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 md:gap-3">
+                    {localInventory.map((product) => (
+                        <div key={product.id} className="flex items-center justify-between p-2 rounded-xl border border-slate-100 bg-white hover:bg-slate-50 transition-colors group shadow-sm">
+                            <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
                                 <button
                                     onClick={() => {
-                                        setEditingProduct({ id: 'new', name: '', price: 0, stock: 0, minStock: 5, cost: 0 } as Product)
+                                        if (product.stock <= 0) {
+                                            alert("No hay stock disponible");
+                                            return;
+                                        }
+                                        addToCart({
+                                            name: product.name,
+                                            price: product.price,
+                                            quantity: 1,
+                                            id: product.id
+                                        })
                                     }}
-                                    className="w-full py-3 bg-slate-800 text-white rounded-xl font-bold text-sm hover:bg-slate-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 transform active:scale-95 group"
+                                    className="bg-blue-600 text-white hover:bg-blue-700 p-1.5 md:p-2 rounded-lg transition-all shadow-sm shadow-blue-500/30 active:scale-95 shrink-0"
+                                    title="Agregar a Venta"
+                                    disabled={product.stock <= 0}
                                 >
-                                    <div className="bg-white/20 p-1 rounded-full group-hover:bg-white/30 transition-colors">
-                                        <Plus className="w-4 h-4" />
-                                    </div>
-                                    CREAR NUEVO PRODUCTO
+                                    <Plus className="w-3 h-3 md:w-3.5 md:h-3.5" />
                                 </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+
+                                <div className="flex flex-col min-w-0 pr-1">
+                                    <span className="font-bold text-slate-700 text-[11px] md:text-[13px] line-clamp-1 leading-tight uppercase truncate">
+                                        {product.name}
+                                    </span>
+                                    <span className="font-bold text-slate-500 text-[10px] md:text-[11px] mt-0.5">
+                                        ${formatNumber(product.price)}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 md:gap-3 shrink-0">
+                                <span className={`px-1 rounded-lg font-black text-[11px] md:text-xs flex items-center justify-center min-w-[1.5rem] h-6 border shadow-sm ${product.stock <= 0
+                                    ? "bg-rose-100 text-rose-700 border-rose-200"
+                                    : product.stock <= (product.minStock || 5)
+                                        ? "bg-amber-100 text-amber-700 border-amber-200"
+                                        : "bg-slate-50 text-slate-800 border-slate-200"
+                                    }`}>
+                                    {product.stock}
+                                </span>
+
+                                <div className="relative w-10 md:w-12 shrink-0">
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        placeholder="+"
+                                        className="w-full h-6 px-1 bg-blue-50/10 border border-slate-200 rounded-md font-bold text-center text-slate-900 focus:border-atsit-blue outline-none transition-all placeholder:text-slate-300 caret-atsit-blue shadow-sm text-xs md:text-sm"
+                                        onFocus={(e) => e.target.select()}
+                                        value={updates[product.id]?.addStock || ""}
+                                        onChange={(e) => handleUpdateChange(product.id, 'addStock', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="flex items-center justify-end gap-1 w-[4.5rem] md:w-[5rem] shrink-0">
+                                    {(updates[product.id]?.addStock > 0 || (updates[product.id]?.price !== undefined && updates[product.id]?.price !== product.price)) ? (
+                                        <button
+                                            onClick={() => saveSingleUpdate(product.id)}
+                                            className="bg-[#4379F2] text-white px-2 py-1 rounded-lg transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center gap-1 w-full text-[10px] md:text-xs font-bold animate-in zoom-in-95 duration-200"
+                                            title="Confirmar"
+                                        >
+                                            <Save className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                                            OK
+                                        </button>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={() => handleEditProduct(product)}
+                                                className="text-slate-300 hover:text-blue-500 hover:bg-blue-50 p-1 md:p-1.5 rounded-lg transition-all"
+                                                title="Editar"
+                                            >
+                                                <Pencil className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(product.id)}
+                                                className="text-slate-300 hover:text-rose-500 hover:bg-rose-50 p-1 md:p-1.5 rounded-lg transition-all"
+                                                title="Eliminar"
+                                            >
+                                                <Trash2 className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Nuevo Producto Button */}
+                <div className="mt-4 pb-2">
+                    <button
+                        onClick={() => {
+                            setEditingProduct({ id: 'new', name: '', price: 0, stock: 0, minStock: 5, cost: 0 } as Product)
+                        }}
+                        className="w-full py-3 md:py-4 bg-slate-800 text-white rounded-xl font-bold text-xs md:text-sm hover:bg-slate-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 transform active:scale-95 group"
+                    >
+                        <div className="bg-white/20 p-1 rounded-full group-hover:bg-white/30 transition-colors">
+                            <Plus className="w-4 h-4" />
+                        </div>
+                        CREAR NUEVO PRODUCTO
+                    </button>
+                </div>
             </div>
 
             {localInventory.length === 0 && (

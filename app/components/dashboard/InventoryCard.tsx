@@ -63,7 +63,7 @@ export function InventoryCard({ totalValue, totalItems, totalProducts, variant =
             <div
                 onClick={() => setShowModal(true)}
                 className={cn(
-                    "col-span-2 md:col-span-1 bg-white p-4 md:p-6 rounded-2xl md:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group relative overflow-hidden",
+                    "col-span-2 md:col-span-1 bg-white p-3 md:p-4 md:py-3 rounded-xl md:rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group relative overflow-hidden",
                     className
                 )}
             >
@@ -74,21 +74,21 @@ export function InventoryCard({ totalValue, totalItems, totalProducts, variant =
                     </span>
                 </div>
 
-                <div className="flex items-center gap-2 mb-2 text-blue-600">
-                    <div className="p-1.5 md:p-2 bg-blue-50 rounded-full group-hover:bg-blue-100 transition-colors">
+                <div className="flex items-center gap-2 mb-1.5 text-blue-600 mt-1">
+                    <div className="p-1 md:p-1.5 bg-blue-50 rounded-full group-hover:bg-blue-100 transition-colors">
                         <Package className="w-4 h-4 md:w-5 md:h-5" />
                     </div>
-                    <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-slate-400 group-hover:text-blue-700 transition-colors">Inventario</span>
+                    <span className="text-[10px] md:text-[11px] font-black uppercase tracking-widest text-slate-400 group-hover:text-blue-700 transition-colors">Inventario</span>
                 </div>
                 <div className="flex items-center justify-between md:block">
-                    <p className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight privacy-sensitive group-hover:scale-105 transition-transform origin-left">
+                    <p className="text-xl md:text-2xl font-black text-slate-900 tracking-tight privacy-sensitive group-hover:scale-105 transition-transform origin-left">
                         ${totalValue.toLocaleString('es-CL')}
                     </p>
-                    <div className="text-right md:text-left md:mt-2">
-                        <p className="text-sm md:text-xl font-black text-slate-800">
+                    <div className="text-right md:text-left md:mt-1">
+                        <p className="text-xs md:text-sm font-black text-slate-800 leading-tight">
                             {totalItems} Unid.
                         </p>
-                        <p className="text-[10px] md:text-xs text-slate-400 font-bold uppercase tracking-wider">
+                        <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-wider relative -top-0.5">
                             {totalProducts} Prods.
                         </p>
                     </div>

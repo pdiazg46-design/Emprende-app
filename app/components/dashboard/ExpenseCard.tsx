@@ -51,7 +51,7 @@ export function ExpenseCard({ amount, variant = 'default', className }: ExpenseC
             <div
                 onClick={() => setShowModal(true)}
                 className={cn(
-                    "bg-white p-4 md:p-6 rounded-2xl md:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group relative overflow-hidden",
+                    "bg-white p-3 md:p-4 md:py-3 rounded-xl md:rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group relative overflow-hidden",
                     className
                 )}
             >
@@ -62,13 +62,13 @@ export function ExpenseCard({ amount, variant = 'default', className }: ExpenseC
                     </span>
                 </div>
 
-                <div className="flex items-center gap-2 mb-2 md:mb-3 text-rose-600">
-                    <div className="p-1.5 md:p-2 bg-rose-50 rounded-full group-hover:bg-rose-100 transition-colors">
+                <div className="flex items-center gap-2 mb-1.5 text-rose-600 mt-1">
+                    <div className="p-1 md:p-1.5 bg-rose-50 rounded-full group-hover:bg-rose-100 transition-colors">
                         <TrendingDown className="w-4 h-4 md:w-5 md:h-5" />
                     </div>
-                    <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-slate-400 group-hover:text-rose-700 transition-colors">Gasto Del Día</span>
+                    <span className="text-[10px] md:text-[11px] font-black uppercase tracking-widest text-slate-400 group-hover:text-rose-700 transition-colors">Gasto Del Día</span>
                 </div>
-                <p className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight privacy-sensitive">
+                <p className="text-xl md:text-2xl font-black text-slate-900 tracking-tight privacy-sensitive">
                     ${amount.toLocaleString('es-CL')}
                 </p>
             </div>
