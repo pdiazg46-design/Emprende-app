@@ -38,15 +38,14 @@ function DashboardSkeleton() {
 }
 
 // Extraído el contenido que bloquea el Time-To-First-Byte
-async function DashboardContent({ session, isTrial, daysRemaining }: { session: any, isTrial: boolean, daysRemaining: number }) {
+// Mitad Izquierda: Productos y Dashboard
+async function DashboardLeft({ session, isTrial, daysRemaining }: { session: any, isTrial: boolean, daysRemaining: number }) {
   const { salesToday, expensesToday, expensesThisWeek, transactionsToday, totalStockValue, inventory } = await getDashboardMetrics()
-
-
 
   return (
     <>
       {/* Header Mobile (Solo visible en md:hidden) */}
-      <header className="md:hidden fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md z-30 h-16 border-b border-slate-100 flex items-center justify-between px-4">
+      <header className="lg:hidden fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md z-30 h-16 border-b border-slate-100 flex items-center justify-between px-4">
         {/* Logo Left - AT-SIT */}
         <div className="relative w-16 h-8 shrink-0">
           <Image
@@ -72,14 +71,14 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
       </header>
 
       {/* Ajuste de padding para mobile header */}
-      <div className="md:hidden h-16" />
+      <div className="lg:hidden h-16" />
 
       {/* Intelligent FOMO Client Component */}
       <IntelligentFOMOBanner isTrial={isTrial} daysRemaining={daysRemaining} />
 
-      <div className="space-y-8 max-w-6xl mx-auto">
+      <div className="space-y-6 lg:space-y-8 w-full">
         {/* Welcome Section (Desktop Only) */}
-        <div className="hidden md:flex mb-8 items-center justify-between">
+        <div className="hidden lg:flex mb-6 items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
               Hola, {session.user.name?.split(' ')[0]} <span className="text-2xl">👋</span>
@@ -109,16 +108,22 @@ async function DashboardContent({ session, isTrial, daysRemaining }: { session: 
           />
         </section>
 
-        <div className="flex flex-col gap-8">
-          <section className="h-full">
-            <InventoryManager inventory={inventory as any} />
-          </section>
-          <section>
-            <RecentActivitySection transactions={transactionsToday as any} />
-          </section>
-        </div>
+        <section className="h-full">
+          <InventoryManager inventory={inventory as any} />
+        </section>
       </div>
     </>
+  )
+}
+
+// Mitad Derecha: Actividad Reciente
+async function DashboardRight() {
+  const { transactionsToday } = await getDashboardMetrics()
+
+  return (
+    <section className="w-full">
+      <RecentActivitySection transactions={transactionsToday as any} />
+    </section>
   )
 }
 
@@ -176,11 +181,33 @@ export default async function Home() {
         permitiendo que el modal de cobro del POS se cierre y se limpie rápido,
         mientras getDashboardMetrics carga la base de datos de forma paralela en el servidor.
       */}
-      <Suspense fallback={<DashboardSkeleton />}>
-        <DashboardContent session={activeSession} isTrial={isTrial} daysRemaining={daysRemaining} />
-      </Suspense>
+      <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 items-start relative w-full lg:max-w-[1400px] lg:mx-auto">
+        {/* COLUMNA IZQUIERDA (8/12) - Productos y Resumen */}
+        <div className="lg:col-span-8 w-full flex flex-col gap-6 lg:gap-8">
+          <Suspense fallback={<DashboardSkeleton />}>
+            <DashboardLeft session={activeSession} isTrial={isTrial} daysRemaining={daysRemaining} />
+          </Suspense>
+        </div>
 
-      <CartSummary />
+        {/* COLUMNA DERECHA (4/12) - Carrito y Actividad Reciente */}
+        <div className="lg:col-span-4 w-full flex flex-col gap-6 lg:sticky lg:top-24 lg:max-h-[calc(100vh-6rem)] relative z-20">
+          <CartSummary />
+
+          <div className="hidden lg:block h-full">
+            <Suspense fallback={<div className="h-64 bg-slate-100 rounded-3xl animate-pulse"></div>}>
+              <DashboardRight />
+            </Suspense>
+          </div>
+        </div>
+      </div>
+
+      {/* Actividad Reciente para Mobile (oculta en lg, ya que arriba se muestra en lg:block) */}
+      <div className="lg:hidden w-full mt-6">
+        <Suspense fallback={<div className="h-64 bg-slate-100 rounded-3xl animate-pulse"></div>}>
+          <DashboardRight />
+        </Suspense>
+      </div>
+
       <VoiceWrapper />
     </DesktopLayout >
   )

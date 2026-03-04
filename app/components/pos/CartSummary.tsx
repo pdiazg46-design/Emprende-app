@@ -80,11 +80,12 @@ export function CartSummary() {
             {/* Floating Bar / Sheet */}
             <div className={cn(
                 "fixed bottom-0 left-0 right-0 z-40 bg-white shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 rounded-t-[2rem]",
-                isOpen ? "h-[90vh]" : "h-24 md:h-auto md:bottom-8 md:right-8 md:left-auto md:w-96 md:rounded-[2rem]"
+                isOpen ? "h-[90vh] lg:h-auto" : "h-24 lg:h-auto",
+                "lg:relative lg:bottom-auto lg:right-auto lg:left-auto lg:w-full lg:rounded-[2rem] lg:border lg:border-slate-100 lg:shadow-sm" // Anular clases fixed en Desktop para que encaje en el layout RightSide
             )}>
-                {/* Handle for dragging (visual only) */}
+                {/* Handle for dragging (visual only - hidden on Desktop) */}
                 <div
-                    className="w-full h-6 flex items-center justify-center cursor-pointer"
+                    className="w-full h-6 flex items-center justify-center cursor-pointer lg:hidden"
                     onClick={() => setIsOpen(!isOpen)}
                 >
                     <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
@@ -122,101 +123,104 @@ export function CartSummary() {
                     </div>
 
                     {/* Expanded Content */}
-                    {isOpen && (
-                        <div className="flex-1 overflow-y-auto mt-4 space-y-3 pb-40 scrollbar-hide">
-                            {cart.map((item) => (
-                                <div key={item.id} className={cn(
-                                    "flex flex-col p-3 rounded-2xl border gap-3 transition-colors",
-                                    item.isOptimistic
-                                        ? "bg-slate-100/50 border-slate-200 animate-pulse ring-1 ring-blue-500/20"
-                                        : "bg-slate-50 border-slate-100"
-                                )}>
-                                    <div className="w-full flex items-center justify-between">
-                                        <p className={cn(
-                                            "font-bold text-sm leading-tight pr-2",
-                                            item.isOptimistic ? "text-slate-500" : "text-slate-800"
-                                        )}>
-                                            {item.name}
-                                        </p>
-                                        {item.isOptimistic && (
-                                            <span className="text-[10px] uppercase font-black tracking-widest text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full">
-                                                Buscando...
+                    <div className={cn(
+                        "flex-1 overflow-y-auto mt-4 space-y-3 pb-4 md:pb-6 scrollbar-hide",
+                        !isOpen ? "hidden lg:block lg:max-h-[60vh]" : "max-h-[60vh] lg:max-h-[60vh]"
+                    )}>
+                        {cart.map((item) => (
+                            <div key={item.id} className={cn(
+                                "flex flex-col p-3 rounded-2xl border gap-3 transition-colors",
+                                item.isOptimistic
+                                    ? "bg-slate-100/50 border-slate-200 animate-pulse ring-1 ring-blue-500/20"
+                                    : "bg-slate-50 border-slate-100"
+                            )}>
+                                <div className="w-full flex items-center justify-between">
+                                    <p className={cn(
+                                        "font-bold text-sm leading-tight pr-2",
+                                        item.isOptimistic ? "text-slate-500" : "text-slate-800"
+                                    )}>
+                                        {item.name}
+                                    </p>
+                                    {item.isOptimistic && (
+                                        <span className="text-[10px] uppercase font-black tracking-widest text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full">
+                                            Buscando...
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="flex items-center justify-between w-full border-t border-slate-100 pt-1">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex items-center bg-white border border-slate-200 rounded-full h-8 overflow-hidden shadow-sm shrink-0">
+                                            <button
+                                                onClick={() => updateQuantity(item.id, -1)}
+                                                className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                                                disabled={item.quantity <= 1}
+                                            >
+                                                -
+                                            </button>
+                                            <span className="w-6 text-center text-xs font-black text-slate-700 select-none">
+                                                {item.quantity}
                                             </span>
-                                        )}
+                                            <button
+                                                onClick={() => updateQuantity(item.id, 1)}
+                                                className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+                                                disabled={item.isOptimistic}
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                        <p className="text-xs text-slate-400 font-medium whitespace-nowrap hidden sm:block">
+                                            {item.isOptimistic ? "---" : `$${item.price.toLocaleString("es-CL")} c/u`}
+                                        </p>
                                     </div>
 
-                                    <div className="flex items-center justify-between w-full border-t border-slate-100 pt-1">
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex items-center bg-white border border-slate-200 rounded-full h-8 overflow-hidden shadow-sm shrink-0">
-                                                <button
-                                                    onClick={() => updateQuantity(item.id, -1)}
-                                                    className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
-                                                    disabled={item.quantity <= 1}
-                                                >
-                                                    -
-                                                </button>
-                                                <span className="w-6 text-center text-xs font-black text-slate-700 select-none">
-                                                    {item.quantity}
-                                                </span>
-                                                <button
-                                                    onClick={() => updateQuantity(item.id, 1)}
-                                                    className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
-                                                    disabled={item.isOptimistic}
-                                                >
-                                                    +
-                                                </button>
-                                            </div>
-                                            <p className="text-xs text-slate-400 font-medium whitespace-nowrap hidden sm:block">
+                                    <div className="flex items-center gap-3 shrink-0">
+                                        <div className="text-right">
+                                            <p className="font-black text-slate-900 text-sm leading-none">
+                                                {item.isOptimistic ? "..." : `$${(item.price * item.quantity).toLocaleString("es-CL")}`}
+                                            </p>
+                                            <p className="text-[10px] text-slate-400 font-medium sm:hidden mt-0.5">
                                                 {item.isOptimistic ? "---" : `$${item.price.toLocaleString("es-CL")} c/u`}
                                             </p>
                                         </div>
-
-                                        <div className="flex items-center gap-3 shrink-0">
-                                            <div className="text-right">
-                                                <p className="font-black text-slate-900 text-sm leading-none">
-                                                    {item.isOptimistic ? "..." : `$${(item.price * item.quantity).toLocaleString("es-CL")}`}
-                                                </p>
-                                                <p className="text-[10px] text-slate-400 font-medium sm:hidden mt-0.5">
-                                                    {item.isOptimistic ? "---" : `$${item.price.toLocaleString("es-CL")} c/u`}
-                                                </p>
-                                            </div>
-                                            <button
-                                                onClick={() => removeFromCart(item.id)}
-                                                className="text-slate-300 hover:text-red-500 transition-colors p-1 flex-shrink-0"
-                                                disabled={item.isOptimistic}
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        </div>
+                                        <button
+                                            onClick={() => removeFromCart(item.id)}
+                                            className="text-slate-300 hover:text-red-500 transition-colors p-1 flex-shrink-0"
+                                            disabled={item.isOptimistic}
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
+                            </div>
+                        ))}
+                    </div>
 
                     {/* Footer Actions when Open */}
-                    {isOpen && (
-                        <div className="absolute bottom-6 left-6 right-6 flex gap-3">
-                            <button
-                                onClick={clearCart}
-                                className="flex-1 py-4 bg-slate-100 text-slate-500 rounded-2xl font-bold text-sm hover:bg-slate-200 transition-all"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                onClick={() => setIsCheckoutOpen(true)}
-                                disabled={isProcessing}
-                                className="flex-[2] py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-2"
-                            >
-                                {isProcessing ? "Procesando..." : (
-                                    <>
-                                        <span>Cobrar ${cartTotal.toLocaleString("es-CL")}</span>
-                                        <CheckCircle2 className="w-5 h-5" />
-                                    </>
-                                )}
-                            </button>
-                        </div>
-                    )}
+                    <div className={cn(
+                        "flex gap-3 mt-4 lg:mt-6 w-full relative z-10 bg-white pt-2",
+                        !isOpen ? "hidden lg:flex" : "absolute lg:relative bottom-6 lg:bottom-auto left-6 lg:left-auto right-6 lg:right-auto w-[calc(100%-3rem)] lg:w-full"
+                    )}>
+                        <button
+                            onClick={clearCart}
+                            className="flex-1 py-3 lg:py-4 bg-slate-100 text-slate-500 rounded-2xl font-bold text-sm hover:bg-slate-200 transition-all"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            onClick={() => setIsCheckoutOpen(true)}
+                            disabled={isProcessing}
+                            className="flex-[2] py-3 lg:py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-2"
+                        >
+                            {isProcessing ? "Procesando..." : (
+                                <>
+                                    <span>Cobrar ${cartTotal.toLocaleString("es-CL")}</span>
+                                    <CheckCircle2 className="w-5 h-5" />
+                                </>
+                            )}
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </>
