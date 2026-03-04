@@ -203,19 +203,19 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                 <table className="w-full text-xs md:text-sm text-left">
                     <thead className="text-[10px] md:text-xs text-slate-400 uppercase bg-slate-50 font-bold border-b border-slate-100">
                         <tr>
-                            <th className="px-0.5 md:px-1 py-2 w-8 md:w-10 text-center text-atsit-blue">
+                            <th className="px-0.5 md:px-1 py-1 w-8 md:w-10 text-center text-atsit-blue">
                                 <Plus className="w-3 h-3 md:w-4 md:h-4 mx-auto" />
                             </th>
-                            <th className="px-1 py-2 w-auto min-w-[80px] md:min-w-[120px]">Producto</th>
-                            <th className="px-0.5 py-2 w-8 md:w-10 text-center">Stock</th>
-                            <th className="px-0.5 py-2 w-10 md:w-12 text-center bg-blue-50/50 text-atsit-blue">Input</th>
-                            <th className="px-0.5 py-2 w-12 md:w-16 text-center">Acción</th>
+                            <th className="px-1 py-1 w-auto min-w-[80px] md:min-w-[120px]">Producto</th>
+                            <th className="px-0.5 py-1 w-8 md:w-10 text-center">Stock</th>
+                            <th className="px-0.5 py-1 w-10 md:w-12 text-center bg-blue-50/50 text-atsit-blue">Input</th>
+                            <th className="px-0.5 py-1 w-12 md:w-16 text-center">Acción</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                         {localInventory.map((product) => (
                             <tr key={product.id} className="hover:bg-slate-50/50 transition-colors group">
-                                <td className="px-0.5 md:px-1 py-1 text-center">
+                                <td className="px-0.5 md:px-1 py-0.5 text-center">
                                     <button
                                         onClick={() => {
                                             if (product.stock <= 0) {
@@ -229,24 +229,24 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                                                 id: product.id
                                             })
                                         }}
-                                        className="bg-blue-600 text-white hover:bg-blue-700 p-1.5 md:p-2 rounded-lg transition-all shadow-sm shadow-blue-500/30 flex items-center justify-center mx-auto active:scale-90"
+                                        className="bg-blue-600 text-white hover:bg-blue-700 p-1 md:p-1.5 rounded-lg transition-all shadow-sm shadow-blue-500/30 flex items-center justify-center mx-auto active:scale-90"
                                         title="Agregar a Venta"
                                         disabled={product.stock <= 0}
                                     >
                                         <Plus className="w-3 h-3 md:w-4 md:h-4" />
                                     </button>
                                 </td>
-                                <td className="px-1 py-1">
-                                    <div className="flex flex-col gap-0.5">
-                                        <span className="font-bold text-slate-700 text-[11px] md:text-sm line-clamp-2 leading-tight uppercase">
+                                <td className="px-1 py-0.5">
+                                    <div className="flex flex-col">
+                                        <span className="font-bold text-slate-700 text-[11px] md:text-sm line-clamp-1 leading-tight uppercase">
                                             {product.name}
                                         </span>
-                                        <span className="font-bold text-slate-500 text-[10px] md:text-xs">
+                                        <span className="font-bold text-slate-500 text-[10px] md:text-xs leading-none mt-0.5">
                                             ${formatNumber(product.price)}
                                         </span>
                                     </div>
                                 </td>
-                                <td className="px-0.5 py-1 text-center align-middle">
+                                <td className="px-0.5 py-0.5 text-center align-middle">
                                     <div className="flex items-center justify-center">
                                         <span className={`px-1 rounded-lg font-black text-sm md:text-lg flex items-center justify-center min-w-[2rem] h-8 md:h-10 shadow-sm border ${product.stock <= 0
                                             ? "bg-rose-100 text-rose-700 border-rose-200"
@@ -258,14 +258,14 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                                         </span>
                                     </div>
                                 </td>
-                                <td className="px-0.5 py-1 text-center bg-blue-50/10 align-middle">
+                                <td className="px-0.5 py-0.5 text-center bg-blue-50/10 align-middle">
                                     <div className="flex items-center justify-center">
                                         <div className="relative w-full max-w-[2.5rem] md:max-w-[3rem]">
                                             <input
                                                 type="text"
                                                 inputMode="numeric"
                                                 placeholder="+"
-                                                className="w-full h-8 md:h-10 px-0.5 bg-white border border-slate-200 rounded-lg font-bold text-center text-slate-900 focus:border-atsit-blue outline-none transition-all placeholder:text-slate-300 caret-atsit-blue shadow-sm text-sm md:text-lg"
+                                                className="w-full h-7 md:h-8 px-0.5 bg-white border border-slate-200 rounded-lg font-bold text-center text-slate-900 focus:border-atsit-blue outline-none transition-all placeholder:text-slate-300 caret-atsit-blue shadow-sm text-sm"
                                                 onFocus={(e) => e.target.select()}
                                                 value={updates[product.id]?.addStock || ""}
                                                 onChange={(e) => handleUpdateChange(product.id, 'addStock', e.target.value)}
@@ -273,7 +273,7 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                                         </div>
                                     </div>
                                 </td>
-                                <td className="px-0 py-1 text-center align-middle">
+                                <td className="px-0 py-0.5 text-center align-middle">
                                     <div className="flex items-center justify-end gap-0.5 pr-0.5">
                                         {(updates[product.id]?.addStock > 0 || (updates[product.id]?.price !== undefined && updates[product.id]?.price !== product.price)) ? (
                                             <button

@@ -77,13 +77,12 @@ async function DashboardLeft({ session, isTrial, daysRemaining }: { session: any
       <IntelligentFOMOBanner isTrial={isTrial} daysRemaining={daysRemaining} />
 
       <div className="space-y-6 lg:space-y-8 w-full">
-        {/* Welcome Section (Desktop Only) */}
-        <div className="hidden lg:flex mb-6 items-center justify-between">
+        <div className="hidden lg:flex mb-3 items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-800 flex items-center gap-2">
               Hola, {session.user.name?.split(' ')[0]} <span className="text-2xl">👋</span>
             </h2>
-            <p className="text-slate-500 text-sm mt-1">Tu resumen de negocio en tiempo real.</p>
+            <p className="text-slate-500 text-xs md:text-sm mt-0.5">Tu resumen de negocio en tiempo real.</p>
           </div>
           {(session.user as any).role === 'ADMIN' && (
             <a href="/admin" className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20 active:scale-95">
@@ -98,7 +97,7 @@ async function DashboardLeft({ session, isTrial, daysRemaining }: { session: any
         <section className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
           <SalesCard amount={salesToday} />
 
-          <ExpenseCard amount={expensesThisWeek || 0} />
+          <ExpenseCard amount={expensesToday || 0} />
 
           <InventoryCard
             totalValue={totalStockValue || 0}
@@ -190,7 +189,7 @@ export default async function Home() {
         </div>
 
         {/* COLUMNA DERECHA (4/12) - Carrito y Actividad Reciente */}
-        <div className="lg:col-span-4 w-full flex flex-col gap-6 lg:sticky lg:top-24 lg:max-h-[calc(100vh-6rem)] relative z-20">
+        <div className="lg:col-span-4 w-full flex flex-col gap-6 relative z-20">
           <CartSummary />
 
           <div className="hidden lg:block h-full">

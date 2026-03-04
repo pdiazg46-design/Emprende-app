@@ -24,7 +24,15 @@ export function CartSummary() {
         })
     }, [])
 
-    if (cartCount === 0) return null
+    if (cartCount === 0) {
+        return (
+            <div className="hidden lg:flex w-full bg-slate-50/50 border-2 border-slate-200 border-dashed rounded-[2rem] p-8 flex-col items-center justify-center text-slate-400 transition-all shrink-0 animate-in fade-in">
+                <ShoppingCart className="w-10 h-10 opacity-20 mb-3" />
+                <p className="font-black text-sm text-slate-500 uppercase tracking-wide">El carrito está vacío</p>
+                <p className="text-xs mt-1 text-slate-400">Clickea [+] en un producto a la izquierda para cobrar.</p>
+            </div>
+        )
+    }
 
     const handleConfirmSale = (method: string) => {
         if (isProcessing) return;
