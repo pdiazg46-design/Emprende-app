@@ -273,8 +273,8 @@ export default async function F29Page(props: {
                     </section>
                 </div>
             </div>
-            {/* CONTENEDOR OCULTO PARA EXPORTACIÓN PDF DIRECTA */}
-            <div className="absolute top-[200vh] left-[-4000px] pointer-events-none -z-50">
+            {/* CONTENEDOR OCULTO PARA EXPORTACIÓN PDF DIRECTA EN VIEWPORT (OPACIDAD 0) PARA CAPTURA PERFECTA */}
+            <div className="fixed top-0 left-0 w-full overflow-hidden opacity-0 pointer-events-none -z-50">
                 <F29PrintReport data={data} monthIndex={currentMonth} year={currentYear} user={session.user} />
             </div>
         </DesktopLayout>

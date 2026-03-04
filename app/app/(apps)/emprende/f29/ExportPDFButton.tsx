@@ -28,7 +28,9 @@ export function ExportPDFButton({ month, year }: ExportPDFButtonProps) {
                 scale: 2,
                 useCORS: true,
                 backgroundColor: '#ffffff',
-                logging: false
+                logging: true,
+                windowWidth: element.scrollWidth,
+                windowHeight: element.scrollHeight
             });
 
             const imgData = canvas.toDataURL('image/jpeg', 0.98);
@@ -44,9 +46,9 @@ export function ExportPDFButton({ month, year }: ExportPDFButtonProps) {
             pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
             pdf.save(`Emprende_F29_Reporte_${month + 1}_${year}.pdf`);
 
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error al exportar PDF directo:", error);
-            alert("Error al generar Archivo PDF. Por favor reintente.");
+            alert(`Fallo Crítico PDF: ${error.message || error}. Por favor tome un Pantallazo y envíelo a Soporte.`);
         } finally {
             setIsExporting(false);
         }
