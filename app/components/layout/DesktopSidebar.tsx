@@ -23,7 +23,7 @@ export function DesktopSidebar({ user }: { user: any }) {
     ];
 
     return (
-        <aside className="w-64 bg-white border-r border-slate-200 flex flex-col h-screen fixed left-0 top-0 z-40 hidden md:flex">
+        <aside className="w-64 bg-white border-r border-slate-200 flex flex-col h-screen fixed left-0 top-0 z-40">
             <div className="p-6 border-b border-slate-100 flex flex-col items-center gap-4 text-center">
                 <div className="relative w-40 h-20 mb-2 mx-auto flex items-center justify-center">
                     <Image
