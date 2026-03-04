@@ -185,7 +185,19 @@ function getChileTimeBounds(baseDate: Date = new Date()) {
     const yearStart = new Date(Date.UTC(year, 0, 1, tzOffsetHours, 0, 0, 0));
     const yearEnd = new Date(Date.UTC(year, 11, 31, tzOffsetHours + 23, 59, 59, 999));
 
-    return { todayStart, weekStart, weekEnd, monthStart, monthEnd, yearStart, yearEnd, chileTime };
+    // Corrección para "Mes Anterior" con cambio de año
+    const lastMonthYear = month === 0 ? year - 1 : year;
+    const lastMonthIdx = month === 0 ? 11 : month - 1;
+
+    const lastMonthStart = new Date(Date.UTC(lastMonthYear, lastMonthIdx, 1, tzOffsetHours, 0, 0, 0));
+    const lastMonthEnd = new Date(Date.UTC(lastMonthYear, lastMonthIdx + 1, 0, tzOffsetHours + 23, 59, 59, 999));
+
+    // Corrección para "Año Anterior"
+    const lastYearStart = new Date(Date.UTC(year - 1, 0, 1, tzOffsetHours, 0, 0, 0));
+    const lastYearEnd = new Date(Date.UTC(year - 1, 11, 31, tzOffsetHours + 23, 59, 59, 999));
+
+
+    return { todayStart, weekStart, weekEnd, monthStart, monthEnd, lastMonthStart, lastMonthEnd, yearStart, yearEnd, lastYearStart, lastYearEnd, chileTime };
 }
 
 export const getDashboardMetrics = cache(async () => {
