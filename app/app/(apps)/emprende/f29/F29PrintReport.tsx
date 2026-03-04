@@ -1,4 +1,4 @@
-import { Calculator, FileText, Calendar, DollarSign, Info, CheckCircle2, Globe, Mail } from "lucide-react";
+import React from 'react';
 
 interface F29PrintReportProps {
     data: any;
@@ -13,6 +13,18 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
 
     return (
         <div id="f29-pdf-template" className="w-[790px] mx-auto p-8" style={{ fontFamily: 'sans-serif', backgroundColor: '#ffffff', color: '#0f172a' }}>
+            {/* HARD CSS RESET: Evita que html2canvas intente parsear variables OKLCH/LAB heredadas del :root de Tailwind V4 */}
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                #f29-pdf-template, #f29-pdf-template * {
+                    --background: #ffffff !important;
+                    --foreground: #000000 !important;
+                    --border: #e2e8f0 !important;
+                    --primary: #4f46e5 !important;
+                    --ring: transparent !important;
+                    color-scheme: light !important;
+                }
+            `}} />
 
             {/* HEADERS Institucionales ATSIT */}
             <div className="flex justify-between items-start border-b-2 pb-4 mb-6" style={{ borderColor: '#e2e8f0' }}>
@@ -24,9 +36,9 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
                     <div className="pl-4 border-l-2" style={{ borderColor: '#e2e8f0' }}>
                         <h1 className="text-lg font-black tracking-tight m-0 uppercase" style={{ color: '#0f172a' }}>ATSIT TELECOM</h1>
                         <p className="text-[10px] font-bold m-0 tracking-widest uppercase mb-1" style={{ color: '#64748b' }}>Servicios de Telecomunicaciones</p>
-                        <div className="flex items-center text-[10px] gap-2 mt-1 font-medium" style={{ color: '#475569' }}>
-                            <span className="flex items-center gap-1"><Globe className="w-3 h-3" /> at-sit-portafolio.vercel.app</span>
-                            <span className="flex items-center gap-1"><Mail className="w-3 h-3" /> atsittelecom@gmail.com</span>
+                        <div className="flex flex-col text-[10px] mt-1 font-medium" style={{ color: '#475569' }}>
+                            <span>Web: at-sit-portafolio.vercel.app</span>
+                            <span>Mail: atsittelecom@gmail.com</span>
                         </div>
                     </div>
                 </div>
@@ -42,8 +54,7 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
                 <div>
                     <h2 className="text-xl font-black mb-1" style={{ color: '#0f172a' }}>Reporte Analítico F29</h2>
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border" style={{ backgroundColor: '#f1f5f9', borderColor: '#e2e8f0' }}>
-                        <Calendar className="w-4 h-4" style={{ color: '#475569' }} />
-                        <span className="font-bold text-xs" style={{ color: '#334155' }}>Período: {monthName} {year}</span>
+                        <strong className="font-bold text-xs" style={{ color: '#334155' }}>🗓 Período: {monthName} {year}</strong>
                     </div>
                 </div>
             </div>
@@ -51,7 +62,7 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
             {/* Resumen Ventas */}
             <div className="mb-6">
                 <h3 className="text-sm font-bold border-b pb-1.5 mb-3 flex items-center gap-2" style={{ color: '#0f172a', borderColor: '#e2e8f0' }}>
-                    <DollarSign className="w-4 h-4" style={{ color: '#4f46e5' }} /> 1. Registros de Ventas e Ingresos
+                    📈 1. Registros de Ventas e Ingresos
                 </h3>
                 <div className="grid grid-cols-3 gap-3">
                     <div className="p-3 rounded-xl border" style={{ backgroundColor: '#f8fafc', borderColor: '#e2e8f0' }}>
@@ -72,7 +83,7 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
             {/* Resumen Compras */}
             <div className="mb-6">
                 <h3 className="text-sm font-bold border-b pb-1.5 mb-3 flex items-center gap-2" style={{ color: '#0f172a', borderColor: '#e2e8f0' }}>
-                    <FileText className="w-4 h-4" style={{ color: '#4f46e5' }} /> 2. Compras y Retenciones
+                    🧾 2. Compras y Retenciones
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 rounded-xl border flex justify-between items-center" style={{ backgroundColor: '#ecfdf5', borderColor: '#a7f3d0' }}>
@@ -95,7 +106,7 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
             {/* Cuadro Resumen Final */}
             <div className="mb-4">
                 <h3 className="text-sm font-bold border-b pb-1.5 mb-3 flex items-center gap-2" style={{ color: '#0f172a', borderColor: '#e2e8f0' }}>
-                    <CheckCircle2 className="w-4 h-4" style={{ color: '#4f46e5' }} /> 3. Liquidación Resumen para TGR
+                    📑 3. Liquidación Resumen para TGR
                 </h3>
 
                 <div className="border rounded-xl overflow-hidden" style={{ backgroundColor: '#f8fafc', borderColor: '#e2e8f0' }}>
@@ -107,7 +118,7 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
 
                         {data.remanenteIva > 0 && (
                             <div className="flex justify-between items-center p-2 rounded-lg border" style={{ backgroundColor: '#d1fae5', borderColor: '#a7f3d0' }}>
-                                <span className="font-bold text-xs flex items-center gap-1.5" style={{ color: '#065f46' }}><Info className="w-3.5 h-3.5" /> Remanente Crédito</span>
+                                <span className="font-bold text-xs flex items-center gap-1.5" style={{ color: '#065f46' }}>ℹ Remanente Crédito</span>
                                 <span className="font-black text-sm" style={{ color: '#065f46' }}>${data.remanenteIva.toLocaleString('es-CL')}</span>
                             </div>
                         )}
