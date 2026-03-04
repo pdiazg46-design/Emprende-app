@@ -137,7 +137,7 @@ export function CartSummary() {
                     )}>
                         {cart.map((item) => (
                             <div key={item.id} className={cn(
-                                "flex flex-col p-3 rounded-2xl border gap-3 transition-colors",
+                                "flex flex-col p-2 md:px-3 md:py-2 rounded-xl border gap-1.5 transition-colors",
                                 item.isOptimistic
                                     ? "bg-slate-100/50 border-slate-200 animate-pulse ring-1 ring-blue-500/20"
                                     : "bg-slate-50 border-slate-100"
@@ -156,28 +156,28 @@ export function CartSummary() {
                                     )}
                                 </div>
 
-                                <div className="flex items-center justify-between w-full border-t border-slate-100 pt-1">
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex items-center bg-white border border-slate-200 rounded-full h-8 overflow-hidden shadow-sm shrink-0">
+                                <div className="flex items-center justify-between w-full border-t border-slate-100 pt-1.5 mt-0.5">
+                                    <div className="flex items-center gap-2 md:gap-3">
+                                        <div className="flex items-center bg-white border border-slate-200 rounded-lg h-7 overflow-hidden shadow-sm shrink-0">
                                             <button
                                                 onClick={() => updateQuantity(item.id, -1)}
-                                                className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+                                                className="w-7 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
                                                 disabled={item.quantity <= 1}
                                             >
                                                 -
                                             </button>
-                                            <span className="w-6 text-center text-xs font-black text-slate-700 select-none">
+                                            <span className="w-5 md:w-6 text-center text-xs font-black text-slate-700 select-none">
                                                 {item.quantity}
                                             </span>
                                             <button
                                                 onClick={() => updateQuantity(item.id, 1)}
-                                                className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
+                                                className="w-7 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
                                                 disabled={item.isOptimistic}
                                             >
                                                 +
                                             </button>
                                         </div>
-                                        <p className="text-xs text-slate-400 font-medium whitespace-nowrap hidden sm:block">
+                                        <p className="text-[10px] md:text-xs text-slate-400 font-medium whitespace-nowrap hidden sm:block">
                                             {item.isOptimistic ? "---" : `$${item.price.toLocaleString("es-CL")} c/u`}
                                         </p>
                                     </div>
