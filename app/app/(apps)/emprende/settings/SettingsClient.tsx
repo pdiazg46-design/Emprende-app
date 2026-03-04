@@ -247,8 +247,8 @@ export default function SettingsClient() {
                         </div>
                     )}
 
-                    {/* AUTOGESTIÓN TRIBUTARIA (SOLO SI F29 ESTA ACTIVO) */}
-                    {f29Active && (
+                    {/* AUTOGESTIÓN TRIBUTARIA (SOLO SI F29 ESTA ACTIVO O ES ADMIN) */}
+                    {(f29Active || (session?.user as any)?.role === 'ADMIN') && (
                         <div className="bg-white rounded-3xl border border-indigo-100 shadow-sm overflow-hidden animate-in fade-in slide-in-from-top-4">
                             <div className="p-6 border-b border-indigo-50 bg-indigo-50/30 flex justify-between items-center">
                                 <div>
