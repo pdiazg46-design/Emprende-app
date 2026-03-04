@@ -3,7 +3,7 @@
 import { Download } from "lucide-react";
 import { useState } from "react";
 import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 
 interface ExportPDFButtonProps {
     month: number;
@@ -19,7 +19,7 @@ export function ExportPDFButton({ month, year }: ExportPDFButtonProps) {
         setIsExporting(true);
         try {
             const element = document.getElementById("f29-summary-capture");
-            if (!element) throw new Error("No se encontró el resumen");
+            if (!element) throw new Error("No se encontró el contenedor f29-summary-capture");
 
             // Temporalmente forzamos estilos para asegurar un buen renderizado
             element.style.background = "#0f172a"; // slate-900 (el color real del div)
@@ -45,7 +45,7 @@ export function ExportPDFButton({ month, year }: ExportPDFButtonProps) {
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-            // Header Formal (Para darle toque a documento contable)
+            // Header Formal
             pdf.setFontSize(20);
             pdf.setTextColor(15, 23, 42); // slate-900
             pdf.text("Resumen Formulario 29", 15, 20);
@@ -69,7 +69,7 @@ export function ExportPDFButton({ month, year }: ExportPDFButtonProps) {
 
         } catch (error) {
             console.error("Error al generar PDF:", error);
-            alert("Hubo un error al generar el PDF. Asegúrese de que el reporte haya cargado completamente.");
+            alert(`Hubo un error al generar PDF: ${error instanceof Error ? error.message : String(error)}`);
         } finally {
             setIsExporting(false);
         }
