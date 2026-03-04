@@ -138,7 +138,7 @@ export async function addTransaction(data: { type: string, amount: number, descr
                         type: 'INCOME',
                         fundId: finanzaUser.sharedFund.id,
                         category: 'Ingreso Empresarial',
-                        description: `Retiro desde Emprende POS${data.paymentMethod ? ` (${data.paymentMethod})` : ''}`,
+                        description: `Ingreso desde Emprende (${data.paymentMethod || 'CASH'})`,
                         installments: 1
                     }
                 })

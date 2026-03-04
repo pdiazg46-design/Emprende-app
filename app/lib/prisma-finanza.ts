@@ -1,4 +1,4 @@
-import { PrismaClient } from '../node_modules/@prisma/client-finanza'
+import { PrismaClient } from '../prisma-finanza/client'
 
 const globalForPrismaFinanza = globalThis as unknown as { prismaFinanza: PrismaClient }
 
