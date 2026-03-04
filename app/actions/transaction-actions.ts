@@ -2,7 +2,6 @@
 
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { prismaFinanza } from "@/lib/prisma-finanza"
 import { revalidatePath } from "next/cache"
 import { cache } from "react"
 import { findBestProductMatch } from "@/lib/product-matching"
@@ -123,35 +122,6 @@ export async function addTransaction(data: { type: string, amount: number, descr
         }
     })
 
-    // --- INTEGRACION CRUZADA CON FINANZA FACIL ---
-    if (data.type === 'WITHDRAWAL') {
-        try {
-            const finanzaUser = await prismaFinanza.user.findUnique({
-                where: { email: session.user.email },
-                include: { sharedFund: true }
-            })
-
-            if (finanzaUser && finanzaUser.sharedFund) {
-                await prismaFinanza.movement.create({
-                    data: {
-                        amount: finalAmount,
-                        type: 'INCOME',
-                        fundId: finanzaUser.sharedFund.id,
-                        category: 'Ingreso Empresarial',
-                        description: `Ingreso desde Emprende (${data.paymentMethod || 'CASH'})`,
-                        installments: 1
-                    }
-                })
-            }
-        } catch (error: any) {
-            console.error("Sincronización con Finanza Fácil fallida:", error)
-            revalidatePath("/")
-            return {
-                success: true, // We still return true because local Emprende transaction succeeded
-                message: `✅ Cajero OK. ❌ Pero falló la subida a Finanzas: ${error.message}`
-            }
-        }
-    }
 
     revalidatePath("/")
 

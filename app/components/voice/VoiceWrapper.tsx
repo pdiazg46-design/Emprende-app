@@ -100,12 +100,12 @@ export function VoiceWrapper() {
                 showFeedback('success', `📉 Gasto de $${intent.amount.toLocaleString('es-CL')} registrado.`)
             }
             else if (intent.type === 'WITHDRAWAL') {
-                await addTransaction({
+                const result = await addTransaction({
                     type: 'WITHDRAWAL',
                     amount: intent.amount || 0,
                     description: intent.description
                 })
-                showFeedback('success', `🏦 Retiro de $${intent.amount.toLocaleString('es-CL')} procesado.`)
+                showFeedback(result.success ? 'success' : 'error', result.message || `🏦 Retiro de $${intent.amount.toLocaleString('es-CL')} procesado.`)
             }
             else if (intent.type === 'INVENTORY_ADD') {
                 await addProduct({
