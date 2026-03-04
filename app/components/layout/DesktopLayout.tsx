@@ -12,9 +12,9 @@ export function DesktopLayout({ children, user }: DesktopLayoutProps) {
     const isBasic = user?.subscriptionPlan === 'BASIC';
 
     return (
-        <div className="min-h-screen bg-[#F4F7F9] flex relative overflow-x-hidden max-w-[100vw]">
+        <div className="min-h-screen bg-[#F4F7F9] print:bg-transparent flex relative overflow-x-hidden max-w-[100vw]">
             <DesktopSidebar user={user} />
-            <main className="flex-1 min-w-0 md:ml-64 p-4 md:p-8 transition-all duration-300 pb-32 md:pb-8 relative">
+            <main className="flex-1 min-w-0 md:ml-64 print:ml-0 p-4 md:p-8 print:p-0 transition-all duration-300 pb-32 md:pb-8 relative">
                 {children}
             </main>
 
