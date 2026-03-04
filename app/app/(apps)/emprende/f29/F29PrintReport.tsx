@@ -19,7 +19,7 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
                 <div className="flex items-center gap-4">
                     {/* Logo ATSIT */}
                     <div className="w-32 h-auto" style={{ minWidth: "128px" }}>
-                        <img src="/logo-atsit.png" alt="ATSIT Logo" className="w-full h-auto object-contain" crossOrigin="anonymous" />
+                        <img src="/logo-atsit.png" alt="ATSIT Logo" className="w-full h-auto object-contain" />
                     </div>
                     <div className="pl-4 border-l-2 border-slate-200">
                         <h1 className="text-lg font-black text-[#0f172a] tracking-tight m-0 uppercase">ATSIT TELECOM</h1>

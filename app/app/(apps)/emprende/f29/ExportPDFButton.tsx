@@ -2,6 +2,8 @@
 
 import { Download, Loader2 } from "lucide-react";
 import { useState } from "react";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 interface ExportPDFButtonProps {
     month: number;
@@ -14,10 +16,6 @@ export function ExportPDFButton({ month, year }: ExportPDFButtonProps) {
     const handleExport = async () => {
         setIsExporting(true);
         try {
-            // Importación dinámica para evitar crash SSR con Next.js
-            const html2pdfModule = await import('html2pdf.js');
-            const html2pdf = (html2pdfModule.default ? html2pdfModule.default : html2pdfModule) as any;
-
             const element = document.getElementById('f29-pdf-template');
             if (!element) {
                 console.error("Template PDF no encontrado en el DOM");
@@ -25,19 +23,26 @@ export function ExportPDFButton({ month, year }: ExportPDFButtonProps) {
                 return;
             }
 
-            // Forzamos block por un instante para que html2canvas lo lea perfecto
-            element.style.display = 'block';
+            // Capturar la imagen forzada del canvas
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                logging: false
+            });
 
-            // Configuración Carta Ajustada
-            const opt = {
-                margin: [0.3, 0.3, 0.3, 0.3], // Margen en formato Array [Sup, Der, Inf, Izq] en pulgadas
-                filename: `Emprende_F29_Reporte_${month + 1}_${year}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, letterRendering: true, backgroundColor: '#ffffff' },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
+            const imgData = canvas.toDataURL('image/jpeg', 0.98);
 
-            await html2pdf().from(element).set(opt).save();
+            // Instanciar un documento Carta (letter), vertical (portrait)
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+
+            // Calculamos propociones en milímetros 
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            // Inyectamos la imagen capturada en alta resolución y la descargamos
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`Emprende_F29_Reporte_${month + 1}_${year}.pdf`);
 
         } catch (error) {
             console.error("Error al exportar PDF directo:", error);
