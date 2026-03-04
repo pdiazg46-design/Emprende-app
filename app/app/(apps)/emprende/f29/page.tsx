@@ -199,18 +199,51 @@ export default async function F29Page(props: {
                     </section>
 
                     {/* 3. LÍNEA FINAL (RESUMEN F29) */}
-                    <section id="f29-summary-capture" className="bg-[#0f172a] rounded-[2rem] p-6 md:p-8 shadow-xl relative overflow-hidden" style={{ backgroundColor: '#0f172a' }}>
+                    <style dangerouslySetInnerHTML={{
+                        __html: `
+                        @media print {
+                            body * {
+                                visibility: hidden;
+                            }
+                            #f29-summary-capture, #f29-summary-capture * {
+                                visibility: visible;
+                            }
+                            #f29-summary-capture {
+                                position: absolute;
+                                left: 0;
+                                top: 0;
+                                width: 100vw;
+                                box-shadow: none !important;
+                                margin: 0;
+                            }
+                            /* Evitamos cortar a la mitad */
+                            #f29-summary-capture {
+                                page-break-inside: avoid;
+                            }
+                            @page {
+                                margin: 1cm;
+                            }
+                        }
+                    `}} />
+                    <section id="f29-summary-capture" className="bg-slate-900 rounded-[2rem] p-6 md:p-8 shadow-xl relative overflow-hidden print:bg-slate-900 print:text-white print:break-inside-avoid shadow-none border border-slate-700/50">
                         {/* Decorative Background */}
                         <div className="absolute top-0 right-0 p-8 opacity-5">
                             <Calculator className="w-64 h-64 text-white" />
                         </div>
 
                         <div className="relative z-10">
-                            <div className="flex items-center gap-3 mb-8">
-                                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white backdrop-blur-md" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
-                                    <CheckCircle2 className="w-5 h-5" />
+                            <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/10">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white backdrop-blur-md">
+                                        <CheckCircle2 className="w-5 h-5" />
+                                    </div>
+                                    <h2 className="text-xl font-black text-white tracking-tight">
+                                        Resumen Declaración TGR
+                                        <span className="hidden print:inline ml-4 text-xs font-normal text-slate-400">
+                                            - Período Tributario: {monthNames[currentMonth]} {currentYear}
+                                        </span>
+                                    </h2>
                                 </div>
-                                <h2 className="text-xl font-black text-white tracking-tight">Resumen Declaración TGR</h2>
                             </div>
 
                             <div className="space-y-4 mb-8">
@@ -220,13 +253,13 @@ export default async function F29Page(props: {
                                 </div>
 
                                 {data.remanenteIva > 0 && (
-                                    <div className="flex justify-between items-center text-emerald-400 p-3 rounded-xl border" style={{ backgroundColor: 'rgba(52, 211, 153, 0.1)', borderColor: 'rgba(52, 211, 153, 0.2)' }}>
+                                    <div className="flex justify-between items-center text-emerald-400 bg-emerald-400/10 p-3 rounded-xl border border-emerald-400/20">
                                         <span className="font-bold text-sm flex items-center gap-2"><Info className="w-4 h-4" /> Remanente de Crédito (A favor mes prox)</span>
                                         <span className="font-black text-lg">${data.remanenteIva.toLocaleString('es-CL')}</span>
                                     </div>
                                 )}
 
-                                <div className="flex justify-between items-center text-white/80 border-t pt-4" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
+                                <div className="flex justify-between items-center text-white/80 border-t border-white/10 pt-4">
                                     <span className="font-medium text-sm">Retención Boletas Honorarios (15.25%)</span>
                                     <span className="font-black text-lg">${data.retencionHonorarios.toLocaleString('es-CL')}</span>
                                 </div>
@@ -237,9 +270,8 @@ export default async function F29Page(props: {
                                 </div>
                             </div>
 
-                            <div className="rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg border relative overflow-hidden"
-                                style={{ backgroundColor: '#2563eb', borderColor: 'rgba(255,255,255,0.1)' }} data-html2canvas-ignore="true">
-                                <div className="absolute -left-10 w-40 h-full opacity-0 transform -skew-x-12 translate-x-full transition-all group-hover:opacity-100" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}></div>
+                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg shadow-blue-900/40 relative overflow-hidden print:bg-blue-600 print:border-none print:shadow-none">
+                                <div className="absolute -left-10 w-40 h-full bg-white/5 opacity-0 transform -skew-x-12 translate-x-full transition-all group-hover:opacity-100"></div>
 
                                 <div>
                                     <p className="text-white/80 text-xs font-bold uppercase tracking-widest mb-1">Costo F29 a Pagar</p>
