@@ -2,6 +2,7 @@ import { getF29Data } from "@/actions/f29-actions";
 import { Calculator, FileText, AlertCircle, Calendar, DollarSign, ArrowLeft, Download, Info, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import F29MonthSelect from "./F29MonthSelect";
 
 // Force dynamic
 export const dynamic = 'force-dynamic';
@@ -64,18 +65,7 @@ export default async function F29Page(props: {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-3 bg-white border border-slate-200 p-2 rounded-2xl shadow-sm">
-                    <Calendar className="w-5 h-5 text-slate-400 ml-2" />
-                    <select
-                        className="bg-transparent font-bold text-slate-700 outline-none pr-4 text-sm focus:ring-0"
-                        defaultValue={currentMonth}
-                        disabled // Para la V1 solo mes actual o pasar a Form Control interactivo
-                    >
-                        {monthNames.map((name, i) => (
-                            <option key={i} value={i}>{name} {currentYear}</option>
-                        ))}
-                    </select>
-                </div>
+                <F29MonthSelect currentMonth={currentMonth} currentYear={currentYear} />
             </header>
 
             {data.isDemo && (
