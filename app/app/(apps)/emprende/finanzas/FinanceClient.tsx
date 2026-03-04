@@ -2,22 +2,50 @@
 
 import { DesktopLayout } from "@/components/layout/DesktopLayout"
 import { useSession } from "next-auth/react"
-import { ArrowLeft, Wallet, Building2, TrendingDown, Percent, CreditCard, SmartphoneNfc, Banknote, ShieldAlert, History, AlertCircle } from "lucide-react"
+import { ArrowLeft, Wallet, Building2, TrendingDown, Percent, CreditCard, SmartphoneNfc, Banknote, ShieldAlert, History, AlertCircle, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { useState } from "react"
+import { addTransaction } from "@/actions/transaction-actions"
 
 export default function FinanceClient({ initialData, timeframe }: { initialData: any, timeframe: string }) {
     const { data: session } = useSession()
     const router = useRouter()
+    const [isRetiroModalOpen, setIsRetiroModalOpen] = useState(false)
+    const [retiroAmount, setRetiroAmount] = useState("")
+    const [isSubmittingRetiro, setIsSubmittingRetiro] = useState(false)
 
     const { ventaBrutaTotal, dineroRealEnBanco, dineroCajaFisica, comisionesCobradas, breakdown, history } = initialData
     const legacyCount = breakdown?.legacyCount || 0;
+    const totalRetiros = breakdown?.withdrawals || 0;
 
     const formatMoney = (val: number) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(Math.round(val))
 
     const handleTimeframeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         router.push(`/emprende/finanzas?timeframe=${e.target.value}`)
         router.refresh()
+    }
+
+    const handleManualRetiro = async (e: React.FormEvent) => {
+        e.preventDefault()
+        const parsedAmount = parseInt(retiroAmount.replace(/\D/g, ''))
+        if (!parsedAmount || parsedAmount <= 0) return
+
+        setIsSubmittingRetiro(true)
+        try {
+            await addTransaction({
+                type: 'WITHDRAWAL',
+                amount: parsedAmount,
+                description: 'Retiro a Finanza Fácil'
+            })
+            setRetiroAmount("")
+            setIsRetiroModalOpen(false)
+            router.refresh()
+        } catch (error) {
+            alert("Error al registrar el retiro")
+        } finally {
+            setIsSubmittingRetiro(false)
+        }
     }
 
     return (
@@ -192,7 +220,87 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
                         </div>
                     </div>
 
+                    {/* RETIROS DE CAJA CARD */}
+                    <div className="bg-white rounded-3xl border border-violet-100 shadow-sm p-6 flex flex-col justify-between md:col-span-2 xl:col-span-1">
+                        <div className="flex justify-between items-start mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center text-violet-600">
+                                    <ArrowLeft className="w-6 h-6 rotate-45" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-black text-slate-800">Retiros de Caja</h3>
+                                    <p className="text-xs text-slate-500">Dinero extraído físicamente</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setIsRetiroModalOpen(true)}
+                                className="text-xs font-bold text-violet-600 bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-lg border border-violet-200 transition-colors"
+                            >
+                                + Nuevo Retiro
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center text-sm font-bold border-b border-violet-50 pb-2">
+                                <span className="text-slate-500">Monto total extraído</span>
+                                <span className="text-violet-600 text-lg">-{formatMoney(totalRetiros)}</span>
+                            </div>
+                            <div className="flex justify-between items-center font-black pt-2">
+                                <span className="text-slate-600 text-xs leading-tight">Este valor ha sido descontado<br />matemáticamente de Caja / Efectivo</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
+                {/* MODAL RETIRO MANUAL */}
+                {isRetiroModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div className="bg-white rounded-3xl p-6 shadow-2xl max-w-sm w-full animate-in zoom-in-95 duration-200 relative">
+                            <button
+                                onClick={() => setIsRetiroModalOpen(false)}
+                                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+
+                            <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-4 text-violet-600">
+                                <Banknote className="w-8 h-8" />
+                            </div>
+
+                            <h3 className="text-xl font-black text-center text-slate-800 mb-1">Registrar Retiro</h3>
+                            <p className="text-center text-sm text-slate-500 mb-6">Extraer billetes de la caja física</p>
+
+                            <form onSubmit={handleManualRetiro} className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Monto a retirar</label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            required
+                                            value={retiroAmount}
+                                            onChange={(e) => {
+                                                const val = e.target.value.replace(/\D/g, '')
+                                                setRetiroAmount(val ? parseInt(val).toLocaleString('es-CL') : '')
+                                            }}
+                                            className="w-full pl-8 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-xl font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all"
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={isSubmittingRetiro || !retiroAmount}
+                                    className="w-full py-4 bg-violet-600 text-white rounded-2xl font-black tracking-widest uppercase hover:bg-violet-700 transition-colors disabled:opacity-50"
+                                >
+                                    {isSubmittingRetiro ? "Procesando..." : "Confirmar Retiro"}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                )}
 
                 {/* ALERTA DE SEPARACION */}
                 <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex gap-4 mt-8">

@@ -1,6 +1,6 @@
 "use client"
 
-import { TrendingUp, TrendingDown, Trash2, Package, ChevronRight, X, Clock, Receipt } from "lucide-react"
+import { TrendingUp, TrendingDown, Trash2, Package, ChevronRight, X, Clock, Receipt, ArrowDownToLine } from "lucide-react"
 import { deleteTransaction } from "@/actions/transaction-actions"
 import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
@@ -104,6 +104,7 @@ export function TransactionList({ transactions }: { transactions: Transaction[] 
                     const isInventoryIn = group.type === 'INVENTORY_IN';
                     const isInventoryOut = group.type === 'INVENTORY_OUT';
                     const isInventory = isInventoryIn || isInventoryOut;
+                    const isWithdrawal = group.type === 'WITHDRAWAL';
 
                     const shortId = group.id.slice(-4).toUpperCase();
 
@@ -127,6 +128,12 @@ export function TransactionList({ transactions }: { transactions: Transaction[] 
                         bgClass = isInventoryIn ? "bg-blue-50" : "bg-amber-50";
                         typeLabel = isInventoryIn ? "Ingreso Inv." : "Ajuste Inv.";
                         sign = isInventoryIn ? "+" : "-";
+                    } else if (isWithdrawal) {
+                        iconContent = <ArrowDownToLine className="w-5 h-5" />;
+                        colorClass = "text-violet-600";
+                        bgClass = "bg-violet-50";
+                        typeLabel = "Retiro";
+                        sign = "-";
                     }
 
                     return (

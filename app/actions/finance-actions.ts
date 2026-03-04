@@ -69,7 +69,7 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
         const sales = await prisma.transaction.findMany({
             where: {
                 userId: session.user.id,
-                type: 'SALE',
+                type: { in: ['SALE', 'WITHDRAWAL'] },
                 amount: { gt: 0 },
                 NOT: [
                     { description: { contains: 'Añadido', mode: 'insensitive' } },
@@ -87,6 +87,7 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
 
         // Agregación de liquidaciones
         let totalCajaEfectivo = 0; // CASH
+        let totalRetirosCaja = 0; // WITHDRAWAL Extractions
         let totalBancoTransferencia = 0; // TRANSFER
         let totalVentaSumUp = 0; // SUMUP Bruto
         let totalVentaMP = 0; // MERCADO_PAGO Bruto
@@ -125,14 +126,19 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
             return {
                 id: s.id,
                 date: s.createdAt,
-                method,
+                method: s.type === 'WITHDRAWAL' ? 'WITHDRAWAL' : method,
                 gross: s.amount,
                 fee,
                 feePercent: percent * 100,
                 net,
-                description: s.description
+                description: s.description,
+                type: s.type
             }
         });
+
+        // Filtrar y sumar retiros
+        const retiros = liquidaciones.filter(l => l.type === 'WITHDRAWAL');
+        totalRetirosCaja = retiros.reduce((acc, curr) => acc + curr.gross, 0);
 
         const sumupFee = Math.round(totalVentaSumUp * SUMUP_FEE_RATE);
         const mpFee = Math.round(totalVentaMP * MP_FEE_RATE);
@@ -142,8 +148,9 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
 
         // "Dinero en Banco" = Transferencias Rojas (0%) + MercadoPago Neto + SumUp Neto
         const dineroRealEnBanco = totalBancoTransferencia + mpNet + sumupNet;
-        // "Dinero Físico" = Efectivo
-        const dineroCajaFisica = totalCajaEfectivo + totalVentaOtros;
+
+        // "Dinero Físico" = Ventas Efectivo - Retiros de Caja
+        const dineroCajaFisica = (totalCajaEfectivo + totalVentaOtros) - totalRetirosCaja;
 
         const comisionesCobradas = sumupFee + mpFee;
         const ventaBrutaTotal = totalCajaEfectivo + totalBancoTransferencia + totalVentaSumUp + totalVentaMP + totalVentaOtros;
@@ -158,6 +165,7 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
                 transfer: totalBancoTransferencia,
                 sumup: { gross: totalVentaSumUp, fee: sumupFee, net: sumupNet },
                 mp: { gross: totalVentaMP, fee: mpFee, net: mpNet },
+                withdrawals: totalRetirosCaja,
                 legacyCount: legacyTxCount
             },
             history: liquidaciones // para la tabla detallada
