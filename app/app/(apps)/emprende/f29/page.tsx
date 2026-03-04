@@ -3,6 +3,7 @@ import { Calculator, FileText, AlertCircle, Calendar, DollarSign, ArrowLeft, Dow
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import F29MonthSelect from "./F29MonthSelect";
+import { ExportPDFButton } from "./ExportPDFButton";
 
 // Force dynamic
 export const dynamic = 'force-dynamic';
@@ -188,7 +189,7 @@ export default async function F29Page(props: {
                 </section>
 
                 {/* 3. LÍNEA FINAL (RESUMEN F29) */}
-                <section className="bg-slate-900 rounded-[2rem] p-6 md:p-8 shadow-xl relative overflow-hidden">
+                <section id="f29-summary-capture" className="bg-slate-900 rounded-[2rem] p-6 md:p-8 shadow-xl relative overflow-hidden">
                     {/* Decorative Background */}
                     <div className="absolute top-0 right-0 p-8 opacity-5">
                         <Calculator className="w-64 h-64 text-white" />
@@ -226,7 +227,7 @@ export default async function F29Page(props: {
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg shadow-blue-900/40 border border-white/10 relative overflow-hidden">
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg shadow-blue-900/40 border border-white/10 relative overflow-hidden" data-html2canvas-ignore="true">
                             <div className="absolute -left-10 w-40 h-full bg-white/5 opacity-0 transform -skew-x-12 translate-x-full transition-all group-hover:opacity-100"></div>
 
                             <div>
@@ -236,9 +237,7 @@ export default async function F29Page(props: {
                                 </p>
                             </div>
 
-                            <button className="bg-white text-indigo-900 px-6 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
-                                <Download className="w-4 h-4" /> Exportar a Contador
-                            </button>
+                            <ExportPDFButton month={currentMonth} year={currentYear} />
                         </div>
                     </div>
                 </section>
