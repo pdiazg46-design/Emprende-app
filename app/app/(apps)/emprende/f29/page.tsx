@@ -6,15 +6,17 @@ import { redirect } from "next/navigation";
 // Force dynamic
 export const dynamic = 'force-dynamic';
 
-export default async function F29Page({
-    searchParams
-}: {
-    searchParams: { month?: string, year?: string }
+export default async function F29Page(props: {
+    searchParams: Promise<{ month?: string, year?: string }>
 }) {
+    const searchParams = await props.searchParams;
     const today = new Date();
     // JS dates are 0-indexed for month. (Marzo = 2)
     const currentMonth = searchParams.month ? parseInt(searchParams.month) : today.getMonth();
     const currentYear = searchParams.year ? parseInt(searchParams.year) : today.getFullYear();
+
+    // Si es Febrero 2026 o anterior, se considera inconsistente para F29 automático
+    const isInconsistentMonth = currentYear < 2026 || (currentYear === 2026 && currentMonth <= 1);
 
     let data;
     try {
@@ -85,6 +87,34 @@ export default async function F29Page({
                         <h4 className="font-bold text-amber-900 mb-1">Vista Previa Super Admin</h4>
                         <p className="text-amber-800/80 text-sm font-medium leading-relaxed">
                             Estás viendo este módulo matemático como cuenta Super Admin. Los clientes normales verán error de inactivo hasta que se les asigne 100% de la funcionalidad desde el Panel.
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {isInconsistentMonth && (
+                <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 mb-8 flex items-start gap-4 animate-in slide-in-from-top-2">
+                    <div className="w-10 h-10 bg-orange-100/50 rounded-full flex items-center justify-center shrink-0">
+                        <AlertCircle className="w-5 h-5 text-orange-600" />
+                    </div>
+                    <div>
+                        <h4 className="font-bold text-orange-900 mb-1">Aviso: Inconsistencia F29</h4>
+                        <p className="text-orange-800/80 text-sm font-medium leading-relaxed">
+                            Los gastos de este mes ({monthNames[currentMonth]} {currentYear}) no tienen el formato requerido para el Formulario 29, ya que la integración de gastos a F29 se lanzó a principios de Marzo. Desde el mes de Marzo en adelante, el F29 se conformará de manera 100% limpia.
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {!isInconsistentMonth && (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-8 flex items-start gap-4 animate-in slide-in-from-top-2">
+                    <div className="w-10 h-10 bg-emerald-100/50 rounded-full flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div>
+                        <h4 className="font-bold text-emerald-900 mb-1">AutoF29 Optimizado</h4>
+                        <p className="text-emerald-800/80 text-sm font-medium leading-relaxed">
+                            Desde este mes en adelante, todos los gastos y ventas se conforman de manera limpia para tu Formulario 29.
                         </p>
                     </div>
                 </div>
