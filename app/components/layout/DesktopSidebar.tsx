@@ -45,7 +45,7 @@ export function DesktopSidebar({ user }: { user: any }) {
                 </div>
             </div>
 
-            <nav className="p-4 space-y-2 flex-1">
+            <nav className="p-4 space-y-2 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
                     return (

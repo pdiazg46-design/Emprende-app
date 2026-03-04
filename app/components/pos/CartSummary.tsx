@@ -137,68 +137,63 @@ export function CartSummary() {
                     )}>
                         {cart.map((item) => (
                             <div key={item.id} className={cn(
-                                "flex flex-col p-2 md:px-3 md:py-2 rounded-xl border gap-1.5 transition-colors",
+                                "flex items-center justify-between p-1.5 md:p-2.5 rounded-xl border gap-2 transition-all",
                                 item.isOptimistic
                                     ? "bg-slate-100/50 border-slate-200 animate-pulse ring-1 ring-blue-500/20"
-                                    : "bg-slate-50 border-slate-100"
+                                    : "bg-slate-50 border-slate-200/60 shadow-sm"
                             )}>
-                                <div className="w-full flex items-center justify-between">
-                                    <p className={cn(
-                                        "font-bold text-sm leading-tight pr-2",
-                                        item.isOptimistic ? "text-slate-500" : "text-slate-800"
-                                    )}>
-                                        {item.name}
+                                <div className="flex flex-col flex-1 min-w-0 pr-1">
+                                    <div className="flex items-center gap-2">
+                                        <p className={cn(
+                                            "font-bold text-xs md:text-[13px] leading-tight truncate",
+                                            item.isOptimistic ? "text-slate-500" : "text-slate-800"
+                                        )}>
+                                            {item.name}
+                                        </p>
+                                        {item.isOptimistic && (
+                                            <span className="text-[8px] uppercase font-black tracking-widest text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded-full shrink-0">
+                                                ...
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p className="text-[9px] md:text-[10px] text-slate-400 font-medium truncate mt-0.5">
+                                        {item.isOptimistic ? "Calculando..." : `$${item.price.toLocaleString("es-CL")} c/u`}
                                     </p>
-                                    {item.isOptimistic && (
-                                        <span className="text-[10px] uppercase font-black tracking-widest text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full">
-                                            Buscando...
-                                        </span>
-                                    )}
                                 </div>
 
-                                <div className="flex items-center justify-between w-full border-t border-slate-100 pt-1.5 mt-0.5">
-                                    <div className="flex items-center gap-2 md:gap-3">
-                                        <div className="flex items-center bg-white border border-slate-200 rounded-lg h-7 overflow-hidden shadow-sm shrink-0">
-                                            <button
-                                                onClick={() => updateQuantity(item.id, -1)}
-                                                className="w-7 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
-                                                disabled={item.quantity <= 1}
-                                            >
-                                                -
-                                            </button>
-                                            <span className="w-5 md:w-6 text-center text-xs font-black text-slate-700 select-none">
-                                                {item.quantity}
-                                            </span>
-                                            <button
-                                                onClick={() => updateQuantity(item.id, 1)}
-                                                className="w-7 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
-                                                disabled={item.isOptimistic}
-                                            >
-                                                +
-                                            </button>
-                                        </div>
-                                        <p className="text-[10px] md:text-xs text-slate-400 font-medium whitespace-nowrap hidden sm:block">
-                                            {item.isOptimistic ? "---" : `$${item.price.toLocaleString("es-CL")} c/u`}
-                                        </p>
-                                    </div>
-
-                                    <div className="flex items-center gap-3 shrink-0">
-                                        <div className="text-right">
-                                            <p className="font-black text-slate-900 text-sm leading-none">
-                                                {item.isOptimistic ? "..." : `$${(item.price * item.quantity).toLocaleString("es-CL")}`}
-                                            </p>
-                                            <p className="text-[10px] text-slate-400 font-medium sm:hidden mt-0.5">
-                                                {item.isOptimistic ? "---" : `$${item.price.toLocaleString("es-CL")} c/u`}
-                                            </p>
-                                        </div>
+                                <div className="flex items-center gap-2 md:gap-3 shrink-0">
+                                    <div className="flex items-center bg-white border border-slate-200 rounded-md h-6 md:h-7 overflow-hidden shadow-sm shrink-0">
                                         <button
-                                            onClick={() => removeFromCart(item.id)}
-                                            className="text-slate-300 hover:text-red-500 transition-colors p-1 flex-shrink-0"
+                                            onClick={() => updateQuantity(item.id, -1)}
+                                            className="w-6 md:w-7 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-30"
+                                            disabled={item.quantity <= 1}
+                                        >
+                                            -
+                                        </button>
+                                        <span className="w-4 md:w-5 text-center text-[10px] md:text-[11px] font-black text-slate-700 select-none">
+                                            {item.quantity}
+                                        </span>
+                                        <button
+                                            onClick={() => updateQuantity(item.id, 1)}
+                                            className="w-6 md:w-7 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors"
                                             disabled={item.isOptimistic}
                                         >
-                                            <Trash2 className="w-4 h-4" />
+                                            +
                                         </button>
                                     </div>
+
+                                    <div className="text-right w-14 md:w-16 shrink-0">
+                                        <p className="font-black text-slate-900 text-xs md:text-sm leading-none">
+                                            {item.isOptimistic ? "..." : `$${(item.price * item.quantity).toLocaleString("es-CL")}`}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => removeFromCart(item.id)}
+                                        className="text-slate-300 hover:text-red-500 transition-colors p-1 flex-shrink-0"
+                                        disabled={item.isOptimistic}
+                                    >
+                                        <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                                    </button>
                                 </div>
                             </div>
                         ))}

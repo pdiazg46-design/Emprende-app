@@ -51,26 +51,21 @@ export function ExpenseCard({ amount, variant = 'default', className }: ExpenseC
             <div
                 onClick={() => setShowModal(true)}
                 className={cn(
-                    "bg-white p-3 md:p-4 md:py-3 rounded-xl md:rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group relative overflow-hidden",
+                    "bg-white p-2 md:p-2.5 rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex items-center justify-between group h-[3.5rem]",
                     className
                 )}
             >
-                <div className="hidden md:block absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-2 group-hover:translate-x-0 duration-300">
-                    <span className="bg-slate-900 text-white text-[10px] px-2 py-1 rounded-full shadow-lg flex items-center gap-1">
-                        <Sparkles className="w-2.5 h-2.5 text-rose-400" />
-                        Analizar
-                    </span>
-                </div>
-
-                <div className="flex items-center gap-2 mb-1.5 text-rose-600 mt-1">
-                    <div className="p-1 md:p-1.5 bg-rose-50 rounded-full group-hover:bg-rose-100 transition-colors">
-                        <TrendingDown className="w-4 h-4 md:w-5 md:h-5" />
+                <div className="flex items-center gap-2 md:gap-3">
+                    <div className="p-1.5 bg-rose-50 rounded-lg group-hover:bg-rose-100 transition-colors">
+                        <TrendingDown className="w-4 h-4 md:w-5 md:h-5 text-rose-600" />
                     </div>
-                    <span className="text-[10px] md:text-[11px] font-black uppercase tracking-widest text-slate-400 group-hover:text-rose-700 transition-colors">Gasto Del Día</span>
+                    <div className="flex flex-col justify-center">
+                        <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-slate-400 leading-none">Gastos Día</span>
+                        <p className="text-base md:text-lg font-black text-slate-900 leading-none mt-1 privacy-sensitive">
+                            ${amount.toLocaleString('es-CL')}
+                        </p>
+                    </div>
                 </div>
-                <p className="text-xl md:text-2xl font-black text-slate-900 tracking-tight privacy-sensitive">
-                    ${amount.toLocaleString('es-CL')}
-                </p>
             </div>
 
             {showModal && <ExpenseInsightModal onClose={() => setShowModal(false)} />}
