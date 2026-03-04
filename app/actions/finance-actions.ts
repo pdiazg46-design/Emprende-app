@@ -106,20 +106,22 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
             let fee = 0;
             let percent = 0;
 
-            if (method === 'SUMUP') {
-                fee = Math.round(s.amount * SUMUP_FEE_RATE);
-                percent = SUMUP_FEE_RATE;
-                totalVentaSumUp += s.amount;
-            } else if (method === 'MERCADO_PAGO') {
-                fee = Math.round(s.amount * MP_FEE_RATE);
-                percent = MP_FEE_RATE;
-                totalVentaMP += s.amount;
-            } else if (method === 'TRANSFER') {
-                totalBancoTransferencia += s.amount;
-            } else if (method === 'CASH') {
-                totalCajaEfectivo += s.amount;
-            } else {
-                totalVentaOtros += s.amount;
+            if (s.type === 'SALE') {
+                if (method === 'SUMUP') {
+                    fee = Math.round(s.amount * SUMUP_FEE_RATE);
+                    percent = SUMUP_FEE_RATE;
+                    totalVentaSumUp += s.amount;
+                } else if (method === 'MERCADO_PAGO') {
+                    fee = Math.round(s.amount * MP_FEE_RATE);
+                    percent = MP_FEE_RATE;
+                    totalVentaMP += s.amount;
+                } else if (method === 'TRANSFER') {
+                    totalBancoTransferencia += s.amount;
+                } else if (method === 'CASH') {
+                    totalCajaEfectivo += s.amount;
+                } else {
+                    totalVentaOtros += s.amount;
+                }
             }
 
             const net = s.amount - fee;
@@ -127,7 +129,7 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
             return {
                 id: s.id,
                 date: s.createdAt,
-                method: s.type === 'WITHDRAWAL' ? 'WITHDRAWAL' : method,
+                method: method,
                 gross: s.amount,
                 fee,
                 feePercent: percent * 100,
