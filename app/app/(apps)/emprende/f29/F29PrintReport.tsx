@@ -53,8 +53,8 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
             <div className="mb-6">
                 <div>
                     <h2 className="text-xl font-black mb-2" style={{ color: '#0f172a' }}>Reporte Analítico F29</h2>
-                    <div className="rounded-lg border inline-block" style={{ backgroundColor: '#f1f5f9', borderColor: '#e2e8f0', padding: '6px 12px' }}>
-                        <span className="font-bold text-xs uppercase" style={{ color: '#334155' }}>Período: {monthName} {year}</span>
+                    <div className="rounded-lg border" style={{ backgroundColor: '#f1f5f9', borderColor: '#e2e8f0', display: 'table', height: '28px' }}>
+                        <span className="font-bold text-xs uppercase" style={{ color: '#334155', display: 'table-cell', verticalAlign: 'middle', padding: '0 12px' }}>Período: {monthName} {year}</span>
                     </div>
                 </div>
             </div>
@@ -87,15 +87,15 @@ export default function F29PrintReport({ data, monthIndex, year, user }: F29Prin
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
                     <div className="p-4 rounded-xl border relative" style={{ backgroundColor: '#ecfdf5', borderColor: '#a7f3d0' }}>
-                        <div style={{ position: 'absolute', top: '12px', right: '12px' }}>
-                            <span className="text-[9px] font-bold uppercase rounded block" style={{ backgroundColor: '#a7f3d0', color: '#065f46', padding: '3px 6px' }}>Aprobadas</span>
+                        <div style={{ position: 'absolute', top: '12px', right: '12px', backgroundColor: '#a7f3d0', borderRadius: '4px', display: 'table', height: '18px' }}>
+                            <span className="text-[9px] font-bold uppercase" style={{ color: '#065f46', display: 'table-cell', verticalAlign: 'middle', padding: '0 6px', letterSpacing: 'normal' }}>Aprobadas</span>
                         </div>
                         <p className="text-[10px] font-bold uppercase mb-1" style={{ color: '#047857' }}>IVA Crédito (Compras)</p>
                         <p className="text-lg font-black" style={{ color: '#047857' }}>- ${data.ivaCredito.toLocaleString('es-CL')}</p>
                     </div>
                     <div className="p-4 rounded-xl border relative" style={{ backgroundColor: '#fff7ed', borderColor: '#fed7aa' }}>
-                        <div style={{ position: 'absolute', top: '12px', right: '12px' }}>
-                            <span className="text-[9px] font-bold uppercase rounded block" style={{ backgroundColor: '#fed7aa', color: '#9a3412', padding: '3px 6px' }}>15.25%</span>
+                        <div style={{ position: 'absolute', top: '12px', right: '12px', backgroundColor: '#fed7aa', borderRadius: '4px', display: 'table', height: '18px' }}>
+                            <span className="text-[9px] font-bold uppercase" style={{ color: '#9a3412', display: 'table-cell', verticalAlign: 'middle', padding: '0 6px', letterSpacing: 'normal' }}>15.25%</span>
                         </div>
                         <p className="text-[10px] font-bold uppercase mb-1" style={{ color: '#c2410c' }}>Retención Honorarios</p>
                         <p className="text-lg font-black" style={{ color: '#c2410c' }}>+ ${data.retencionHonorarios.toLocaleString('es-CL')}</p>
