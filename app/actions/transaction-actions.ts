@@ -143,8 +143,13 @@ export async function addTransaction(data: { type: string, amount: number, descr
                     }
                 })
             }
-        } catch (error) {
-            console.error("Sincronización con Finanza Fácil fallida (Fallo Silencioso):", error)
+        } catch (error: any) {
+            console.error("Sincronización con Finanza Fácil fallida:", error)
+            revalidatePath("/")
+            return {
+                success: true, // We still return true because local Emprende transaction succeeded
+                message: `✅ Cajero OK. ❌ Pero falló la subida a Finanzas: ${error.message}`
+            }
         }
     }
 
