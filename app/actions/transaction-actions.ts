@@ -2,6 +2,7 @@
 
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { prismaFinanza } from "@/lib/prisma-finanza"
 import { revalidatePath } from "next/cache"
 import { cache } from "react"
 import { findBestProductMatch } from "@/lib/product-matching"
@@ -121,6 +122,31 @@ export async function addTransaction(data: { type: string, amount: number, descr
             paymentMethod: data.paymentMethod
         }
     })
+
+    // --- INTEGRACION CRUZADA CON FINANZA FACIL ---
+    if (data.type === 'WITHDRAWAL') {
+        try {
+            const finanzaUser = await prismaFinanza.user.findUnique({
+                where: { email: session.user.email },
+                include: { sharedFund: true }
+            })
+
+            if (finanzaUser && finanzaUser.sharedFund) {
+                await prismaFinanza.movement.create({
+                    data: {
+                        amount: finalAmount,
+                        type: 'INCOME',
+                        fundId: finanzaUser.sharedFund.id,
+                        category: 'Ingreso Empresarial',
+                        description: `Retiro desde Emprende POS${data.paymentMethod ? ` (${data.paymentMethod})` : ''}`,
+                        installments: 1
+                    }
+                })
+            }
+        } catch (error) {
+            console.error("Sincronización con Finanza Fácil fallida (Fallo Silencioso):", error)
+        }
+    }
 
     revalidatePath("/")
 
