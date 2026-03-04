@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import F29MonthSelect from "./F29MonthSelect";
 import { ExportPDFButton } from "./ExportPDFButton";
+import F29PrintReport from "./F29PrintReport";
 import { DesktopLayout } from "@/components/layout/DesktopLayout";
 import { auth } from "@/lib/auth";
 
@@ -56,7 +57,19 @@ export default async function F29Page(props: {
 
     return (
         <DesktopLayout user={session.user}>
-            <div className="max-w-4xl mx-auto px-4 py-8 pb-32 md:pb-8">
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                @media print {
+                    /* Oculta la página normal entera en favor del Print Component */
+                    .screen-only {
+                        display: none !important;
+                    }
+                    /* Evitamos bordes adicionales del navegador */
+                    @page { margin: 0; }
+                    body { margin: 1cm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                }
+            `}} />
+            <div className="max-w-4xl mx-auto px-4 py-8 pb-32 md:pb-8 screen-only">
                 <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <div className="flex items-center gap-4 mb-2">
@@ -199,33 +212,7 @@ export default async function F29Page(props: {
                     </section>
 
                     {/* 3. LÍNEA FINAL (RESUMEN F29) */}
-                    <style dangerouslySetInnerHTML={{
-                        __html: `
-                        @media print {
-                            body * {
-                                visibility: hidden;
-                            }
-                            #f29-summary-capture, #f29-summary-capture * {
-                                visibility: visible;
-                            }
-                            #f29-summary-capture {
-                                position: absolute;
-                                left: 0;
-                                top: 0;
-                                width: 100vw;
-                                box-shadow: none !important;
-                                margin: 0;
-                            }
-                            /* Evitamos cortar a la mitad */
-                            #f29-summary-capture {
-                                page-break-inside: avoid;
-                            }
-                            @page {
-                                margin: 1cm;
-                            }
-                        }
-                    `}} />
-                    <section id="f29-summary-capture" className="bg-slate-900 rounded-[2rem] p-6 md:p-8 shadow-xl relative overflow-hidden print:bg-slate-900 print:text-white print:break-inside-avoid shadow-none border border-slate-700/50">
+                    <section id="f29-summary-capture" className="bg-slate-900 rounded-[2rem] p-6 md:p-8 shadow-xl relative overflow-hidden shadow-none border border-slate-700/50">
                         {/* Decorative Background */}
                         <div className="absolute top-0 right-0 p-8 opacity-5">
                             <Calculator className="w-64 h-64 text-white" />
@@ -286,6 +273,8 @@ export default async function F29Page(props: {
                     </section>
                 </div>
             </div>
+            {/* COMPONENTE EXCLUSIVO PARA RENDER EN PDF/IMPRESIÓN (A4) */}
+            <F29PrintReport data={data} monthIndex={currentMonth} year={currentYear} user={session.user} />
         </DesktopLayout>
     );
 }
