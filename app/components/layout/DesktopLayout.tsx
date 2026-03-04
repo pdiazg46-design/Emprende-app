@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { DesktopSidebar } from "./DesktopSidebar";
-import { CartSummary } from "../pos/CartSummary";
 import { Lock, Sparkles } from "lucide-react";
 import { LogoutButton } from "../LogoutButton";
 
@@ -18,7 +17,6 @@ export function DesktopLayout({ children, user }: DesktopLayoutProps) {
             <main className="flex-1 min-w-0 md:ml-64 p-4 md:p-8 transition-all duration-300 pb-32 md:pb-8 relative">
                 {children}
             </main>
-            <CartSummary />
 
             {/* Desktop Full-Screen Paywall */}
             {isBasic && (
