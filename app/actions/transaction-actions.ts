@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache"
 import { cache } from "react"
 import { findBestProductMatch } from "@/lib/product-matching"
 
-export async function addTransaction(data: { type: string, amount: number, description?: string, productId?: string, isQuantity?: boolean, taxDocumentType?: string }) {
+export async function addTransaction(data: { type: string, amount: number, description?: string, productId?: string, isQuantity?: boolean, taxDocumentType?: string, paymentMethod?: string }) {
     const session = await auth()
     if (!session?.user?.email) throw new Error("Unauthorized")
 
@@ -117,7 +117,8 @@ export async function addTransaction(data: { type: string, amount: number, descr
             quantity: finalQuantity,
             description: finalDescription,
             productId: finalProductId,
-            taxDocumentType: data.taxDocumentType
+            taxDocumentType: data.taxDocumentType,
+            paymentMethod: data.paymentMethod
         }
     })
 

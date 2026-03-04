@@ -41,6 +41,7 @@ export async function processVoiceCommand(text: string) {
                     'RECORDS_INCOME', 'DELETE_LAST', 'UPDATE_BUDGET', 'UPDATE_PARTNER', 'CALIBRATE_FUND'
                 ]).describe("El tipo de operación detectada."),
                 amount: z.string().describe("Monto total principal extraído. Ejemplo: '1000', '1', 'un'. Si no hay monto, envía '0'."),
+                paymentMethod: z.enum(['CASH', 'TRANSFER']).optional().describe("Para RETIROS (CASH_WITHDRAWAL) o INGRESOS, especifica si salió/entró a la Caja de Billetes ('CASH') o a la Cuenta de Banco ('TRANSFER'). Asume CASH si no se menciona un banco o cuenta."),
                 description: z.string().describe("Descripción limpia para Gastos o nombre del Presupuesto. Si no hay, envía ''."),
                 productName: z.string().describe("Nombre de producto si es Venta o Inventario. Si no hay, envía ''."),
                 isQuantity: z.boolean().describe("True si el número dictado es una cantidad en vez de un valor monetario. False por defecto."),
@@ -65,7 +66,7 @@ export async function processVoiceCommand(text: string) {
             - SALE: Venta de un solo producto.
             - MULTI_SALE: Venta de VARIOS productos (Ej: "vendí 2 papas y 1 collar", "vendí un anillo, un collar y dos gorros"). Llena el array 'items'.
             - EXPENSE: Gastos / Compras que hace el usuario. Llena 'amount' y 'description'.
-            - CASH_WITHDRAWAL: Extracciones de dinero de la caja, retiros para el dueño. (Ej: "Retiro de plata por 10 lucas", "Retiré 5000 de la caja"). Llena solo 'amount'.
+            - CASH_WITHDRAWAL: Extracciones de dinero. (Ej: "Retiro de plata por 10 lucas", "Saqué 5000 de la caja" -> CASH). (Ej: "Retiré 10000 del banco", "Transferí 5000 a mi cuenta" -> TRANSFER). Llena 'amount' y 'paymentMethod'.
             - INVENTORY_ADD: Creación de un producto en bodega. (Ej: "agrega lápiz a 500 pesos con 10 de stock"). Llena productName, price, y amount (como stock).
             - INVENTORY_RESTOCK: Suma stock a algo existente. (Ej: "llegaron 50 lápices"). Llena productName y amount (cantidad).
             - DELETE_LAST: "borra el ultimo", "eliminar el ultimo registro".
@@ -77,7 +78,7 @@ export async function processVoiceCommand(text: string) {
 
         console.log(`[V2A-Generative-AI] Interpretado:`, object)
 
-        const { intent, amount, description, productName, isQuantity, items, price, installments, categoryType } = object;
+        const { intent, amount, description, productName, isQuantity, items, price, installments, categoryType, paymentMethod } = object;
 
         // NLP Parser para transformar textos chilenos ('un', 'dos', 'luca') a números Reales
         const parseNat = (val: string | number | undefined): number => {
@@ -117,7 +118,7 @@ export async function processVoiceCommand(text: string) {
             return { success: true, intent: { type: 'EXPENSE', amount: cleanAmount || 0, description: description || "Gasto Automático" } }
         }
         if (intent === 'CASH_WITHDRAWAL') {
-            return { success: true, intent: { type: 'WITHDRAWAL', amount: cleanAmount || 0, description: "Retiro a Finanza Fácil" } }
+            return { success: true, intent: { type: 'WITHDRAWAL', amount: cleanAmount || 0, paymentMethod: paymentMethod || 'CASH', description: "Retiro a Finanza Fácil" } }
         }
         if (intent === 'INVENTORY_ADD') {
             return { success: true, intent: { type: 'INVENTORY_ADD', product: productName || "Nuevo Producto", price: cleanPrice || 0, stock: cleanAmount || 0 } }

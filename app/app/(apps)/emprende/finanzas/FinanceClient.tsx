@@ -13,11 +13,13 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
     const router = useRouter()
     const [isRetiroModalOpen, setIsRetiroModalOpen] = useState(false)
     const [retiroAmount, setRetiroAmount] = useState("")
+    const [retiroMethod, setRetiroMethod] = useState<'CASH' | 'TRANSFER'>('CASH')
     const [isSubmittingRetiro, setIsSubmittingRetiro] = useState(false)
 
     const { ventaBrutaTotal, dineroRealEnBanco, dineroCajaFisica, comisionesCobradas, breakdown, history } = initialData
     const legacyCount = breakdown?.legacyCount || 0;
-    const totalRetiros = breakdown?.withdrawals || 0;
+    const withdrawals = breakdown?.withdrawals || { cash: 0, bank: 0 };
+    const totalRetiros = withdrawals.cash + withdrawals.bank;
 
     const formatMoney = (val: number) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(Math.round(val))
 
@@ -36,9 +38,11 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
             await addTransaction({
                 type: 'WITHDRAWAL',
                 amount: parsedAmount,
+                paymentMethod: retiroMethod,
                 description: 'Retiro a Finanza Fácil'
             })
             setRetiroAmount("")
+            setRetiroMethod('CASH')
             setIsRetiroModalOpen(false)
             router.refresh()
         } catch (error) {
@@ -228,8 +232,8 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
                                     <ArrowLeft className="w-6 h-6 rotate-45" />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-black text-slate-800">Retiros de Caja</h3>
-                                    <p className="text-xs text-slate-500">Dinero extraído físicamente</p>
+                                    <h3 className="text-lg font-black text-slate-800">Retiros Extraídos</h3>
+                                    <p className="text-xs text-slate-500">Monto sacado de Físico y Banco</p>
                                 </div>
                             </div>
                             <button
@@ -242,11 +246,16 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
 
                         <div className="space-y-4">
                             <div className="flex justify-between items-center text-sm font-bold border-b border-violet-50 pb-2">
-                                <span className="text-slate-500">Monto total extraído</span>
-                                <span className="text-violet-600 text-lg">-{formatMoney(totalRetiros)}</span>
+                                <span className="text-slate-500">Caja Efectivo</span>
+                                <span className="text-violet-600">-{formatMoney(withdrawals.cash)}</span>
+                            </div>
+                            <div className="flex justify-between items-center text-sm font-bold border-b border-violet-50 pb-2">
+                                <span className="text-slate-500">Cuenta Bancaria</span>
+                                <span className="text-violet-600">-{formatMoney(withdrawals.bank)}</span>
                             </div>
                             <div className="flex justify-between items-center font-black pt-2">
-                                <span className="text-slate-600 text-xs leading-tight">Este valor ha sido descontado<br />matemáticamente de Caja / Efectivo</span>
+                                <span className="text-slate-600 text-[10px] leading-tight opacity-70">Descontado matemáticamente<br />del pozo superior</span>
+                                <span className="text-violet-700 text-lg">-{formatMoney(totalRetiros)}</span>
                             </div>
                         </div>
                     </div>
@@ -269,9 +278,28 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
                             </div>
 
                             <h3 className="text-xl font-black text-center text-slate-800 mb-1">Registrar Retiro</h3>
-                            <p className="text-center text-sm text-slate-500 mb-6">Extraer billetes de la caja física</p>
+                            <p className="text-center text-sm text-slate-500 mb-6">Extraer dinero de Caja o Banco</p>
 
                             <form onSubmit={handleManualRetiro} className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Origen del Dinero</label>
+                                    <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl mb-4">
+                                        <button
+                                            type="button"
+                                            onClick={() => setRetiroMethod('CASH')}
+                                            className={`py-2 px-3 text-sm font-bold rounded-lg transition-all ${retiroMethod === 'CASH' ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'}`}
+                                        >
+                                            Caja Física (Billetes)
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setRetiroMethod('TRANSFER')}
+                                            className={`py-2 px-3 text-sm font-bold rounded-lg transition-all ${retiroMethod === 'TRANSFER' ? 'bg-white text-violet-700 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200'}`}
+                                        >
+                                            Transferencia (Banco)
+                                        </button>
+                                    </div>
+                                </div>
                                 <div>
                                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Monto a retirar</label>
                                     <div className="relative">

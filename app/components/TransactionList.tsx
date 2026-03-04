@@ -1,6 +1,6 @@
 "use client"
 
-import { TrendingUp, TrendingDown, Trash2, Package, ChevronRight, X, Clock, Receipt, ArrowDownToLine } from "lucide-react"
+import { TrendingUp, TrendingDown, Trash2, Package, ChevronRight, X, Clock, Receipt, ArrowDownToLine, Landmark } from "lucide-react"
 import { deleteTransaction } from "@/actions/transaction-actions"
 import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
@@ -129,10 +129,11 @@ export function TransactionList({ transactions }: { transactions: Transaction[] 
                         typeLabel = isInventoryIn ? "Ingreso Inv." : "Ajuste Inv.";
                         sign = isInventoryIn ? "+" : "-";
                     } else if (isWithdrawal) {
-                        iconContent = <ArrowDownToLine className="w-5 h-5" />;
-                        colorClass = "text-violet-600";
-                        bgClass = "bg-violet-50";
-                        typeLabel = "Retiro";
+                        const isBank = (firstTx as any).paymentMethod === 'TRANSFER';
+                        iconContent = isBank ? <Landmark className="w-4 h-4" /> : <ArrowDownToLine className="w-5 h-5" />;
+                        colorClass = isBank ? "text-indigo-600" : "text-violet-600";
+                        bgClass = isBank ? "bg-indigo-50" : "bg-violet-50";
+                        typeLabel = isBank ? "Retiro a Banco" : "Retiro Físico";
                         sign = "-";
                     }
 
