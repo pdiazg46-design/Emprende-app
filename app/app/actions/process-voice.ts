@@ -63,8 +63,8 @@ export async function processVoiceCommand(text: string) {
             - "luca"/"lucas" = 1000. (ej: 40 lucas = 40000). "palo" = 1000000.
             
             Reglas de Intents:
-            - SALE: Venta de un solo producto.
-            - MULTI_SALE: Venta de VARIOS productos (Ej: "vendí 2 papas y 1 collar", "vendí un anillo, un collar y dos gorros"). Llena el array 'items'.
+            - SALE: Venta de un producto. Si el usuario NO menciona un número o cantidad (Ej: "vendí barra dubai", "vendí un café"), DEBES asumir obligatoriamente amount="1" e isQuantity=true.
+            - MULTI_SALE: Venta de VARIOS productos (Ej: "vendí 2 papas y 1 collar", "vendí un anillo, un collar y dos gorros"). Llena el array 'items'. Aquí también, si dice "y una papa", asume amount="1".
             - EXPENSE: Gastos / Compras que hace el usuario. Llena 'amount' y 'description'.
             - CASH_WITHDRAWAL: Extracciones de dinero. (Ej: "Retiro de plata por 10 lucas", "Saqué 5000 de la caja" -> CASH). (Ej: "Retiré 10000 del banco", "Transferí 5000 a mi cuenta" -> TRANSFER). Llena 'amount' y 'paymentMethod'.
             - INVENTORY_ADD: Creación de un producto en bodega. (Ej: "agrega lápiz a 500 pesos con 10 de stock"). Llena productName, price, y amount (como stock).
