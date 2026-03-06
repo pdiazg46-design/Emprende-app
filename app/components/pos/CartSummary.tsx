@@ -26,7 +26,7 @@ export function CartSummary() {
 
     if (cartCount === 0) {
         return (
-            <div className="hidden lg:flex w-full bg-slate-50/50 border-2 border-slate-200 border-dashed rounded-[2rem] p-8 flex-col items-center justify-center text-slate-400 transition-all shrink-0 animate-in fade-in">
+            <div className="hidden md:flex w-full bg-slate-50/50 border-2 border-slate-200 border-dashed rounded-[2rem] p-8 flex-col items-center justify-center text-slate-400 transition-all shrink-0 animate-in fade-in">
                 <ShoppingCart className="w-10 h-10 opacity-20 mb-3" />
                 <p className="font-black text-sm text-slate-500 uppercase tracking-wide">El carrito está vacío</p>
                 <p className="text-xs mt-1 text-slate-400">Clickea [+] en un producto a la izquierda para cobrar.</p>
@@ -88,12 +88,12 @@ export function CartSummary() {
             {/* Floating Bar / Sheet */}
             <div className={cn(
                 "fixed bottom-0 left-0 right-0 z-40 bg-white shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 rounded-t-[2rem]",
-                isOpen ? "h-[90vh] lg:h-auto" : "h-24 lg:h-auto",
-                "lg:relative lg:bottom-auto lg:right-auto lg:left-auto lg:w-full lg:rounded-[2rem] lg:border lg:border-slate-100 lg:shadow-sm" // Anular clases fixed en Desktop para que encaje en el layout RightSide
+                isOpen ? "h-[90vh] md:h-auto" : "h-24 md:h-auto",
+                "md:relative md:bottom-auto md:right-auto md:left-auto md:w-full md:rounded-[2rem] md:border md:border-slate-100 md:shadow-sm" // Anular clases fixed en Desktop para que encaje en el layout RightSide
             )}>
                 {/* Handle for dragging (visual only - hidden on Desktop) */}
                 <div
-                    className="w-full h-6 flex items-center justify-center cursor-pointer lg:hidden"
+                    className="w-full h-6 flex items-center justify-center cursor-pointer md:hidden"
                     onClick={() => setIsOpen(!isOpen)}
                 >
                     <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
@@ -133,7 +133,7 @@ export function CartSummary() {
                     {/* Expanded Content */}
                     <div className={cn(
                         "flex-1 overflow-y-auto mt-4 space-y-3 pb-4 md:pb-6 scrollbar-hide",
-                        !isOpen ? "hidden lg:block lg:max-h-[60vh]" : "max-h-[60vh] lg:max-h-[60vh]"
+                        !isOpen ? "hidden md:block md:max-h-[60vh]" : "max-h-[60vh] md:max-h-[60vh]"
                     )}>
                         {cart.map((item) => (
                             <div key={item.id} className={cn(
@@ -201,19 +201,19 @@ export function CartSummary() {
 
                     {/* Footer Actions when Open */}
                     <div className={cn(
-                        "flex gap-3 mt-4 lg:mt-6 w-full relative z-10 bg-white pt-2",
-                        !isOpen ? "hidden lg:flex" : "absolute lg:relative bottom-6 lg:bottom-auto left-6 lg:left-auto right-6 lg:right-auto w-[calc(100%-3rem)] lg:w-full"
+                        "flex gap-3 mt-4 md:mt-6 w-full relative z-10 bg-white pt-2",
+                        !isOpen ? "hidden md:flex" : "absolute md:relative bottom-6 md:bottom-auto left-6 md:left-auto right-6 md:right-auto w-[calc(100%-3rem)] md:w-full"
                     )}>
                         <button
                             onClick={clearCart}
-                            className="flex-1 py-3 lg:py-4 bg-slate-100 text-slate-500 rounded-2xl font-bold text-sm hover:bg-slate-200 transition-all"
+                            className="flex-1 py-3 md:py-4 bg-slate-100 text-slate-500 rounded-2xl font-bold text-sm hover:bg-slate-200 transition-all"
                         >
                             Cancelar
                         </button>
                         <button
                             onClick={() => setIsCheckoutOpen(true)}
                             disabled={isProcessing}
-                            className="flex-[2] py-3 lg:py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-2"
+                            className="flex-[2] py-3 md:py-4 bg-blue-600 text-white rounded-2xl font-black text-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-2"
                         >
                             {isProcessing ? "Procesando..." : (
                                 <>
