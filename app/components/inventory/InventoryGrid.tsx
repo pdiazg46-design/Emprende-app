@@ -141,7 +141,7 @@ export function InventoryGrid({ products }: InventoryGridProps) {
             {/* Search Bar - Compact */}
             {/* TODO: Implement Search if needed */}
 
-            <div className="grid grid-cols-2 gap-3 pb-44 md:pb-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 md:gap-4 pb-44 md:pb-6">
                 {filteredProducts.map((product) => {
                     const isLowStock = product.stock < 5
                     const isCritical = product.stock === 0

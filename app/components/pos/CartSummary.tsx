@@ -51,9 +51,14 @@ export function CartSummary() {
         // 3. Proceso "Fire-and-Forget" con Desacople Total del Event Loop
         setTimeout(() => {
             processSale(snapshotCart, snapshotTotal, method)
-                .then(() => {
-                    // Cuando Vercel finalice, refrescamos la página invisiblemente.
-                    router.refresh()
+                .then((res: any) => {
+                    if (res?.error) {
+                        alert("Error al procesar la venta: " + res.error);
+                        clearOptimisticTransactions();
+                    } else {
+                        // Cuando Vercel finalice, refrescamos la página invisiblemente.
+                        router.refresh()
+                    }
                 })
                 .catch((error) => {
                     console.error("Error silencioso procesando la venta:", error)
