@@ -108,7 +108,7 @@ async function DashboardLeft({ session, isTrial, daysRemaining }: { session: any
         </section>
 
         <section className="h-full">
-          <InventoryGrid products={inventory as any} />
+          <InventoryManager inventory={inventory as any} />
         </section>
       </div>
     </>
