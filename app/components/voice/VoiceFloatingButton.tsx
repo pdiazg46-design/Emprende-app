@@ -138,13 +138,9 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
                         )}
 
                         <button
-                            onPointerDown={(e) => {
-                                e.stopPropagation()
-                                e.preventDefault()
-                                toggleListen()
-                            }}
+                            onClick={toggleListen}
                             className={cn(
-                                "w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 relative z-10 border-4 border-white pointer-events-auto",
+                                "w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 relative z-10 border-4 border-white",
                                 isListening
                                     ? "bg-[#E63946] scale-110 shadow-rose-500/40" // Rose Red
                                     : isProcessing
@@ -154,15 +150,15 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
                             disabled={isProcessing}
                         >
                             {isProcessing ? (
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white pointer-events-none"></div>
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
                             ) : isListening ? (
-                                <div className="space-y-1 block pointer-events-none">
+                                <div className="space-y-1 block">
                                     <div className="w-8 h-1 bg-white rounded-full animate-[pulse_1s_ease-in-out_infinite]" />
                                     <div className="w-5 h-1 bg-white rounded-full animate-[pulse_1.5s_ease-in-out_infinite] mx-auto" />
                                     <div className="w-8 h-1 bg-white rounded-full animate-[pulse_0.8s_ease-in-out_infinite]" />
                                 </div>
                             ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white drop-shadow-sm pointer-events-none"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" x2="12" y1="19" y2="22" /></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white drop-shadow-sm"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" x2="12" y1="19" y2="22" /></svg>
                             )}
                         </button>
                     </div>
