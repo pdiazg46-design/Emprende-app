@@ -149,9 +149,8 @@ export function InventoryGrid({ products }: InventoryGridProps) {
                     return (
                         <div
                             key={product.id}
-                            onClick={() => openEditSheet(product)}
                             className={cn(
-                                "relative bg-white rounded-2xl p-3 border shadow-sm transition-all active:scale-95 touch-manipulation flex flex-col justify-between h-32 cursor-pointer",
+                                "relative bg-white rounded-2xl p-3 border shadow-sm transition-all active:scale-95 touch-manipulation flex flex-col justify-between h-32",
                                 isCritical ? "border-red-400 bg-red-50/30" :
                                     isLowStock ? "border-amber-400 bg-amber-50/30" : "border-slate-100"
                             )}
@@ -164,12 +163,13 @@ export function InventoryGrid({ products }: InventoryGridProps) {
                                 )} />
                             )}
 
-                            <div>
+                            {/* Clickeable Edit Area */}
+                            <div className="cursor-pointer" onClick={() => openEditSheet(product)}>
                                 <h3 className="font-bold text-slate-800 text-sm leading-tight line-clamp-2">
                                     {product.name}
                                 </h3>
                                 <p className="text-xs text-slate-400 mt-3 font-bold uppercase tracking-wider flex items-center justify-between gap-2">
-                                    <span>Stock Disponible:</span>
+                                    <span>Stock:</span>
                                     <span className={cn(
                                         "font-black text-xl px-3 py-1 rounded-lg border",
                                         isLowStock ? "bg-amber-100 text-amber-800 border-amber-200" : "bg-slate-100 text-slate-800 border-slate-200"
@@ -180,13 +180,17 @@ export function InventoryGrid({ products }: InventoryGridProps) {
                             </div>
 
                             <div className="flex items-end justify-between mt-2">
-                                <span className="font-black text-lg text-slate-900">
+                                <span 
+                                    className="font-black text-lg text-slate-900 cursor-pointer"
+                                    onClick={() => openEditSheet(product)}
+                                >
                                     ${product.price.toLocaleString("es-CL")}
                                 </span>
 
-                                {/* Quick Add Button - Stop Propagation to prevent opening edit sheet */}
+                                {/* Quick Add Button - Isolated from Parent Card */}
                                 <button
                                     onClick={(e) => {
+                                        e.preventDefault()
                                         e.stopPropagation()
                                         addToCart({
                                             id: product.id,
@@ -196,9 +200,15 @@ export function InventoryGrid({ products }: InventoryGridProps) {
                                             isManual: true
                                         })
                                     }}
-                                    className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-xl shadow-blue-500/30 active:bg-blue-700 active:scale-90 transition-all z-10"
+                                    onPointerDown={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        // Some browsers on desktop require pointer events to be caught
+                                    }}
+                                    className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-xl shadow-blue-500/30 active:bg-blue-700 active:scale-90 transition-all z-20 relative pointer-events-auto"
+                                    title="Agregar al Carrito"
                                 >
-                                    <Plus className="w-5 h-5" />
+                                    <Plus className="w-5 h-5 pointer-events-none" />
                                 </button>
                             </div>
                         </div>
