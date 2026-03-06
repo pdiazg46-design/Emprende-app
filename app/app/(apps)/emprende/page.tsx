@@ -180,19 +180,19 @@ export default async function Home() {
         permitiendo que el modal de cobro del POS se cierre y se limpie rápido,
         mientras getDashboardMetrics carga la base de datos de forma paralela en el servidor.
       */}
-      <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 items-start relative w-full lg:max-w-[1400px] lg:mx-auto">
+      <div className="flex flex-col md:grid md:grid-cols-12 gap-6 md:gap-8 items-start relative w-full md:max-w-[1400px] md:mx-auto">
         {/* COLUMNA IZQUIERDA (8/12) - Productos y Resumen */}
-        <div className="lg:col-span-8 w-full flex flex-col gap-6 lg:gap-8">
+        <div className="md:col-span-8 w-full flex flex-col gap-6 md:gap-8">
           <Suspense fallback={<DashboardSkeleton />}>
             <DashboardLeft session={activeSession} isTrial={isTrial} daysRemaining={daysRemaining} />
           </Suspense>
         </div>
 
         {/* COLUMNA DERECHA (4/12) - Carrito y Actividad Reciente */}
-        <div className="lg:col-span-4 w-full flex flex-col gap-6 relative z-20">
+        <div className="md:col-span-4 w-full flex flex-col gap-6 relative z-20">
           <CartSummary />
 
-          <div className="hidden lg:block h-full">
+          <div className="hidden md:block h-full">
             <Suspense fallback={<div className="h-64 bg-slate-100 rounded-3xl animate-pulse"></div>}>
               <DashboardRight />
             </Suspense>
@@ -200,8 +200,8 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* Actividad Reciente para Mobile (oculta en lg, ya que arriba se muestra en lg:block) */}
-      <div className="lg:hidden w-full mt-6">
+      {/* Actividad Reciente para Mobile (oculta en md, ya que arriba se muestra en md:block) */}
+      <div className="md:hidden w-full mt-6">
         <Suspense fallback={<div className="h-64 bg-slate-100 rounded-3xl animate-pulse"></div>}>
           <DashboardRight />
         </Suspense>

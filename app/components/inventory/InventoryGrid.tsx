@@ -184,10 +184,17 @@ export function InventoryGrid({ products }: InventoryGridProps) {
                                     ${product.price.toLocaleString("es-CL")}
                                 </span>
 
-                                {/* Quick Add Button - Stop Propagation to prevent opening edit sheet */}
+                                {/* Quick Add Button - Universal Click/Touch Support */}
                                 <button
                                     onClick={(e) => {
+                                        // Fallback and prevent double fire
                                         e.stopPropagation()
+                                        e.preventDefault()
+                                    }}
+                                    onPointerDown={(e) => {
+                                        // onPointerDown es supremo para Safari iOS y Desktop Mouse 
+                                        e.stopPropagation()
+                                        e.preventDefault()
                                         addToCart({
                                             id: product.id,
                                             name: product.name,
@@ -196,9 +203,9 @@ export function InventoryGrid({ products }: InventoryGridProps) {
                                             isManual: true
                                         })
                                     }}
-                                    className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-xl shadow-blue-500/30 active:bg-blue-700 active:scale-90 transition-all z-10"
+                                    className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-xl shadow-blue-500/30 active:bg-blue-700 active:scale-90 transition-all z-20 relative pointer-events-auto"
                                 >
-                                    <Plus className="w-5 h-5" />
+                                    <Plus className="w-5 h-5 pointer-events-none" />
                                 </button>
                             </div>
                         </div>
