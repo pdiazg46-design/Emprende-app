@@ -56,7 +56,7 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
                 // Por ejemplo, 1500 se convierte en el texto EXACTO "1500.00" sin que JS meta mano.
                 const sumupAmount = `${Math.round(total)}.00`;
                 const callbackUrl = encodeURIComponent(`${window.location.origin}/emprende`);
-                window.location.href = `sumupmerchant://pay/1.0?amount=${sumupAmount}&currency=CLP&title=Venta%20POS&callback=${callbackUrl}`;
+                window.location.href = `sumupmerchant://pay/1.0?affiliate-key=emprende_pos&app-id=com.emprende.app&amount=${sumupAmount}&total=${sumupAmount}&currency=CLP&title=Venta%20POS&callback=${callbackUrl}`;
             } else {
                 onConfirmSale('SUMUP')
                 onClose()
