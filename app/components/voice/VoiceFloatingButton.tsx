@@ -119,7 +119,10 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
             )}>
 
 
-                <div className="pointer-events-auto relative flex items-center gap-3">
+                <div className={cn(
+                    "relative flex items-center gap-3",
+                    (isCheckoutOpen || isCartExpanded) ? "pointer-events-none" : "pointer-events-auto"
+                )}>
                     {/* Help Button (Left of Mic) */}
                     <button
                         onClick={() => setShowHelp(true)}
@@ -128,6 +131,7 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
                             isListening && "opacity-0 scale-75 pointer-events-none"
                         )}
                         title="Ejemplos de voz"
+                        disabled={isCheckoutOpen || isCartExpanded}
                     >
                         <HelpCircle className="w-6 h-6" />
                     </button>
@@ -148,7 +152,7 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
                                         ? "bg-slate-700 shadow-slate-500/40"
                                         : "bg-[#4379F2] hover:scale-105 active:scale-95 shadow-blue-500/40" // Brand Blue
                             )}
-                            disabled={isProcessing}
+                            disabled={isProcessing || isCheckoutOpen || isCartExpanded}
                         >
                             {isProcessing ? (
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
