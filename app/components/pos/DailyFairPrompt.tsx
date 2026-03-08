@@ -1,16 +1,23 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Store, X, MapPin, CalendarClock, TrendingUp } from "lucide-react"
+import { Store, X, MapPin, CalendarClock, TrendingUp, History } from "lucide-react"
 
 export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
     const [isOpen, setIsOpen] = useState(false)
     const [fairName, setFairName] = useState("")
+    const [knownFairs, setKnownFairs] = useState<string[]>([])
 
     useEffect(() => {
         if (!isPro) return;
 
         try {
+            // Cargar ferias conocidas
+            const storedFairs = localStorage.getItem('emprende_known_fairs')
+            if (storedFairs) {
+                setKnownFairs(JSON.parse(storedFairs))
+            }
+
             const today = new Date().toISOString().split('T')[0]
             const lastPrompt = localStorage.getItem('emprende_last_fair_prompt')
             
@@ -31,9 +38,17 @@ export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
             alert("Por favor, ingresa el nombre de la feria o evento.")
             return;
         }
+
+        const newFairName = fairName.trim()
+        
+        // Guardar en el historial de ferias (máximo 5)
+        const updatedFairs = Array.from(new Set([newFairName, ...knownFairs])).slice(0, 5)
+        localStorage.setItem('emprende_known_fairs', JSON.stringify(updatedFairs))
+        setKnownFairs(updatedFairs)
+
         const today = new Date().toISOString().split('T')[0]
         localStorage.setItem('emprende_last_fair_prompt', today)
-        localStorage.setItem('current_fair', fairName.trim())
+        localStorage.setItem('current_fair', newFairName)
         setIsOpen(false)
     }
 
@@ -46,7 +61,8 @@ export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
 
     return (
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4">
-            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={handleDismiss} />
+            {/* NO onClick en el backdrop para forzar a que interactúen con la UI y no se pierda por accidente */}
+            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
             
             <div className="relative bg-white w-full max-w-sm rounded-[2rem] shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-300">
                 <button 
@@ -64,7 +80,7 @@ export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
                     ¿Estás vendiendo en una feria hoy?
                 </h2>
                 
-                <p className="text-center text-slate-500 text-sm font-medium mb-8">
+                <p className="text-center text-slate-500 text-sm font-medium mb-6">
                     Activaremos el <span className="text-violet-600 font-bold">Rastreador Inteligente PRO</span> para analizar el rendimiento de este evento especial.
                 </p>
 
@@ -80,9 +96,23 @@ export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
                         />
                     </div>
 
+                    {knownFairs.length > 0 && (
+                        <div className="flex flex-wrap gap-2 pt-1">
+                            {knownFairs.map((fair, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setFairName(fair)}
+                                    className="px-3 py-1.5 bg-violet-50 text-violet-700 border border-violet-100 rounded-lg text-xs font-bold hover:bg-violet-100 transition-colors flex items-center gap-1.5"
+                                >
+                                    <History className="w-3 h-3" /> {fair}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
                     <button
                         onClick={handleConfirm}
-                        className="w-full bg-slate-900 text-white font-black uppercase tracking-widest text-xs py-4 rounded-xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 active:scale-95"
+                        className="w-full bg-slate-900 text-white font-black uppercase tracking-widest text-xs py-4 rounded-xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 active:scale-95 mt-2"
                     >
                         <TrendingUp className="w-4 h-4" /> Iniciar Rastreo
                     </button>
