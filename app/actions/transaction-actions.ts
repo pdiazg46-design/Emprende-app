@@ -793,7 +793,7 @@ export async function getSalesInsights(timeframe: string = 'week') {
 
 
 // --- EXPENSE INTELLIGENCE ---
-export async function getExpenseInsights(timeframe: 'week' | 'month' | 'year' = 'week') {
+export async function getExpenseInsights(timeframe: string = 'week') {
     const session = await auth()
     if (!session?.user?.id) return {
         totalExpenses: 0,
@@ -806,6 +806,7 @@ export async function getExpenseInsights(timeframe: 'week' | 'month' | 'year' = 
     const bounds = getChileTimeBounds();
     let startDate = bounds.weekStart;
     let endDate = bounds.weekEnd;
+    let isDailyTrend = true;
 
     if (timeframe === 'month') {
         startDate = bounds.monthStart;
@@ -813,6 +814,29 @@ export async function getExpenseInsights(timeframe: 'week' | 'month' | 'year' = 
     } else if (timeframe === 'year') {
         startDate = bounds.yearStart;
         endDate = bounds.yearEnd;
+        isDailyTrend = false;
+    } else if (timeframe === 'prev_week') {
+        startDate = bounds.lastWeekStart;
+        endDate = bounds.lastWeekEnd;
+    } else if (timeframe === 'prev_month') {
+        startDate = bounds.lastMonthStart;
+        endDate = bounds.lastMonthEnd;
+    } else if (timeframe === 'prev_year') {
+        startDate = bounds.lastYearStart;
+        endDate = bounds.lastYearEnd;
+        isDailyTrend = false;
+    } else if (timeframe.startsWith('custom_')) {
+        const parts = timeframe.split('_');
+        if (parts.length === 3) {
+            startDate = new Date(`${parts[1]}T00:00:00.000Z`);
+            endDate = new Date(`${parts[2]}T23:59:59.999Z`);
+            
+            const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays > 31) {
+                isDailyTrend = false;
+            }
+        }
     }
 
     const expenses = await prisma.transaction.findMany({
@@ -843,13 +867,16 @@ export async function getExpenseInsights(timeframe: 'week' | 'month' | 'year' = 
     // Trend Map Logic (Week, Month, Year)
     const trendMap = new Map<string, number>()
 
-    if (timeframe === 'week') {
+    if (timeframe === 'week' || timeframe === 'prev_week') {
         const daysOfWeek = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
         daysOfWeek.forEach(day => trendMap.set(day, 0))
-    } else if (timeframe === 'month') {
-        const daysInMonth = (new Date(bounds.monthEnd.getTime() - 4 * 3600 * 1000)).getDate();
+    } else if (timeframe === 'month' || timeframe === 'prev_month') {
+        const daysInMonth = (new Date(endDate.getTime() - 4 * 3600 * 1000)).getDate();
         for (let i = 1; i <= daysInMonth; i++) trendMap.set(i.toString(), 0)
-    } else if (timeframe === 'year') {
+    } else if (timeframe === 'year' || timeframe === 'prev_year') {
+        const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+        months.forEach(m => trendMap.set(m, 0))
+    } else if (timeframe.startsWith('custom_') && !isDailyTrend) {
         const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
         months.forEach(m => trendMap.set(m, 0))
     }
@@ -864,18 +891,26 @@ export async function getExpenseInsights(timeframe: 'week' | 'month' | 'year' = 
 
         let labelKey = ''
 
-        if (timeframe === 'week') {
+        if (timeframe === 'week' || timeframe === 'prev_week') {
             const dayIndex = expDateLocal.getUTCDay()
             const mappedIndex = dayIndex === 0 ? 6 : dayIndex - 1
             labelKey = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][mappedIndex]
-        } else if (timeframe === 'month') {
+        } else if (timeframe === 'month' || timeframe === 'prev_month') {
             labelKey = expDateLocal.getUTCDate().toString()
-        } else if (timeframe === 'year') {
+        } else if (timeframe === 'year' || timeframe === 'prev_year') {
             labelKey = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][expDateLocal.getUTCMonth()]
+        } else if (timeframe.startsWith('custom_')) {
+            if (isDailyTrend) {
+                labelKey = `${expDateLocal.getUTCDate()}/${expDateLocal.getUTCMonth()+1}`;
+            } else {
+                labelKey = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][expDateLocal.getUTCMonth()];
+            }
         }
 
         if (trendMap.has(labelKey)) {
             trendMap.set(labelKey, trendMap.get(labelKey)! + e.amount)
+        } else if (isDailyTrend && timeframe.startsWith('custom_')) {
+            trendMap.set(labelKey, e.amount)
         }
     })
 
