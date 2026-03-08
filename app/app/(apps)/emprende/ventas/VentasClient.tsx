@@ -40,7 +40,7 @@ export default function VentasClient({
         try {
             // Fetch both metric types simultaneously
             const [data, analyticsData] = await Promise.all([
-                getDashboardMetrics(),
+                getDashboardMetrics(initialTimeframe),
                 getSalesInsights(initialTimeframe)
             ])
             setMetrics(data)
@@ -75,7 +75,7 @@ export default function VentasClient({
     if (loading) return <div className="p-8 text-center text-slate-400">Cargando inteligencia de negocio...</div>
 
     // --- BI LOGIC: "EL SOCIO VIRTUAL" ---
-
+    // Note: We use metrics?.transactionsToday here to evaluate the current "Period" performance
     let totalRevenue = 0
     let totalCost = 0
 
@@ -91,24 +91,26 @@ export default function VentasClient({
     const marginPercent = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0
 
     let status = 'neutral'
-    let message = "Aún no hay suficientes datos hoy."
+    let message = "Aún no hay suficientes ventas en este período temporal."
     let colorClass = "bg-slate-100 text-slate-600"
+
+    const isTodayFilter = initialTimeframe === 'today' || initialTimeframe === 'week';
 
     if (salesTransactions.length === 0) {
         status = 'empty'
-        message = "El día está comenzando. ¡Vamos por esa primera venta!"
+        message = isTodayFilter ? "El día está comenzando. ¡Vamos por esa primera venta!" : "No se registraron ventas en este bloque de tiempo."
         colorClass = "bg-slate-100 text-slate-500"
     } else if (totalProfit > 15000) { 
         status = 'success'
-        message = "¡Excelente ritmo! Hoy tus ganancias cubren tus costos y generan riqueza."
+        message = "¡Excelente ritmo! Tus ganancias cubren tus costos y están generando un excedente de rentabilidad."
         colorClass = "bg-emerald-100 text-emerald-800 border border-emerald-200"
     } else if (totalProfit > 0) {
         status = 'warning'
-        message = "Estás en números azules, pero el volumen es bajo. Impulsa productos de alto margen."
+        message = "Estás en números azules, pero el margen absoluto es bajo. Intenta impulsar productos premium."
         colorClass = "bg-yellow-50 text-yellow-800 border border-yellow-200"
     } else {
         status = 'danger'
-        message = "Cuidado. Tus ventas apenas cubren los costos estimados. Revisa tus precios."
+        message = "Alerta crítica. Las ventas capturadas apenas cubren los costos estimados del stock. Estás cambiando plata."
         colorClass = "bg-rose-100 text-rose-800 border border-rose-200"
     }
 
@@ -127,6 +129,7 @@ export default function VentasClient({
                         onChange={handleTimeframeChange}
                         className="p-3 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 shadow-sm outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%208l5%205%205-5%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%222%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[position:right_10px_center] bg-no-repeat pr-10"
                     >
+                        <option value="today">Día de Hoy (Default)</option>
                         <option value="week">Semana Actual</option>
                         <option value="prev_week">Semana Anterior</option>
                         <option value="month">Mes Actual</option>
@@ -172,7 +175,7 @@ export default function VentasClient({
                         {status === 'empty' && <ShoppingBag className="w-8 h-8 text-slate-400" />}
                     </div>
                     <div>
-                        <h2 className="text-lg font-black mb-1">Diagnóstico Diario</h2>
+                        <h2 className="text-lg font-black mb-1">{isTodayFilter ? "Diagnóstico Diario" : "Diagnóstico del Período"}</h2>
                         <p className="font-medium text-sm leading-relaxed opacity-90">
                             {message}
                         </p>

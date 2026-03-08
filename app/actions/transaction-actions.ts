@@ -205,20 +205,53 @@ function getChileTimeBounds(baseDate: Date = new Date()) {
     return { todayStart, weekStart, weekEnd, lastWeekStart, lastWeekEnd, monthStart, monthEnd, lastMonthStart, lastMonthEnd, yearStart, yearEnd, lastYearStart, lastYearEnd, chileTime };
 }
 
-export const getDashboardMetrics = cache(async () => {
+export const getDashboardMetrics = cache(async (timeframe: string = 'today') => {
     const session = await auth()
-    if (!session?.user?.email) return { salesToday: 0, expensesToday: 0, transactionsToday: [], totalStockValue: 0, inventory: [] }
+    if (!session?.user?.id) return { salesToday: 0, expensesToday: 0, transactionsToday: [], totalStockValue: 0, inventory: [] }
 
-    const user = await prisma.user.findUnique({ where: { email: session.user.email } })
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } })
     if (!user) return { salesToday: 0, expensesToday: 0, transactionsToday: [], totalStockValue: 0, inventory: [] }
 
     const bounds = getChileTimeBounds();
+    
+    // Dynamic boundaries based on timeframe
+    let periodStart = bounds.todayStart;
+    let periodEnd = new Date(); // now
+
+    if (timeframe === 'week') {
+        periodStart = bounds.weekStart;
+        periodEnd = bounds.weekEnd;
+    } else if (timeframe === 'month') {
+        periodStart = bounds.monthStart;
+        periodEnd = bounds.monthEnd;
+    } else if (timeframe === 'year') {
+        periodStart = bounds.yearStart;
+        periodEnd = bounds.yearEnd;
+    } else if (timeframe === 'prev_week') {
+        periodStart = bounds.lastWeekStart;
+        periodEnd = bounds.lastWeekEnd;
+    } else if (timeframe === 'prev_month') {
+        periodStart = bounds.lastMonthStart;
+        periodEnd = bounds.lastMonthEnd;
+    } else if (timeframe === 'prev_year') {
+        periodStart = bounds.lastYearStart;
+        periodEnd = bounds.lastYearEnd;
+    } else if (timeframe.startsWith('custom_')) {
+        const parts = timeframe.split('_');
+        if (parts.length === 3) {
+            periodStart = new Date(`${parts[1]}T00:00:00.000Z`);
+            periodEnd = new Date(`${parts[2]}T23:59:59.999Z`);
+        }
+    }
+
+    // Keep the week baseline for comparisons if needed, otherwise use the period
+    const comparisonStart = timeframe === 'today' ? bounds.weekStart : periodStart;
 
     const [transactionsToday, salesToday, salesThisWeek, expensesToday, expensesThisWeek, inventory] = await Promise.all([
         prisma.transaction.findMany({
             where: {
                 userId: user.id,
-                createdAt: { gte: bounds.todayStart }
+                createdAt: { gte: periodStart, lte: periodEnd }
             },
             orderBy: { createdAt: 'desc' },
             include: { product: true }
@@ -234,7 +267,7 @@ export const getDashboardMetrics = cache(async () => {
                     { description: { contains: 'stock', mode: 'insensitive' } },
                     { description: { startsWith: 'Repuestos', mode: 'insensitive' } }
                 ],
-                createdAt: { gte: bounds.todayStart }
+                createdAt: { gte: periodStart, lte: periodEnd }
             },
             _sum: { amount: true }
         }),
@@ -249,7 +282,7 @@ export const getDashboardMetrics = cache(async () => {
                     { description: { contains: 'stock', mode: 'insensitive' } },
                     { description: { startsWith: 'Repuestos', mode: 'insensitive' } }
                 ],
-                createdAt: { gte: bounds.weekStart }
+                createdAt: { gte: comparisonStart, lte: periodEnd }
             },
             _sum: { amount: true }
         }),
@@ -257,7 +290,7 @@ export const getDashboardMetrics = cache(async () => {
             where: {
                 userId: user.id,
                 type: 'EXPENSE',
-                createdAt: { gte: bounds.todayStart }
+                createdAt: { gte: periodStart, lte: periodEnd }
             },
             _sum: { amount: true }
         }),
@@ -265,7 +298,7 @@ export const getDashboardMetrics = cache(async () => {
             where: {
                 userId: user.id,
                 type: 'EXPENSE',
-                createdAt: { gte: bounds.weekStart }
+                createdAt: { gte: comparisonStart, lte: periodEnd }
             },
             _sum: { amount: true }
         }),

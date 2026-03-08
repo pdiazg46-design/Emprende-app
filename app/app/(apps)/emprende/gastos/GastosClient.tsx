@@ -38,9 +38,8 @@ export default function GastosClient({
     const loadData = async () => {
         setLoading(true)
         try {
-            // Fetch both metric types simultaneously
             const [data, analyticsData] = await Promise.all([
-                getDashboardMetrics(),
+                getDashboardMetrics(initialTimeframe),
                 getExpenseInsights(initialTimeframe)
             ])
             setMetrics(data)
@@ -75,10 +74,6 @@ export default function GastosClient({
     if (loading) return <div className="p-8 text-center text-slate-400">Cargando inteligencia de gastos...</div>
 
     const expenseTransactions = metrics?.transactionsToday?.filter((t: any) => t.type === 'EXPENSE') || []
-    let totalExpensesToday = 0
-    expenseTransactions.forEach((t: any) => {
-        totalExpensesToday += t.amount
-    })
 
     return (
         <div className="pb-24 space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto">
@@ -86,7 +81,7 @@ export default function GastosClient({
             <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-black text-slate-900 tracking-tight">Control de Gastos</h1>
-                    <p className="text-sm font-bold text-slate-400">Tus salidas de dinero de hoy</p>
+                    <p className="text-sm font-bold text-slate-400">Análisis detallado de tus salidas de dinero</p>
                 </div>
                 
                 <div className="flex flex-col items-end gap-2">
@@ -158,8 +153,11 @@ export default function GastosClient({
 
             {/* Recent Expenses List */}
             <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-                    <h3 className="font-black text-slate-800 text-lg">Últimos Gastos Registrados (Hoy)</h3>
+                <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <h3 className="font-black text-slate-800 text-lg">Historial de Gastos</h3>
+                    <span className="text-xs font-bold text-slate-400 bg-white px-3 py-1 rounded-lg border border-slate-200">
+                        {expenseTransactions.length} Movimientos en este período
+                    </span>
                 </div>
 
                 {expenseTransactions.length === 0 ? (
