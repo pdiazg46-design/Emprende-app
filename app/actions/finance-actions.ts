@@ -69,7 +69,7 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
         const sales = await prisma.transaction.findMany({
             where: {
                 userId: session.user.id,
-                type: { in: ['SALE', 'WITHDRAWAL'] },
+                type: { in: ['SALE', 'WITHDRAWAL', 'CASH_DEPOSIT'] },
                 amount: { gt: 0 },
                 NOT: [
                     { description: { contains: 'Añadido', mode: 'insensitive' } },
@@ -89,6 +89,7 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
         let totalCajaEfectivo = 0; // CASH
         let totalRetirosCaja = 0; // WITHDRAWAL CASH
         let totalRetirosBanco = 0; // WITHDRAWAL TRANSFER
+        let totalDepositosBanco = 0; // CASH_DEPOSIT
         let totalBancoTransferencia = 0; // TRANSFER
         let totalVentaSumUp = 0; // SUMUP Bruto
         let totalVentaMP = 0; // MERCADO_PAGO Bruto
@@ -141,10 +142,14 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
 
         // Filtrar y sumar retiros
         const retiros = liquidaciones.filter(l => l.type === 'WITHDRAWAL');
+        const depositos = liquidaciones.filter(l => l.type === 'CASH_DEPOSIT');
 
         // Sumar retiros por origen (CASH o TRANSFER). Si no hay method, asume CASH.
         totalRetirosCaja = retiros.filter(r => r.method === 'CASH').reduce((acc, curr) => acc + curr.gross, 0);
         totalRetirosBanco = retiros.filter(r => r.method === 'TRANSFER').reduce((acc, curr) => acc + curr.gross, 0);
+        
+        // Sumar depósitos
+        totalDepositosBanco = depositos.reduce((acc, curr) => acc + curr.gross, 0);
 
         const sumupFee = Math.round(totalVentaSumUp * SUMUP_FEE_RATE);
         const mpFee = Math.round(totalVentaMP * MP_FEE_RATE);
@@ -152,11 +157,11 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
         const sumupNet = totalVentaSumUp - sumupFee;
         const mpNet = totalVentaMP - mpFee;
 
-        // "Dinero en Banco" = Transferencias Rojas (0%) + MercadoPago Neto + SumUp Neto - Retiros al Banco
-        const dineroRealEnBanco = (totalBancoTransferencia + mpNet + sumupNet) - totalRetirosBanco;
+        // "Dinero en Banco" = Transferencias Rojas (0%) + MercadoPago Neto + SumUp Neto - Retiros al Banco + Depósitos
+        const dineroRealEnBanco = (totalBancoTransferencia + mpNet + sumupNet) - totalRetirosBanco + totalDepositosBanco;
 
-        // "Dinero Físico" = Ventas Efectivo - Retiros de Caja
-        const dineroCajaFisica = (totalCajaEfectivo + totalVentaOtros) - totalRetirosCaja;
+        // "Dinero Físico" = Ventas Efectivo - Retiros de Caja - Depósitos
+        const dineroCajaFisica = (totalCajaEfectivo + totalVentaOtros) - totalRetirosCaja - totalDepositosBanco;
 
         const comisionesCobradas = sumupFee + mpFee;
         const ventaBrutaTotal = totalCajaEfectivo + totalBancoTransferencia + totalVentaSumUp + totalVentaMP + totalVentaOtros;
@@ -172,6 +177,7 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
                 sumup: { gross: totalVentaSumUp, fee: sumupFee, net: sumupNet },
                 mp: { gross: totalVentaMP, fee: mpFee, net: mpNet },
                 withdrawals: { cash: totalRetirosCaja, bank: totalRetirosBanco },
+                deposits: totalDepositosBanco,
                 legacyCount: legacyTxCount
             },
             history: liquidaciones // para la tabla detallada

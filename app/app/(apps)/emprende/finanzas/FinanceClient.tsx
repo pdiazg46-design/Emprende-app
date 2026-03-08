@@ -16,9 +16,15 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
     const [retiroMethod, setRetiroMethod] = useState<'CASH' | 'TRANSFER'>('CASH')
     const [isSubmittingRetiro, setIsSubmittingRetiro] = useState(false)
 
+    // Deposit State
+    const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
+    const [depositAmount, setDepositAmount] = useState("")
+    const [isSubmittingDeposit, setIsSubmittingDeposit] = useState(false)
+
     const { ventaBrutaTotal, dineroRealEnBanco, dineroCajaFisica, comisionesCobradas, breakdown, history } = initialData
     const legacyCount = breakdown?.legacyCount || 0;
     const withdrawals = breakdown?.withdrawals || { cash: 0, bank: 0 };
+    const deposits = breakdown?.deposits || 0;
     const totalRetiros = withdrawals.cash + withdrawals.bank;
 
     const formatMoney = (val: number) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(Math.round(val))
@@ -49,6 +55,29 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
             alert("Error al registrar el retiro")
         } finally {
             setIsSubmittingRetiro(false)
+        }
+    }
+
+    const handleManualDeposit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        const parsedAmount = parseInt(depositAmount.replace(/\D/g, ''))
+        if (!parsedAmount || parsedAmount <= 0) return
+
+        setIsSubmittingDeposit(true)
+        try {
+            await addTransaction({
+                type: 'CASH_DEPOSIT',
+                amount: parsedAmount,
+                paymentMethod: 'TRANSFER', 
+                description: 'Depósito de Efectivo Físico a Banco'
+            })
+            setDepositAmount("")
+            setIsDepositModalOpen(false)
+            router.refresh()
+        } catch (error) {
+            alert("Error al registrar el depósito")
+        } finally {
+            setIsSubmittingDeposit(false)
         }
     }
 
@@ -220,30 +249,44 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
                                     <ArrowLeft className="w-6 h-6 rotate-45" />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-black text-slate-800">Retiros Extraídos</h3>
-                                    <p className="text-xs text-slate-500">Monto sacado de Físico y Banco</p>
+                                    <h3 className="text-lg font-black text-slate-800">Movimientos de Caja</h3>
+                                    <p className="text-xs text-slate-500">Capital Extraído y Depositado</p>
                                 </div>
                             </div>
-                            <button
-                                onClick={() => setIsRetiroModalOpen(true)}
-                                className="text-xs font-bold text-violet-600 bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-lg border border-violet-200 transition-colors"
-                            >
-                                + Nuevo Retiro
-                            </button>
+                            <div className="flex flex-col gap-2">
+                                <button
+                                    onClick={() => setIsRetiroModalOpen(true)}
+                                    className="text-xs font-bold text-violet-600 bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-lg border border-violet-200 transition-colors"
+                                >
+                                    + Nuevo Retiro
+                                </button>
+                                <button
+                                    onClick={() => setIsDepositModalOpen(true)}
+                                    className="text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors"
+                                >
+                                    + Depositar Efectivo
+                                </button>
+                            </div>
                         </div>
 
                         <div className="space-y-4">
                             <div className="flex justify-between items-center text-sm font-bold border-b border-violet-50 pb-2">
-                                <span className="text-slate-500">Caja Efectivo</span>
+                                <span className="text-slate-500">Caja Efectivo (Retiros)</span>
                                 <span className="text-violet-600">-{formatMoney(withdrawals.cash)}</span>
                             </div>
                             <div className="flex justify-between items-center text-sm font-bold border-b border-violet-50 pb-2">
-                                <span className="text-slate-500">Cuenta Bancaria</span>
+                                <span className="text-slate-500">Cuenta Bancaria (Retiros)</span>
                                 <span className="text-violet-600">-{formatMoney(withdrawals.bank)}</span>
                             </div>
+                            {deposits > 0 && (
+                                <div className="flex justify-between items-center text-sm font-bold border-b border-emerald-50 pb-2">
+                                    <span className="text-slate-500">Ingresado al Banco</span>
+                                    <span className="text-emerald-500">+{formatMoney(deposits)}</span>
+                                </div>
+                            )}
                             <div className="flex justify-between items-center font-black pt-2">
                                 <span className="text-slate-600 text-[10px] leading-tight opacity-70">Descontado matemáticamente<br />del pozo superior</span>
-                                <span className="text-violet-700 text-lg">-{formatMoney(totalRetiros)}</span>
+                                <span className="text-violet-700 text-lg">-{formatMoney(totalRetiros)} Extraído</span>
                             </div>
                         </div>
                     </div>
@@ -312,6 +355,55 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
                                     className="w-full py-4 bg-violet-600 text-white rounded-2xl font-black tracking-widest uppercase hover:bg-violet-700 transition-colors disabled:opacity-50"
                                 >
                                     {isSubmittingRetiro ? "Procesando..." : "Confirmar Retiro"}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
+                {/* MODAL DEPOSITO MANUAL */}
+                {isDepositModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+                        <div className="bg-white rounded-3xl p-6 shadow-2xl max-w-sm w-full animate-in zoom-in-95 duration-200 relative">
+                            <button
+                                onClick={() => setIsDepositModalOpen(false)}
+                                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+
+                            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600">
+                                <ArrowLeft className="w-8 h-8 -rotate-45" />
+                            </div>
+
+                            <h3 className="text-xl font-black text-center text-slate-800 mb-1">Depositar al Banco</h3>
+                            <p className="text-center text-sm text-slate-500 mb-6">Restará físico e incrementará banco</p>
+
+                            <form onSubmit={handleManualDeposit} className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Monto Físico a Depositar</label>
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                                        <input
+                                            type="text"
+                                            inputMode="numeric"
+                                            required
+                                            value={depositAmount}
+                                            onChange={(e) => {
+                                                const val = e.target.value.replace(/\D/g, '')
+                                                setDepositAmount(val ? parseInt(val).toLocaleString('es-CL') : '')
+                                            }}
+                                            className="w-full pl-8 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-xl font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={isSubmittingDeposit || !depositAmount}
+                                    className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black tracking-widest uppercase hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                                >
+                                    {isSubmittingDeposit ? "Procesando..." : "Confirmar Depósito"}
                                 </button>
                             </form>
                         </div>
