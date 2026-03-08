@@ -28,6 +28,8 @@ interface CartContextType {
     setCatalog: (products: any[]) => void // Función para inyectar desde el servidor/InventoryManager
     isCheckoutOpen: boolean
     setIsCheckoutOpen: (open: boolean) => void
+    isCartExpanded: boolean
+    setIsCartExpanded: (expanded: boolean) => void
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -40,6 +42,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const [catalogRAM, setCatalogState] = useState<any[]>([])
     const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+    const [isCartExpanded, setIsCartExpanded] = useState(false)
 
     const setCatalog = (products: any[]) => {
         setCatalogState(products)
@@ -149,6 +152,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             optimisticSalesToday, addOptimisticSale,
             optimisticTransactions, clearOptimisticTransactions,
             isCheckoutOpen, setIsCheckoutOpen,
+            isCartExpanded, setIsCartExpanded,
             catalogRAM, setCatalog
         }}>
             {children}

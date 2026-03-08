@@ -19,7 +19,7 @@ interface VoiceFloatingButtonProps {
 
 export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFloatingButtonProps) {
     const { data: session } = useSession()
-    const { cartCount, isCheckoutOpen } = useCart()
+    const { cartCount, isCheckoutOpen, isCartExpanded } = useCart()
     const [isListening, setIsListening] = useState(false)
     const [isProcessing, setIsProcessing] = useState(false)
     const [transcript, setTranscript] = useState("")
@@ -115,7 +115,7 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
             <div className={cn(
                 "fixed left-1/2 md:left-[calc(50%+8rem)] -translate-x-1/2 z-50 flex flex-col items-center gap-4 pointer-events-none transition-all duration-300",
                 cartCount > 0 ? "bottom-[100px] sm:bottom-28" : "bottom-8",
-                isCheckoutOpen && "opacity-0 translate-y-20 scale-90 pointer-events-none"
+                (isCheckoutOpen || isCartExpanded) && "opacity-0 translate-y-20 scale-90 pointer-events-none"
             )}>
 
 
