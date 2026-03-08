@@ -16,11 +16,12 @@ export function CartSummary() {
     const [isProcessing, setIsProcessing] = useState(false)
     const [paymentConfig, setPaymentConfig] = useState<any>(null)
     const router = useRouter()
-
-    // Sync local open state with global context
+    
+    // Al montar (cuando cartCount pasa de 0 a 1), nos aseguramos de que el contexto se informe que está cerrado.
     useEffect(() => {
-        setIsCartExpanded(isOpen)
-    }, [isOpen, setIsCartExpanded])
+        setIsCartExpanded(false)
+        return () => setIsCartExpanded(false)
+    }, [setIsCartExpanded])
 
     useEffect(() => {
         getPaymentConfig().then(setConfig => {
@@ -50,6 +51,7 @@ export function CartSummary() {
         addOptimisticSale(snapshotTotal, snapshotCart, method)
         clearCart()
         setIsOpen(false)
+        setIsCartExpanded(false)
         setIsCheckoutOpen(false) // Forzar cierre del modal
 
         // 3. Proceso "Fire-and-Forget" con Desacople Total del Event Loop
@@ -75,6 +77,12 @@ export function CartSummary() {
         }, 50)
     }
 
+    const toggleOpen = () => {
+        const newState = !isOpen;
+        setIsOpen(newState);
+        setIsCartExpanded(newState);
+    }
+
     return (
         <>
             <CheckoutModal
@@ -90,7 +98,10 @@ export function CartSummary() {
             {isOpen && (
                 <div
                     className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => {
+                        setIsOpen(false);
+                        setIsCartExpanded(false);
+                    }}
                 />
             )}
 
@@ -103,7 +114,7 @@ export function CartSummary() {
                 {/* Handle for dragging (visual only - hidden on Desktop) */}
                 <div
                     className="w-full h-6 flex items-center justify-center cursor-pointer md:hidden"
-                    onClick={() => setIsOpen(!isOpen)}
+                    onClick={toggleOpen}
                 >
                     <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
                 </div>
@@ -111,7 +122,7 @@ export function CartSummary() {
                 <div className="px-6 pb-6 h-full flex flex-col">
                     {/* Header Row */}
                     <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3" onClick={() => setIsOpen(!isOpen)}>
+                        <div className="flex items-center gap-3 cursor-pointer" onClick={toggleOpen}>
                             <div className="relative">
                                 <div className="p-3 bg-blue-600 rounded-full text-white shadow-lg shadow-blue-500/30">
                                     <ShoppingCart className="w-6 h-6" />
@@ -130,9 +141,12 @@ export function CartSummary() {
 
                         {!isOpen && (
                             <button
-                                onClick={() => setIsCheckoutOpen(true)}
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Avoid triggering toggleOpen if nested somehow
+                                    setIsCheckoutOpen(true);
+                                }}
                                 disabled={isProcessing}
-                                className="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-slate-800 transition-all disabled:opacity-50 flex items-center gap-2"
+                                className="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-slate-800 transition-all disabled:opacity-50 flex items-center gap-2 relative z-10"
                             >
                                 {isProcessing ? "..." : <><CheckCircle2 className="w-4 h-4" /> Cobrar</>}
                             </button>
