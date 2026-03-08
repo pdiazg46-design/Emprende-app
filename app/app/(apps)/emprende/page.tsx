@@ -19,6 +19,7 @@ import { InventoryCard } from "@/components/dashboard/InventoryCard"
 import { RiskManager } from "@/components/dashboard/RiskManager"
 import { IntelligentFOMOBanner } from "@/components/dashboard/IntelligentFOMOBanner"
 import { Suspense } from "react"
+import { DailyFairPrompt } from "@/components/pos/DailyFairPrompt"
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -208,6 +209,7 @@ export default async function Home() {
       </div>
 
       <VoiceWrapper />
+      <DailyFairPrompt isPro={activeSession.user.role === 'ADMIN' || activeSession.user.subscriptionPlan === 'PRO'} />
     </DesktopLayout >
   )
 }

@@ -5,7 +5,7 @@ import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, 
     PieChart, Pie, Cell, Sector 
 } from "recharts"
-import { Download, ChevronRight, Package, TrendingUp, TrendingDown, Clock, Lock, ShieldCheck, PieChart as PieChartIcon } from "lucide-react"
+import { Download, ChevronRight, Package, TrendingUp, TrendingDown, Clock, Lock, ShieldCheck, PieChart as PieChartIcon, Store } from "lucide-react"
 
 interface InsightData {
     totalRevenue: number
@@ -14,6 +14,7 @@ interface InsightData {
     peakHours: { hour: string, count: number, intensity: number }[]
     averageTicket: number
     trend: { label: string, amount: number }[]
+    fairPerformance?: { name: string, totalRevenue: number, transactionCount: number }[]
 }
 
 export function SalesAnalyticsContainer({ 
@@ -155,9 +156,10 @@ export function SalesAnalyticsContainer({
                                 <YAxis stroke="#cbd5e1" fontSize={12} fontWeight="bold" tickFormatter={(v) => `$${(v/1000)}k`} axisLine={false} tickLine={false} />
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                 <RechartsTooltip 
-                                    formatter={(value: any) => [`$${value.toLocaleString('es-CL')}`, 'Ingreso']}
-                                    labelStyle={{ fontWeight: 'bold', color: '#1e293b' }}
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                                    formatter={(value: any) => [`$${value.toLocaleString('es-CL')}`, 'Ingreso Total']}
+                                    labelFormatter={(label) => `Período: ${label}`}
+                                    labelStyle={{ fontWeight: 'black', color: '#8b5cf6', marginBottom: '4px' }}
+                                    contentStyle={{ borderRadius: '16px', border: '1px solid #f1f5f9', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.05)', backgroundColor: 'white' }}
                                 />
                                 <Area type="monotone" dataKey="amount" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
                             </AreaChart>
@@ -283,6 +285,48 @@ export function SalesAnalyticsContainer({
                 </div>
 
             </div>
+
+            {/* SECCIÓN ANALÍTICA DE FERIAS (NUEVO) */}
+            {insights.fairPerformance && insights.fairPerformance.length > 0 && (
+                <div className="w-full bg-gradient-to-br from-violet-600 to-fuchsia-600 rounded-[2rem] p-8 shadow-xl text-white relative overflow-hidden group mb-8">
+                    {/* Background decorations */}
+                    <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none transform group-hover:scale-110 transition-transform duration-700">
+                        <Store className="w-48 h-48" />
+                    </div>
+
+                    <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
+                        <div className="max-w-md">
+                            <h3 className="text-sm font-black uppercase tracking-widest text-violet-200 mb-2 flex items-center gap-2">
+                                <TrendingUp className="w-4 h-4" /> Inteligencia Eventos Físicos
+                            </h3>
+                            <h2 className="text-3xl font-black mb-3">Rendimiento en Ferias</h2>
+                            <p className="text-violet-100 font-medium leading-relaxed text-sm">
+                                Has estado registrando ventas bajo eventos físicos específicos. 
+                                La IA indica que tu evento más rentable hasta la fecha es <span className="font-black text-white">{insights.fairPerformance[0].name}</span>, generando <span className="font-black text-white">${insights.fairPerformance[0].totalRevenue.toLocaleString('es-CL')}</span>.
+                            </p>
+                        </div>
+
+                        <div className="flex-1 w-full grid grid-cols-1 gap-3">
+                            {insights.fairPerformance.map((fair, idx) => (
+                                <div key={idx} className="bg-black/20 backdrop-blur-md rounded-2xl p-4 flex items-center justify-between border border-white/10 hover:bg-black/30 transition-colors">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-black text-sm">
+                                            #{idx + 1}
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-lg">{fair.name}</p>
+                                            <p className="text-xs font-bold text-violet-200 uppercase tracking-widest">{fair.transactionCount} Transacciones</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="font-black text-xl">${fair.totalRevenue.toLocaleString('es-CL')}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

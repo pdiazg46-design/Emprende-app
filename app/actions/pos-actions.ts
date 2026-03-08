@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { CartItem } from "@/components/pos/CartContext"
 
-export async function processSale(cart: CartItem[], total: number, paymentMethod: string = 'CASH') {
+export async function processSale(cart: CartItem[], total: number, paymentMethod: string = 'CASH', eventName?: string | null) {
     try {
         const session = await auth()
         if (!session?.user?.id) return { error: "No autorizado" }
@@ -39,6 +39,7 @@ export async function processSale(cart: CartItem[], total: number, paymentMethod
         // 2. Execute Sale (Deduct Stock & Create Transaction en UNA SOLA TRANSACCIÓN MASIVA)
         const transactionGroupId = crypto.randomUUID();
         const dbOperations = [];
+        const prefix = eventName ? `[Feria: ${eventName}] ` : '';
 
         for (const item of cart) {
             const product = productsMap.get(item.id);
@@ -60,7 +61,7 @@ export async function processSale(cart: CartItem[], total: number, paymentMethod
                         type: 'SALE',
                         amount: item.price * item.quantity,
                         quantity: item.quantity,
-                        description: `Venta POS: ${item.quantity}x ${item.name}`,
+                        description: `${prefix}Venta POS: ${item.quantity}x ${item.name}`,
                         paymentMethod: paymentMethod,
                         groupId: transactionGroupId,
                         productId: isManual ? null : item.id

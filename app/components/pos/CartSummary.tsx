@@ -56,7 +56,9 @@ export function CartSummary() {
 
         // 3. Proceso "Fire-and-Forget" con Desacople Total del Event Loop
         setTimeout(() => {
-            processSale(snapshotCart, snapshotTotal, method)
+            const currentFair = typeof window !== 'undefined' ? localStorage.getItem('current_fair') : null;
+            
+            processSale(snapshotCart, snapshotTotal, method, currentFair)
                 .then((res: any) => {
                     if (res?.error) {
                         alert("Error al procesar la venta: " + res.error);

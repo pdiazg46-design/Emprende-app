@@ -16,9 +16,22 @@ export default function VentasClient({
     const [metrics, setMetrics] = useState<any>(null)
     const [insights, setInsights] = useState<any>(null)
     const [loading, setLoading] = useState(true)
+    
+    // Custom Timeframe State
+    const [isCustomMode, setIsCustomMode] = useState(initialTimeframe.startsWith('custom_'))
+    const [customStart, setCustomStart] = useState(() => {
+        if (initialTimeframe.startsWith('custom_')) return initialTimeframe.split('_')[1]
+        return ""
+    })
+    const [customEnd, setCustomEnd] = useState(() => {
+        if (initialTimeframe.startsWith('custom_')) return initialTimeframe.split('_')[2]
+        return ""
+    })
+    
     const router = useRouter()
 
     useEffect(() => {
+        setIsCustomMode(initialTimeframe.startsWith('custom_'))
         loadData()
     }, [initialTimeframe]) // Reload when timeframe changes
 
@@ -28,7 +41,7 @@ export default function VentasClient({
             // Fetch both metric types simultaneously
             const [data, analyticsData] = await Promise.all([
                 getDashboardMetrics(),
-                getSalesInsights(initialTimeframe as 'week' | 'month' | 'year')
+                getSalesInsights(initialTimeframe)
             ])
             setMetrics(data)
             setInsights(analyticsData)
@@ -40,8 +53,23 @@ export default function VentasClient({
     }
 
     const handleTimeframeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        router.push(`/emprende/ventas?timeframe=${e.target.value}`)
-        router.refresh()
+        const val = e.target.value
+        if (val === 'custom') {
+            setIsCustomMode(true)
+        } else {
+            setIsCustomMode(false)
+            router.push(`/emprende/ventas?timeframe=${val}`)
+            router.refresh()
+        }
+    }
+
+    const applyCustomRange = () => {
+        if (customStart && customEnd) {
+            router.push(`/emprende/ventas?timeframe=custom_${customStart}_${customEnd}`)
+            router.refresh()
+        } else {
+            alert("Por favor selecciona una fecha de inicio y fin para buscar.")
+        }
     }
 
     if (loading) return <div className="p-8 text-center text-slate-400">Cargando inteligencia de negocio...</div>
@@ -87,21 +115,51 @@ export default function VentasClient({
     return (
         <div className="pb-24 space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto">
             {/* Header */}
-            <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-black text-slate-900 tracking-tight">Ventas & Márgenes</h1>
                     <p className="text-sm font-bold text-slate-400">Inteligencia de Negocio</p>
                 </div>
                 
-                <select
-                    value={initialTimeframe}
-                    onChange={handleTimeframeChange}
-                    className="p-3 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 shadow-sm outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%208l5%205%205-5%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%222%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[position:right_10px_center] bg-no-repeat pr-10"
-                >
-                    <option value="week">Última Semana</option>
-                    <option value="month">Mes Actual</option>
-                    <option value="year">Histórico Anual</option>
-                </select>
+                <div className="flex flex-col items-end gap-2">
+                    <select
+                        value={isCustomMode ? 'custom' : initialTimeframe}
+                        onChange={handleTimeframeChange}
+                        className="p-3 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 shadow-sm outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%208l5%205%205-5%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%222%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-[length:20px] bg-[position:right_10px_center] bg-no-repeat pr-10"
+                    >
+                        <option value="week">Semana Actual</option>
+                        <option value="prev_week">Semana Anterior</option>
+                        <option value="month">Mes Actual</option>
+                        <option value="prev_month">Mes Anterior</option>
+                        <option value="year">Año Actual</option>
+                        <option value="prev_year">Año Anterior</option>
+                        <option value="custom">Rango Personalizado...</option>
+                    </select>
+
+                    {isCustomMode && (
+                        <div className="flex animate-in slide-in-from-top-2 items-center gap-2 bg-slate-50 p-2 rounded-xl border border-slate-200">
+                            <input 
+                                type="date" 
+                                value={customStart}
+                                onChange={e => setCustomStart(e.target.value)}
+                                className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-600 focus:outline-none focus:border-blue-500"
+                            />
+                            <span className="text-slate-400 font-bold text-sm">a</span>
+                            <input 
+                                type="date" 
+                                value={customEnd}
+                                onChange={e => setCustomEnd(e.target.value)}
+                                className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-600 focus:outline-none focus:border-blue-500"
+                            />
+                            <button 
+                                onClick={applyCustomRange}
+                                className="bg-slate-900 text-white px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors ml-1"
+                            >
+                                Filtrar
+                            </button>
+                        </div>
+                    )}
+                </div>
             </header>
 
             {/* "EL SOCIO VIRTUAL" INSIGHT CARD */}

@@ -181,6 +181,10 @@ function getChileTimeBounds(baseDate: Date = new Date()) {
     const weekStart = new Date(Date.UTC(year, month, date - diffToMonday, tzOffsetHours, 0, 0, 0));
     const weekEnd = new Date(Date.UTC(year, month, date - diffToMonday + 6, tzOffsetHours + 23, 59, 59, 999));
 
+    // Corrección Semana Anterior
+    const lastWeekStart = new Date(Date.UTC(year, month, date - diffToMonday - 7, tzOffsetHours, 0, 0, 0));
+    const lastWeekEnd = new Date(Date.UTC(year, month, date - diffToMonday - 1, tzOffsetHours + 23, 59, 59, 999));
+
     const monthStart = new Date(Date.UTC(year, month, 1, tzOffsetHours, 0, 0, 0));
     const monthEnd = new Date(Date.UTC(year, month + 1, 0, tzOffsetHours + 23, 59, 59, 999));
 
@@ -198,8 +202,7 @@ function getChileTimeBounds(baseDate: Date = new Date()) {
     const lastYearStart = new Date(Date.UTC(year - 1, 0, 1, tzOffsetHours, 0, 0, 0));
     const lastYearEnd = new Date(Date.UTC(year - 1, 11, 31, tzOffsetHours + 23, 59, 59, 999));
 
-
-    return { todayStart, weekStart, weekEnd, monthStart, monthEnd, lastMonthStart, lastMonthEnd, yearStart, yearEnd, lastYearStart, lastYearEnd, chileTime };
+    return { todayStart, weekStart, weekEnd, lastWeekStart, lastWeekEnd, monthStart, monthEnd, lastMonthStart, lastMonthEnd, yearStart, yearEnd, lastYearStart, lastYearEnd, chileTime };
 }
 
 export const getDashboardMetrics = cache(async () => {
@@ -508,7 +511,7 @@ export async function addMultiProductTransaction(items: { amount: number, produc
     };
 }
 
-export async function getSalesInsights(timeframe: 'week' | 'month' | 'year' = 'week') {
+export async function getSalesInsights(timeframe: string = 'week') {
     const session = await auth()
     if (!session?.user?.id) return null
 
@@ -516,13 +519,43 @@ export async function getSalesInsights(timeframe: 'week' | 'month' | 'year' = 'w
         const bounds = getChileTimeBounds();
         let startDate = bounds.weekStart;
         let endDate = bounds.weekEnd;
-
+        let isDailyTrend = true; // Si es true, agrupa por día (ej: "Lun", "15"). Si es false, agrupa por mes (ej: "Ene", "Feb")
+        
+        // --- TIMEFRAME PARSING ---
         if (timeframe === 'month') {
             startDate = bounds.monthStart;
             endDate = bounds.monthEnd;
         } else if (timeframe === 'year') {
             startDate = bounds.yearStart;
             endDate = bounds.yearEnd;
+            isDailyTrend = false;
+        } else if (timeframe === 'prev_week') {
+            startDate = bounds.lastWeekStart;
+            endDate = bounds.lastWeekEnd;
+        } else if (timeframe === 'prev_month') {
+            startDate = bounds.lastMonthStart;
+            endDate = bounds.lastMonthEnd;
+        } else if (timeframe === 'prev_year') {
+            startDate = bounds.lastYearStart;
+            endDate = bounds.lastYearEnd;
+            isDailyTrend = false;
+        } else if (timeframe.startsWith('custom_')) {
+            // format: custom_YYYY-MM-DD_YYYY-MM-DD
+            const parts = timeframe.split('_');
+            if (parts.length === 3) {
+                // Parse as UTC dates starting precisely at midnight Chilean Time equivalent
+                startDate = new Date(`${parts[1]}T03:00:00Z`); // +3 UTC offset to align with Chilean midnight accurately backwards
+                endDate = new Date(`${parts[2]}T23:59:59Z`);
+                
+                // Adjust endpoint by adding 3 hours to compensate for the trailing timezone shift
+                endDate = new Date(endDate.getTime() + (3 * 3600 * 1000));
+                
+                // If diff > 60 days, default to monthly grouping for trends
+                const diffDays = (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24);
+                if (diffDays > 45) {
+                    isDailyTrend = false;
+                }
+            }
         }
 
         const sales = await prisma.transaction.findMany({
@@ -563,17 +596,36 @@ export async function getSalesInsights(timeframe: 'week' | 'month' | 'year' = 'w
         let totalRevenue = 0
 
         const trendMap = new Map<string, number>()
+        const fairStats = new Map<string, { totalRevenue: number, transactionCount: number }>()
 
-        if (timeframe === 'week') {
+        // --- TREND MAP INITIATION ---
+        if (timeframe === 'week' || timeframe === 'prev_week') {
             const daysOfWeek = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
             daysOfWeek.forEach(day => trendMap.set(day, 0))
         } else if (timeframe === 'month') {
-            // Usar la fecha chilena máxima para saber cuántos días dibujar
-            const daysInMonth = (new Date(bounds.monthEnd.getTime() - 4 * 3600 * 1000)).getDate();
+            const daysInMonth = bounds.chileTime.getDate() // Hasta el día actual del mes
             for (let i = 1; i <= daysInMonth; i++) trendMap.set(i.toString(), 0)
-        } else if (timeframe === 'year') {
+        } else if (timeframe === 'prev_month') {
+            const daysInLastMonth = new Date(bounds.lastMonthEnd.getTime() - 4 * 3600 * 1000).getDate()
+            for (let i = 1; i <= daysInLastMonth; i++) trendMap.set(i.toString(), 0)
+        } else if (timeframe === 'year' || timeframe === 'prev_year') {
             const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
             months.forEach(m => trendMap.set(m, 0))
+        } else if (timeframe.startsWith('custom_')) {
+            // Dependiendo si es diario o mensual
+            if (isDailyTrend) {
+                // Initialize all days between start and end
+                let curr = new Date(startDate.getTime());
+                while (curr <= endDate) {
+                    const chileCurr = new Date(curr.getTime() - (3 * 3600 * 1000));
+                    const label = `${chileCurr.getUTCDate()}/${chileCurr.getUTCMonth()+1}`;
+                    trendMap.set(label, 0);
+                    curr.setDate(curr.getDate() + 1);
+                }
+            } else {
+                const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+                months.forEach(m => trendMap.set(m, 0))
+            }
         }
 
         sales.forEach(sale => {
@@ -590,6 +642,17 @@ export async function getSalesInsights(timeframe: 'week' | 'month' | 'year' = 'w
                 revenue: current.revenue + sale.amount
             })
 
+            // Track Fair (Feria) Performance
+            const fairMatch = sale.description?.match(/\[Feria: (.*?)\]/);
+            if (fairMatch && fairMatch[1]) {
+                const fairName = fairMatch[1];
+                const currentFair = fairStats.get(fairName) || { totalRevenue: 0, transactionCount: 0 };
+                fairStats.set(fairName, {
+                    totalRevenue: currentFair.totalRevenue + sale.amount,
+                    transactionCount: currentFair.transactionCount + 1
+                });
+            }
+
             // Adjust Sale Date to Chile Time
             const saleDateUTC = new Date(sale.createdAt);
             const saleDateLocal = new Date(saleDateUTC.getTime() - (3 * 3600 * 1000));
@@ -599,18 +662,27 @@ export async function getSalesInsights(timeframe: 'week' | 'month' | 'year' = 'w
 
             let labelKey = ''
 
-            if (timeframe === 'week') {
+            if (timeframe === 'week' || timeframe === 'prev_week') {
                 const dayIndex = saleDateLocal.getUTCDay()
                 const mappedIndex = dayIndex === 0 ? 6 : dayIndex - 1
                 labelKey = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][mappedIndex]
-            } else if (timeframe === 'month') {
+            } else if (timeframe === 'month' || timeframe === 'prev_month') {
                 labelKey = saleDateLocal.getUTCDate().toString()
-            } else if (timeframe === 'year') {
+            } else if (timeframe === 'year' || timeframe === 'prev_year') {
                 labelKey = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][saleDateLocal.getUTCMonth()]
+            } else if (timeframe.startsWith('custom_')) {
+                if (isDailyTrend) {
+                    labelKey = `${saleDateLocal.getUTCDate()}/${saleDateLocal.getUTCMonth()+1}`;
+                } else {
+                    labelKey = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][saleDateLocal.getUTCMonth()];
+                }
             }
 
             if (trendMap.has(labelKey)) {
                 trendMap.set(labelKey, trendMap.get(labelKey)! + sale.amount)
+            } else if (isDailyTrend && timeframe.startsWith('custom_')) {
+               // Fallback setup array for missing days
+               trendMap.set(labelKey, sale.amount)
             }
 
             totalRevenue += sale.amount
@@ -636,13 +708,20 @@ export async function getSalesInsights(timeframe: 'week' | 'month' | 'year' = 'w
         const uniqueGroups = new Set(sales.map(s => s.groupId || s.id)).size
         const averageTicket = uniqueGroups > 0 ? Math.round(totalRevenue / uniqueGroups) : 0
 
+        const fairPerformance = Array.from(fairStats.entries()).map(([name, data]) => ({
+            name,
+            totalRevenue: data.totalRevenue,
+            transactionCount: data.transactionCount
+        })).sort((a, b) => b.totalRevenue - a.totalRevenue);
+
         return {
             totalRevenue,
             totalTransactions: uniqueGroups,
             topProducts,
             peakHours,
             averageTicket,
-            trend
+            trend,
+            fairPerformance
         }
 
     } catch (error) {
