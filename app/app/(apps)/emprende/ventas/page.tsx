@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 export default async function SalesPage({
     searchParams
 }: {
-    searchParams: { timeframe?: string }
+    searchParams: Promise<{ timeframe?: string }>
 }) {
     const session = await auth()
     if (!session?.user) {
@@ -17,7 +17,8 @@ export default async function SalesPage({
     }
 
     const isPro = (session.user as any)?.subscriptionPlan === 'PRO'
-    const timeframe = searchParams.timeframe || 'month' 
+    const sp = await searchParams;
+    const timeframe = sp.timeframe || 'month' 
 
     return (
         <DesktopLayout user={session.user}>
