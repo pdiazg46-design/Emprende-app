@@ -596,7 +596,14 @@ export async function getSalesInsights(timeframe: string = 'week') {
         let totalRevenue = 0
 
         const trendMap = new Map<string, number>()
-        const fairStats = new Map<string, { totalRevenue: number, transactionCount: number }>()
+        
+        // Fair Stats: Total Revenue, Transaction Count, Product Map, Hour Count
+        const fairStats = new Map<string, { 
+            totalRevenue: number, 
+            transactionCount: number,
+            productStats: Map<string, { name: string, quantity: number, revenue: number }>,
+            hourStats: number[]
+        }>()
 
         // --- TREND MAP INITIATION ---
         if (timeframe === 'week' || timeframe === 'prev_week') {
@@ -642,23 +649,51 @@ export async function getSalesInsights(timeframe: string = 'week') {
                 revenue: current.revenue + sale.amount
             })
 
-            // Track Fair (Feria) Performance
-            const fairMatch = sale.description?.match(/\[Feria: (.*?)\]/);
-            if (fairMatch && fairMatch[1]) {
-                const fairName = fairMatch[1];
-                const currentFair = fairStats.get(fairName) || { totalRevenue: 0, transactionCount: 0 };
-                fairStats.set(fairName, {
-                    totalRevenue: currentFair.totalRevenue + sale.amount,
-                    transactionCount: currentFair.transactionCount + 1
-                });
-            }
-
             // Adjust Sale Date to Chile Time
             const saleDateUTC = new Date(sale.createdAt);
             const saleDateLocal = new Date(saleDateUTC.getTime() - (3 * 3600 * 1000));
             // Hour adjusted
             const localHour = saleDateLocal.getUTCHours();
             hourStats[localHour]++
+
+            // Track Fair (Feria) Performance
+            const fairMatch = sale.description?.match(/\[Feria: (.*?)\]/);
+            if (fairMatch && fairMatch[1]) {
+                const fairName = fairMatch[1];
+                
+                if (!fairStats.has(fairName)) {
+                    fairStats.set(fairName, { 
+                        totalRevenue: 0, 
+                        transactionCount: 0,
+                        productStats: new Map<string, { name: string, quantity: number, revenue: number }>(),
+                        hourStats: new Array(24).fill(0)
+                    });
+                }
+                
+                const currentFair = fairStats.get(fairName)!;
+                
+                // Add Fair Revenue & Transactions
+                currentFair.totalRevenue += sale.amount;
+                // Para simplificar, contamos items como transacciones o asumimos el mismo agrupador luego, 
+                // pero por ahora cada "sale" suma 1. (Ideal si filtramos uniqueIds, pero es OK para rough metrics).
+                currentFair.transactionCount += 1;
+                
+                // Add Fair Product
+                const fairProductKey = sale.productId || sale.description || 'Otros';
+                const currentFProduct = currentFair.productStats.get(fairProductKey) || {
+                    name: sale.description || 'Producto Desconocido',
+                    quantity: 0,
+                    revenue: 0
+                };
+                currentFair.productStats.set(fairProductKey, {
+                    name: currentFProduct.name,
+                    quantity: currentFProduct.quantity + (sale.quantity || 1),
+                    revenue: currentFProduct.revenue + sale.amount
+                });
+                
+                // Add Fair Hour
+                currentFair.hourStats[localHour]++;
+            }
 
             let labelKey = ''
 
@@ -708,11 +743,36 @@ export async function getSalesInsights(timeframe: string = 'week') {
         const uniqueGroups = new Set(sales.map(s => s.groupId || s.id)).size
         const averageTicket = uniqueGroups > 0 ? Math.round(totalRevenue / uniqueGroups) : 0
 
-        const fairPerformance = Array.from(fairStats.entries()).map(([name, data]) => ({
-            name,
-            totalRevenue: data.totalRevenue,
-            transactionCount: data.transactionCount
-        })).sort((a, b) => b.totalRevenue - a.totalRevenue);
+        const fairPerformance = Array.from(fairStats.entries()).map(([name, data]) => {
+            // Find Top Product for this Fair
+            const topFProducts = Array.from(data.productStats.values()).sort((a, b) => b.quantity - a.quantity);
+            const topProduct = topFProducts.length > 0 ? topFProducts[0] : undefined;
+
+            // Find Peak Hour for this Fair
+            const peakFHours = data.hourStats.map((count, hour) => ({ hour, count })).sort((a, b) => b.count - a.count);
+            const peakHour = peakFHours.length > 0 && peakFHours[0].count > 0 ? `${peakFHours[0].hour}:00` : undefined;
+
+            return {
+                name,
+                totalRevenue: data.totalRevenue,
+                transactionCount: data.transactionCount,
+                topProduct,
+                peakHour
+            }
+        }).sort((a, b) => b.totalRevenue - a.totalRevenue);
+
+        // Find Unsold Products (Products in Inventory but NOT in productStats map)
+        const allProducts = await prisma.product.findMany({ where: { userId: session.user.id } });
+        const soldProductIds = new Set(sales.filter(s => s.productId).map(s => s.productId));
+        const unsoldProducts = allProducts
+            .filter(p => !soldProductIds.has(p.id) && p.stock > 0)
+            .map(p => ({
+                name: p.name,
+                stock: p.stock,
+                cost: p.cost * p.stock // Valor total inmovilizado
+            }))
+            .sort((a, b) => b.cost - a.cost)
+            .slice(0, 3); // Top 3 productos que te están costando dinero por no venderse
 
         return {
             totalRevenue,
@@ -721,7 +781,8 @@ export async function getSalesInsights(timeframe: string = 'week') {
             peakHours,
             averageTicket,
             trend,
-            fairPerformance
+            fairPerformance,
+            unsoldProducts
         }
 
     } catch (error) {

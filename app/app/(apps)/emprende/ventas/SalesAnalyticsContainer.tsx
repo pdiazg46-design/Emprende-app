@@ -14,7 +14,14 @@ interface InsightData {
     peakHours: { hour: string, count: number, intensity: number }[]
     averageTicket: number
     trend: { label: string, amount: number }[]
-    fairPerformance?: { name: string, totalRevenue: number, transactionCount: number }[]
+    fairPerformance?: { 
+        name: string, 
+        totalRevenue: number, 
+        transactionCount: number,
+        topProduct?: { name: string, quantity: number, revenue: number },
+        peakHour?: string
+    }[]
+    unsoldProducts?: { name: string, stock: number, cost: number }[]
 }
 
 export function SalesAnalyticsContainer({ 
@@ -299,7 +306,7 @@ export function SalesAnalyticsContainer({
                             <h3 className="text-sm font-black uppercase tracking-widest text-violet-200 mb-2 flex items-center gap-2">
                                 <TrendingUp className="w-4 h-4" /> Inteligencia Eventos Físicos
                             </h3>
-                            <h2 className="text-3xl font-black mb-3">Rendimiento en Ferias</h2>
+                            <h2 className="text-3xl font-black mb-3">Reporte IA de Ferias</h2>
                             <p className="text-violet-100 font-medium leading-relaxed text-sm">
                                 Has estado registrando ventas bajo eventos físicos específicos. 
                                 La IA indica que tu evento más rentable hasta la fecha es <span className="font-black text-white">{insights.fairPerformance[0].name}</span>, generando <span className="font-black text-white">${insights.fairPerformance[0].totalRevenue.toLocaleString('es-CL')}</span>.
@@ -308,21 +315,50 @@ export function SalesAnalyticsContainer({
 
                         <div className="flex-1 w-full grid grid-cols-1 gap-3">
                             {insights.fairPerformance.map((fair, idx) => (
-                                <div key={idx} className="bg-black/20 backdrop-blur-md rounded-2xl p-4 flex items-center justify-between border border-white/10 hover:bg-black/30 transition-colors">
+                                <div key={idx} className="bg-black/20 backdrop-blur-md rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between border border-white/10 hover:bg-black/30 transition-colors gap-4">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-black text-sm">
+                                        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center font-black text-sm shrink-0">
                                             #{idx + 1}
                                         </div>
                                         <div>
                                             <p className="font-bold text-lg">{fair.name}</p>
                                             <p className="text-xs font-bold text-violet-200 uppercase tracking-widest">{fair.transactionCount} Transacciones</p>
+                                            
+                                            {/* AI Detailed Metrics per Fair */}
+                                            <div className="mt-2 flex flex-wrap gap-2">
+                                                {fair.topProduct && (
+                                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-white/10 px-2 py-1 rounded-md text-white">
+                                                        ⭐ Top: {fair.topProduct.name} ({fair.topProduct.quantity} un.)
+                                                    </span>
+                                                )}
+                                                {fair.peakHour && (
+                                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-white/10 px-2 py-1 rounded-md text-white">
+                                                        🔥 Hora Punta: {fair.peakHour}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="text-right">
+                                    <div className="text-left md:text-right mt-2 md:mt-0 w-full md:w-auto border-t border-white/10 md:border-0 pt-3 md:pt-0">
                                         <p className="font-black text-xl">${fair.totalRevenue.toLocaleString('es-CL')}</p>
                                     </div>
                                 </div>
                             ))}
+                            
+                            {/* Unsold Products Warning (General Context) */}
+                            {insights.unsoldProducts && insights.unsoldProducts.length > 0 && (
+                                <div className="mt-2 bg-rose-500/20 border border-rose-500/30 rounded-2xl p-4 flex gap-3">
+                                    <TrendingDown className="w-5 h-5 text-rose-300 shrink-0 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-bold text-rose-100 mb-1">Inventario inmovilizado durante este periodo:</p>
+                                        <ul className="text-xs text-rose-200/80 space-y-1">
+                                            {insights.unsoldProducts.map((up, i) => (
+                                                <li key={i}>• {up.name} ({up.stock} unidades = ${up.cost.toLocaleString('es-CL')})</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
