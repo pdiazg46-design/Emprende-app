@@ -128,7 +128,10 @@ export function VoiceWrapper() {
                 showFeedback('success', "✨ " + (intent.message || "Operación procesada exitosamente."));
             }
             else {
-                showFeedback('error', `😓 No entendí: "${intent.original}". Intenta: 'Venta de 5000' o 'Vendí 3 Pulseras'`)
+                const errMsg = intent.serverError 
+                    ? `[v1.2] ${intent.serverError}` 
+                    : `[v1.2] 😓 No entendí: "${intent.original}". Intenta: 'Venta de 5000' o 'Vendí 3 Pulseras'`;
+                showFeedback('error', errMsg)
             }
 
             router.refresh()

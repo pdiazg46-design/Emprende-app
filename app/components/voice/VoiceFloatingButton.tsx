@@ -65,12 +65,12 @@ export function VoiceFloatingButton({ onCommand, feedback, onDismiss }: VoiceFlo
                     if (response.success && response.intent) {
                         onCommand(response.intent)
                     } else {
-                        onCommand({ type: 'UNKNOWN', original: text })
+                        onCommand({ type: 'UNKNOWN', original: text, serverError: response.error })
                         if (response.error) console.error(response.error)
                     }
-                } catch (error) {
+                } catch (error: any) {
                     console.error("Error processing voice:", error)
-                    onCommand({ type: 'UNKNOWN', original: text })
+                    onCommand({ type: 'UNKNOWN', original: text, serverError: error?.message || "Error catch" })
                 } finally {
                     setIsProcessing(false)
                 }
