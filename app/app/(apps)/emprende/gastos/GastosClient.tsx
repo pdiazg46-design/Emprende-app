@@ -140,9 +140,9 @@ export default function GastosClient({
                         <div className="p-2 bg-rose-50 rounded-xl text-rose-600">
                             <TrendingDown className="w-5 h-5" />
                         </div>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Gastos de Hoy</p>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Gastado del Rango Seleccionado</p>
                     </div>
-                    <p className="text-3xl font-black text-rose-600">${totalExpensesToday.toLocaleString('es-CL')}</p>
+                    <p className="text-3xl font-black text-rose-600">${(insights?.totalExpenses || 0).toLocaleString('es-CL')}</p>
                 </div>
 
                 <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm">
@@ -150,16 +150,16 @@ export default function GastosClient({
                         <div className="p-2 bg-slate-50 rounded-xl text-slate-500">
                             <DollarSign className="w-5 h-5" />
                         </div>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Gastos de la Semana</p>
+                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Promedio Diario del Rango Seleccionado</p>
                     </div>
-                    <p className="text-3xl font-black text-slate-900">${(metrics?.expensesThisWeek || 0).toLocaleString('es-CL')}</p>
+                    <p className="text-3xl font-black text-slate-900">${(insights?.averageMonthly || 0).toLocaleString('es-CL')}</p>
                 </div>
             </div>
 
             {/* Recent Expenses List */}
             <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-                    <h3 className="font-black text-slate-800 text-lg">Gastos de Hoy</h3>
+                    <h3 className="font-black text-slate-800 text-lg">Últimos Gastos Registrados (Hoy)</h3>
                 </div>
 
                 {expenseTransactions.length === 0 ? (
