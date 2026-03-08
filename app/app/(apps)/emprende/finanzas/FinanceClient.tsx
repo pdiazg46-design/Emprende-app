@@ -100,18 +100,6 @@ export default function FinanceClient({ initialData, timeframe }: { initialData:
                     </div>
                 )}
 
-                {/* ALERTA INCONSISTENCIA F29 */}
-                {timeframe === 'last_month' && new Date().getFullYear() === 2026 && new Date().getMonth() <= 2 && (
-                    <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4 flex gap-4 mt-4 animate-in fade-in slide-in-from-top-4">
-                        <AlertCircle className="w-6 h-6 text-orange-500 shrink-0 mt-0.5" />
-                        <div>
-                            <h4 className="font-bold text-orange-900 text-sm">Aviso: Inconsistencia F29 (Febrero)</h4>
-                            <p className="text-xs text-orange-800 leading-relaxed mt-1">
-                                Los gastos del mes anterior no tienen el formato requerido para el Formulario 29, ya que la integración de gastos a F29 se lanzó a principios de Marzo. Desde el mes actual en adelante, el F29 se conformará de manera limpia.
-                            </p>
-                        </div>
-                    </div>
-                )}
 
                 {/* KPI GRID */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
