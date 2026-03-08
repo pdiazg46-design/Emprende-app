@@ -40,20 +40,20 @@ export async function processVoiceCommand(text: string) {
                     'SALE', 'MULTI_SALE', 'EXPENSE', 'INVENTORY_ADD', 'INVENTORY_RESTOCK', 'CASH_WITHDRAWAL',
                     'RECORDS_INCOME', 'DELETE_LAST', 'UPDATE_BUDGET', 'UPDATE_PARTNER', 'CALIBRATE_FUND'
                 ]).describe("El tipo de operación detectada."),
-                amount: z.string().describe("Monto total principal extraído. Ejemplo: '1000', '1', 'un'. Si no hay monto, envía '0'."),
+                amount: z.union([z.string(), z.number()]).optional().describe("Monto total principal extraído. Ejemplo: '1000', '1', 'un'. Si no hay monto, envía '0'."),
                 paymentMethod: z.enum(['CASH', 'TRANSFER']).optional().describe("Para RETIROS (CASH_WITHDRAWAL) o INGRESOS, especifica si salió/entró a la Caja de Billetes ('CASH') o a la Cuenta de Banco ('TRANSFER'). Asume CASH si no se menciona un banco o cuenta."),
-                description: z.string().describe("Descripción limpia para Gastos o nombre del Presupuesto. Si no hay, envía ''."),
-                productName: z.string().describe("Nombre de producto si es Venta o Inventario. Si no hay, envía ''."),
-                isQuantity: z.boolean().describe("True si el número dictado es una cantidad en vez de un valor monetario. False por defecto."),
+                description: z.string().optional().describe("Descripción limpia para Gastos o nombre del Presupuesto. Si no hay, envía ''."),
+                productName: z.string().optional().describe("Nombre de producto si es Venta o Inventario. Si no hay, envía ''."),
+                isQuantity: z.boolean().optional().describe("True si el número dictado es una cantidad en vez de un valor monetario. False por defecto."),
                 items: z.array(z.object({
-                    amount: z.string().describe("Monto o cantidad del item. Puede ser palabra como '1', 'un', 'dos'."),
-                    product: z.string().describe("Nombre del producto limpio"),
-                    isQuantity: z.boolean().describe("True si 'amount' es cantidad de items")
-                })).describe("Solo se usa si hay multiples productos dictados en una misma oración. Sino, array vacío []"),
-                price: z.string().describe("Precio unitario si el usuario esta creando inventario. Si no aplica manda '0'."),
-                installments: z.string().describe("Cantidad de cuotas. Si no aplica manda '0'."),
-                categoryType: z.enum(['SUBSCRIPTION', 'FIXED_PAGO', 'VARIABLE_SERVICE', 'CONTRIBUTION', 'GENERAL', 'NONE']).describe("Tipo. Usa 'NONE' si no aplica."),
-                confidence: z.number().describe("Qué tan seguro estás del intent (0 a 1).")
+                    amount: z.union([z.string(), z.number()]).optional().describe("Monto o cantidad del item. Puede ser palabra como '1', 'un', 'dos'."),
+                    product: z.string().optional().describe("Nombre del producto limpio"),
+                    isQuantity: z.boolean().optional().describe("True si 'amount' es cantidad de items")
+                })).optional().describe("Solo se usa si hay multiples productos dictados en una misma oración. Sino, array vacío []"),
+                price: z.union([z.string(), z.number()]).optional().describe("Precio unitario si el usuario esta creando inventario. Si no aplica manda '0'."),
+                installments: z.union([z.string(), z.number()]).optional().describe("Cantidad de cuotas. Si no aplica manda '0'."),
+                categoryType: z.enum(['SUBSCRIPTION', 'FIXED_PAGO', 'VARIABLE_SERVICE', 'CONTRIBUTION', 'GENERAL', 'NONE']).optional().describe("Tipo. Usa 'NONE' si no aplica."),
+                confidence: z.number().optional().describe("Qué tan seguro estás del intent (0 a 1).")
             }),
             prompt: `
             Eres un asistente financiero ultra-inteligente para Chile. Extrae información en formato exacto.
