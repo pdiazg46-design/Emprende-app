@@ -5,6 +5,7 @@ import { Pencil, X, CheckCircle2, TrendingUp, TrendingDown } from "lucide-react"
 import { useCart } from "@/components/pos/CartContext"
 import { addTransaction } from "@/actions/transaction-actions"
 import { useRouter } from "next/navigation"
+import { cn } from "@/lib/utils"
 
 export function ManualExpenseFallback({
     isOpen,
@@ -16,7 +17,7 @@ export function ManualExpenseFallback({
     isStandalone?: boolean
 }) {
     const router = useRouter()
-    const { addToCart } = useCart()
+    const { addToCart, cartCount, isCheckoutOpen, isCartExpanded } = useCart()
     const [localOpen, setLocalOpen] = useState(false)
     const [amount, setAmount] = useState("")
     const [desc, setDesc] = useState("")
@@ -56,13 +57,23 @@ export function ManualExpenseFallback({
         <>
             {/* Standalone Trigger (Lápiz flotante si no hay voz) */}
             {isStandalone && (
-                <div className="fixed left-1/2 md:left-[calc(50%+8rem)] -translate-x-1/2 bottom-8 z-50 flex flex-col items-center gap-4">
-                    <button
-                        onClick={() => setLocalOpen(true)}
-                        className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-105 active:scale-95 border-4 border-white text-white"
-                    >
-                        <Pencil className="w-6 h-6" />
-                    </button>
+                <div className={cn(
+                    "fixed left-1/2 md:left-[calc(50%+8rem)] -translate-x-1/2 z-50 flex flex-col items-center gap-4 pointer-events-none transition-all duration-300",
+                    cartCount > 0 ? "bottom-[100px] sm:bottom-28" : "bottom-8",
+                    (isCheckoutOpen || isCartExpanded) && "opacity-0 translate-y-20 scale-90 pointer-events-none"
+                )}>
+                    <div className={cn(
+                        "relative flex items-center justify-center",
+                        (isCheckoutOpen || isCartExpanded) ? "pointer-events-none" : "pointer-events-auto"
+                    )}>
+                        <button
+                            onClick={() => setLocalOpen(true)}
+                            disabled={isCheckoutOpen || isCartExpanded}
+                            className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-105 active:scale-95 border-4 border-white text-white"
+                        >
+                            <Pencil className="w-6 h-6" />
+                        </button>
+                    </div>
                 </div>
             )}
 
