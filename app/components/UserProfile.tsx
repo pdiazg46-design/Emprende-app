@@ -2,7 +2,7 @@
 
 import { signOut, useSession } from "next-auth/react"
 import { LogOut, Users, RefreshCw, Settings, Mail, Calculator, Wallet } from "lucide-react"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { AdminUsersModal } from "./AdminUsersModal"
 import { InstallButton } from "./InstallButton"
 import { HardwareIdFetcher } from "./HardwareIdFetcher"
@@ -21,11 +21,31 @@ export function UserProfile({ user }: UserProfileProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [isAdminOpen, setIsAdminOpen] = useState(false)
     const { data: session } = useSession()
+    const menuRef = useRef<HTMLDivElement>(null)
 
     const isAdmin = (session?.user as any)?.role === 'ADMIN'
 
+    // Detectar clics fuera del menú para cerrarlo automáticamente
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent | TouchEvent) {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsOpen(false)
+            }
+        }
+
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside)
+            document.addEventListener("touchstart", handleClickOutside)
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+            document.removeEventListener("touchstart", handleClickOutside)
+        }
+    }, [isOpen])
+
     return (
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-9 h-9 rounded-full bg-slate-100 border-2 border-slate-100 shadow-sm overflow-hidden flex items-center justify-center cursor-pointer hover:border-blue-400 transition-all focus:outline-none"
@@ -40,10 +60,6 @@ export function UserProfile({ user }: UserProfileProps) {
             {/* Logout Menu */}
             {isOpen && (
                 <>
-                    <div
-                        className="fixed inset-0 z-40"
-                        onClick={() => setIsOpen(false)}
-                    />
                     <div className="absolute right-0 top-12 md:top-14 z-50 bg-white border border-slate-100 shadow-2xl rounded-2xl p-2 min-w-[200px] animate-in fade-in zoom-in-95 duration-100">
                         <div className="px-3 py-2 border-b border-slate-50 mb-1">
                             <p className="text-[10px] font-black text-slate-800 truncate">{user.name || "Usuario"}</p>
