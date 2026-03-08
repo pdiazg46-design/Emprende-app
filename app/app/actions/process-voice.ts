@@ -40,18 +40,18 @@ export async function processVoiceCommand(text: string) {
                     'SALE', 'MULTI_SALE', 'EXPENSE', 'INVENTORY_ADD', 'INVENTORY_RESTOCK', 'CASH_WITHDRAWAL',
                     'RECORDS_INCOME', 'DELETE_LAST', 'UPDATE_BUDGET', 'UPDATE_PARTNER', 'CALIBRATE_FUND'
                 ]).describe("El tipo de operación detectada."),
-                amount: z.union([z.string(), z.number()]).optional().describe("Monto total principal extraído. Ejemplo: '1000', '1', 'un'. Si no hay monto, envía '0'."),
-                paymentMethod: z.enum(['CASH', 'TRANSFER']).optional().describe("Para RETIROS (CASH_WITHDRAWAL) o INGRESOS, especifica si salió/entró a la Caja de Billetes ('CASH') o a la Cuenta de Banco ('TRANSFER'). Asume CASH si no se menciona un banco o cuenta."),
+                amount: z.string().optional().describe("Monto total o cantidad. Siempre devolver como STRING de texto. Ej: '1000', '1', 'un'."),
+                paymentMethod: z.enum(['CASH', 'TRANSFER']).optional().describe("Para RETIROS (CASH_WITHDRAWAL) o INGRESOS, especifica CASH o TRANSFER."),
                 description: z.string().optional().describe("Descripción limpia para Gastos o nombre del Presupuesto. Si no hay, envía ''."),
                 productName: z.string().optional().describe("Nombre de producto si es Venta o Inventario. Si no hay, envía ''."),
                 isQuantity: z.boolean().optional().describe("True si el número dictado es una cantidad en vez de un valor monetario. False por defecto."),
                 items: z.array(z.object({
-                    amount: z.union([z.string(), z.number()]).optional().describe("Monto o cantidad del item. Puede ser palabra como '1', 'un', 'dos'."),
+                    amount: z.string().optional().describe("Cantidad o valor. Siempre como string de texto. Ej: '1', 'un', 'dos'."),
                     product: z.string().optional().describe("Nombre del producto limpio"),
                     isQuantity: z.boolean().optional().describe("True si 'amount' es cantidad de items")
-                })).optional().describe("Solo se usa si hay multiples productos dictados en una misma oración. Sino, array vacío []"),
-                price: z.union([z.string(), z.number()]).optional().describe("Precio unitario si el usuario esta creando inventario. Si no aplica manda '0'."),
-                installments: z.union([z.string(), z.number()]).optional().describe("Cantidad de cuotas. Si no aplica manda '0'."),
+                })).optional().describe("Usar si hay multiples productos en una misma oración. Sino, array vacío."),
+                price: z.string().optional().describe("Precio unitario. Siempre string."),
+                installments: z.string().optional().describe("Cantidad de cuotas. Siempre string."),
                 categoryType: z.enum(['SUBSCRIPTION', 'FIXED_PAGO', 'VARIABLE_SERVICE', 'CONTRIBUTION', 'GENERAL', 'NONE']).optional().describe("Tipo. Usa 'NONE' si no aplica."),
                 confidence: z.number().optional().describe("Qué tan seguro estás del intent (0 a 1).")
             }),
@@ -178,6 +178,8 @@ export async function processVoiceCommand(text: string) {
 
     } catch (error: any) {
         console.error("[V2A-Generative-AI] Error:", error?.message || error)
-        return { success: false, error: "Falla IA: " + (error?.message || "Error Desconocido") }
+        // Forward the exact inner error if it's schema parsing so we can debug it
+        const safeError = error?.message ? `Error IA: ${error.message.substring(0, 100)}` : "Intención no asimilada por el motor IA.";
+        return { success: false, error: safeError }
     }
 }
