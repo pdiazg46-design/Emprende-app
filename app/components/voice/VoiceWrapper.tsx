@@ -129,8 +129,8 @@ export function VoiceWrapper() {
             }
             else {
                 const errMsg = intent.serverError 
-                    ? `[v1.2] ${intent.serverError}` 
-                    : `[v1.2] 😓 No entendí: "${intent.original}". Intenta: 'Venta de 5000' o 'Vendí 3 Pulseras'`;
+                    ? `[v1.3] ${intent.serverError}` 
+                    : `[v1.3] 😓 No entendí: "${intent.original}". Intenta: 'Venta de 5000' o 'Vendí 3 Pulseras'`;
                 showFeedback('error', errMsg)
             }
 

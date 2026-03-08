@@ -46,10 +46,10 @@ export async function processVoiceCommand(text: string) {
                 productName: z.string().optional().describe("Nombre de producto si es Venta o Inventario. Si no hay, envía ''."),
                 isQuantity: z.boolean().optional().describe("True si el número dictado es una cantidad en vez de un valor monetario. False por defecto."),
                 items: z.array(z.object({
-                    amount: z.string().optional().describe("Cantidad o valor. Siempre como string de texto. Ej: '1', 'un', 'dos'."),
-                    product: z.string().optional().describe("Nombre del producto limpio"),
-                    isQuantity: z.boolean().optional().describe("True si 'amount' es cantidad de items")
-                })).optional().describe("Usar si hay multiples productos en una misma oración. Sino, array vacío."),
+                    amount: z.string().describe("Cantidad o valor. Siempre como string de texto. Ej: '1', 'un', 'dos'. Obligatorio llenar con '1' si se omite."),
+                    product: z.string().describe("Nombre del producto limpio. Obligatorio llenar."),
+                    isQuantity: z.boolean().describe("True si 'amount' es cantidad de items. Asumir true si es un producto.")
+                })).describe("Usar si hay multiples productos en una misma oración. Retornar array vacío [] si no hay múltiples."),
                 price: z.string().optional().describe("Precio unitario. Siempre string."),
                 installments: z.string().optional().describe("Cantidad de cuotas. Siempre string."),
                 categoryType: z.enum(['SUBSCRIPTION', 'FIXED_PAGO', 'VARIABLE_SERVICE', 'CONTRIBUTION', 'GENERAL', 'NONE']).optional().describe("Tipo. Usa 'NONE' si no aplica."),
