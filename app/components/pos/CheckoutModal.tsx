@@ -121,7 +121,7 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
                     </button>
                 </div>
 
-                <div className="p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
+                <div className="p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto pb-28 md:pb-6">
                     {/* Cart Details */}
                     <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 max-h-32 md:max-h-40 overflow-y-auto space-y-1.5">
                         <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Detalle de la compra</p>
