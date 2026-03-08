@@ -11,9 +11,8 @@ import { CheckoutModal } from "@/components/pos/CheckoutModal"
 import { getPaymentConfig } from "@/actions/user-settings-actions"
 
 export function CartSummary() {
-    const { cart, removeFromCart, clearCart, cartTotal, cartCount, addOptimisticSale, clearOptimisticTransactions, updateQuantity } = useCart()
+    const { cart, removeFromCart, clearCart, cartTotal, cartCount, addOptimisticSale, clearOptimisticTransactions, updateQuantity, isCheckoutOpen, setIsCheckoutOpen } = useCart()
     const [isOpen, setIsOpen] = useState(false)
-    const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
     const [isProcessing, setIsProcessing] = useState(false)
     const [paymentConfig, setPaymentConfig] = useState<any>(null)
     const router = useRouter()

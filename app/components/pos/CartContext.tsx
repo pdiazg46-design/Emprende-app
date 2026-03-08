@@ -26,6 +26,8 @@ interface CartContextType {
     clearOptimisticTransactions: () => void
     catalogRAM: any[] // Caché de productos en memoria para voz instantánea
     setCatalog: (products: any[]) => void // Función para inyectar desde el servidor/InventoryManager
+    isCheckoutOpen: boolean
+    setIsCheckoutOpen: (open: boolean) => void
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
@@ -36,8 +38,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const [optimisticSalesToday, setOptimisticSalesToday] = useState(0)
     const [optimisticTransactions, setOptimisticTransactions] = useState<any[]>([])
 
-    // Caché de Productos para búsquedas en 0ms
     const [catalogRAM, setCatalogState] = useState<any[]>([])
+    const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
     const setCatalog = (products: any[]) => {
         setCatalogState(products)
@@ -146,6 +148,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             cart, addToCart, replaceCartItem, updateQuantity, removeFromCart, clearCart, cartTotal, cartCount,
             optimisticSalesToday, addOptimisticSale,
             optimisticTransactions, clearOptimisticTransactions,
+            isCheckoutOpen, setIsCheckoutOpen,
             catalogRAM, setCatalog
         }}>
             {children}
