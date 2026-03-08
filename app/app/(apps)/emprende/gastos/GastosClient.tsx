@@ -71,12 +71,12 @@ export default function GastosClient({
         }
     }
 
-    if (loading) return <div className="p-8 text-center text-slate-400">Cargando inteligencia de gastos...</div>
+    if (loading && !metrics) return <div className="p-8 text-center text-slate-400">Cargando inteligencia de gastos...</div>
 
     const expenseTransactions = metrics?.transactionsToday?.filter((t: any) => t.type === 'EXPENSE') || []
 
     return (
-        <div className="pb-24 space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto">
+        <div className={`pb-24 space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto transition-opacity ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
             {/* Header */}
             <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div>
