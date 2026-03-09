@@ -1,7 +1,7 @@
 'use client'
 
 import { signOut, useSession } from "next-auth/react"
-import { LogOut, Users, RefreshCw, Settings, Mail, Calculator, Wallet } from "lucide-react"
+import { LogOut, Users, RefreshCw, Settings, Mail, Calculator, Wallet, Store } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { AdminUsersModal } from "./AdminUsersModal"
 import { InstallButton } from "./InstallButton"
@@ -43,6 +43,12 @@ export function UserProfile({ user }: UserProfileProps) {
             document.removeEventListener("touchstart", handleClickOutside)
         }
     }, [isOpen])
+
+    // Function to manually trigger the Daily Fair Prompt
+    const handleManualFairTrigger = () => {
+        localStorage.removeItem('emprende_last_fair_prompt')
+        window.location.reload()
+    }
 
     return (
         <div className="relative" ref={menuRef}>
@@ -129,6 +135,16 @@ export function UserProfile({ user }: UserProfileProps) {
                                 className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest text-center mb-2 border border-emerald-200 shadow-sm"
                             >
                                 <Wallet className="w-3.5 h-3.5" /> Inteligencia Financiera
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    setIsOpen(false)
+                                    handleManualFairTrigger()
+                                }}
+                                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest text-center mb-2 border border-purple-200 shadow-sm"
+                            >
+                                <Store className="w-3.5 h-3.5" /> Activar Rastreo de Feria
                             </button>
 
                             <button
