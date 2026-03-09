@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { grantProAccess, grantBasicAccess, updateUserF29 } from "@/actions/admin-actions"
+import { grantProAccess, grantBasicAccess, updateUserF29, deleteUser } from "@/actions/admin-actions"
 import { MoreHorizontal, Check, X, Shield, Lock, CreditCard, Gift, Smartphone } from "lucide-react"
 
 export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
@@ -60,6 +60,29 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
             setUsers(users.map(u => u.id === user.id ? { ...u, f29Active: newValue, ppmRate: newPpm } : u));
         } else {
             alert(res.error || "Error al actualizar la configuración tributaria");
+        }
+        setLoading(null);
+    }
+
+    const handleDeleteUser = async (user: any) => {
+        const confirm1 = confirm(`PELIGRO: Estás a punto de eliminar a ${user.name || user.email} y todos sus datos (Ventas, Inventario, Cuenta). ¿Continuar?`);
+        if (!confirm1) return;
+
+        const confirm2 = prompt(`Escribe "ELIMINAR" para confirmar la destrucción de los datos de ${user.email} y la cancelación de su suscripción de MercadoPago si la tuviera.`);
+        if (confirm2 !== "ELIMINAR") {
+            alert("Eliminación cancelada.");
+            return;
+        }
+
+        setLoading(user.id);
+        setActionMenuOpen(null);
+
+        const res = await deleteUser(user.id);
+        if (res.success) {
+            setUsers(users.filter(u => u.id !== user.id));
+            alert("Usuario eliminado correctamente de la base de datos.");
+        } else {
+            alert(res.error || "Error al eliminar usuario.");
         }
         setLoading(null);
     }
@@ -200,6 +223,16 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
                                                     >
                                                         <Shield className="w-3.5 h-3.5" />
                                                         {user.f29Active ? "Apagar Motor Tributario" : "Encender Motor F29 (VIP)"}
+                                                    </button>
+                                                    <div className="my-2 border-t border-slate-100"></div>
+                                                    <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest px-2 mb-1">Zona de Peligro</p>
+                                                    <button
+                                                        onClick={() => handleDeleteUser(user)}
+                                                        disabled={loading === user.id}
+                                                        className="w-full text-left px-3 py-2 text-xs font-semibold bg-red-50 hover:bg-red-100 text-red-700 flex items-center gap-2 rounded-lg transition-colors"
+                                                    >
+                                                        <X className="w-3.5 h-3.5" />
+                                                        Eliminar Usuario (Wipe)
                                                     </button>
                                                 </div>
                                             </div>

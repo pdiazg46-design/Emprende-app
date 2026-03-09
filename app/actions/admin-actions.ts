@@ -161,6 +161,61 @@ export async function grantBasicAccess(userId: string) {
     }
 }
 
+export async function deleteUser(userId: string) {
+    await requireAdmin()
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { mpPreapprovalId: true, name: true, email: true }
+        })
+
+        if (!user) {
+            return { success: false, error: "Usuario no encontrado" }
+        }
+
+        // 1. Cancel in MercadoPago if a preapproval plan exists
+        if (user.mpPreapprovalId) {
+            try {
+                const mpRes = await fetch(`https://api.mercadopago.com/preapproval/${user.mpPreapprovalId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: 'cancelled' })
+                })
+                
+                if (!mpRes.ok) {
+                    const mpError = await mpRes.text()
+                    console.error(`MP Cancellation Error for ${user.email} (${user.mpPreapprovalId}):`, mpError)
+                    // We log it but continue deleting from the platform so the admin isn't blocked 
+                    // if the MP plan was already cancelled externally.
+                } else {
+                    console.log(`Successfully cancelled MP Subscription ${user.mpPreapprovalId} for ${user.email}`)
+                }
+            } catch (error) {
+                console.error("Network error while cancelling MP subscription:", error)
+            }
+        }
+
+        // 2. Cascade delete records mathematically to avoid Foreign Key conflicts
+        await prisma.$transaction([
+            prisma.transaction.deleteMany({ where: { userId } }),
+            prisma.product.deleteMany({ where: { userId } }),
+            prisma.account.deleteMany({ where: { userId } }),
+            prisma.session.deleteMany({ where: { userId } }),
+            prisma.user.delete({ where: { id: userId } })
+        ])
+
+        revalidatePath("/admin")
+        return { success: true }
+    } catch (error) {
+        console.error("Delete user error:", error)
+        return { success: false, error: "Fallo crítico al eliminar el usuario y sus dependencias." }
+    }
+}
+
 export async function getSaaSAnalytics() {
     await requireAdmin()
 
