@@ -22,9 +22,9 @@ export function IntelligentFOMOBanner({ isTrial, daysRemaining }: Props) {
     const isUrgent = daysRemaining <= 5;
 
     return (
-        <div className="fixed top-[88px] md:top-6 left-1/2 -translate-x-1/2 w-[92%] md:w-auto max-w-md z-[9999] pointer-events-none">
+        <div className="w-full mb-6 relative z-40">
             <div
-                className={`pointer-events-auto shadow-2xl rounded-2xl md:rounded-full p-4 md:py-2.5 md:px-5 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6 border backdrop-blur-xl animate-in slide-in-from-top-10 zoom-in-95 duration-500 ${isUrgent
+                className={`w-full shadow-xl rounded-2xl p-4 md:py-3 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4 border backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-500 ${isUrgent
                         ? "bg-red-600/95 border-red-400 text-white shadow-red-500/30"
                         : "bg-slate-900/95 border-slate-700 text-white shadow-slate-900/20"
                     }`}
