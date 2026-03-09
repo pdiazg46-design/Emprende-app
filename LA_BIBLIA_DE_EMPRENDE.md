@@ -47,6 +47,9 @@ Esta es la configuración de los componentes críticos al estado actual. Cualqui
 ### 3. Inteligencia Artificial por Voz (NLP Engine / VoiceWrapper)
 - Existe una barra intermitente de escucha inteligente ("Control Total") diseñada para registrar ingresos o buscar productos en el carrito simplemente mediante lenguaje natural (Ej: "Vendí 2 pantalones negros").
 - Depende críticamente de Server Actions estrictos (`actions/process-voice.ts` y relacionados) acoplados al `CartContext`.
+- 🚨 **LEY DE ESQUEMA ESTRICTO DE OPENAI (Zod JSON Schema):** Para evitar alucinaciones, la API de OpenAI (SDK `generateObject`) corre en Modo Estricto (`strict: true`). Esto **prohíbe taxativamente** usar el método `.optional()` en cualquier propiedad del esquema Zod en estructuras anidadas o raíces. Todos los campos deben ser declarados como **requeridos**. Si un campo no aplica (ej. no hay cuotas o no hay categoría), se le debe instruir obligatoriamente en el `.describe()` a la IA que asuma y devuelva un flag de escape como `"NONE"` o `"0"`. Usar `.optional()` provoca la muerte silenciosa del validador (`'required' is required to be supplied`) devolviendo al usuario "No entendí...".
+- 🚨 **TIPADO PURO DE STRING:** Las propiedades ambiguas como las cantidades o precios deben definirse explícitamente como `z.string()` y no `z.number()` ni `z.union`. OpenAI colapsa tratando de encajar números en cadenas, por lo tanto, forzamos que devuelva la cantidad en formato literal de texto para aislar problemas de Cast.
+- **Transparencia de Errores:** En la interfaz frontal, cualquier fallo proveniente del backend (`intent.serverError`) **debe** visibilizarse en la pantalla ("Error IA: ...") en vez de enmascararse, para permitir diagnóstico en producción en vivo.
 
 ### 4. Transformación SaaS y Inteligencia VIP (F29 & Finanzas)
 - El modelo SaaS (Basic, Pro, VIP) bloquea accesos en Desktop (`DesktopLayout`) e inyecta Paywalls.
