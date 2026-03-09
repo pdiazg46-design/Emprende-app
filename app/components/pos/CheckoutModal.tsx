@@ -110,7 +110,7 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
     const showTransfer = paymentConfig?.acceptsTransfer === true
 
     return (
-        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-4 sm:p-0">
+        <div className="fixed inset-0 z-[10000] flex items-end md:items-center justify-center p-4 sm:p-0">
             <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
 
             <div className="relative bg-white w-full max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-10 md:zoom-in-95 duration-300 max-h-[90vh] flex flex-col">
