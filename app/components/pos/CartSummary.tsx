@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useCart } from "@/components/pos/CartContext"
-import { ShoppingCart, X, ChevronUp, ChevronDown, Trash2, CheckCircle2 } from "lucide-react"
+import { ShoppingCart, X, ChevronUp, ChevronDown, Trash2, CheckCircle2, Store } from "lucide-react"
 import { cn } from "@/lib/utils"
 // import { addTransaction } from "@/actions/transaction-actions" 
 import { processSale } from "@/actions/pos-actions"
@@ -15,6 +15,7 @@ export function CartSummary() {
     const [isOpen, setIsOpen] = useState(false)
     const [isProcessing, setIsProcessing] = useState(false)
     const [paymentConfig, setPaymentConfig] = useState<any>(null)
+    const [activeFair, setActiveFair] = useState<string | null>(null)
     const router = useRouter()
     
     // Al montar (cuando cartCount pasa de 0 a 1), nos aseguramos de que el contexto se informe que está cerrado.
@@ -27,6 +28,9 @@ export function CartSummary() {
         getPaymentConfig().then(setConfig => {
             if (setConfig) setPaymentConfig(setConfig)
         })
+        
+        // Cargar feria activa para visibilidad
+        setActiveFair(localStorage.getItem('current_fair'))
     }, [])
 
     if (cartCount === 0) {
@@ -122,6 +126,22 @@ export function CartSummary() {
                 </div>
 
                 <div className="px-6 pb-6 h-full flex flex-col">
+                    {/* Banner Móvil de Feria (Visible sólo en Mobile cuando el carrito está expandido) */}
+                    {isOpen && activeFair && (
+                        <div className="md:hidden w-full flex items-center justify-between gap-3 px-4 py-2 bg-gradient-to-r from-purple-50 to-fuchsia-50/20 border border-purple-100 rounded-xl mb-4 animate-in slide-in-from-top-2">
+                            <div className="flex items-center gap-2">
+                                <div className="p-1.5 bg-purple-100 rounded-lg">
+                                    <Store className="w-4 h-4 text-purple-600" />
+                                </div>
+                                <div>
+                                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Registrando en</p>
+                                    <p className="text-xs font-black text-purple-700 uppercase tracking-tight">{activeFair}</p>
+                                </div>
+                            </div>
+                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+                        </div>
+                    )}
+
                     {/* Header Row */}
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3 cursor-pointer" onClick={toggleOpen}>
@@ -140,6 +160,19 @@ export function CartSummary() {
                                 </p>
                             </div>
                         </div>
+
+                        {/* Indicador VIP de Feria (Cart Header) */}
+                        {activeFair && (
+                            <div className="hidden md:flex flex-col ml-4">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest text-right mb-0.5">Destino de la Venta</span>
+                                <div className="flex items-center gap-1.5 px-3 py-1 bg-purple-100/50 border border-purple-200 rounded-full animate-in slide-in-from-right-2">
+                                    <Store className="w-3.5 h-3.5 text-purple-600" />
+                                    <span className="text-[10px] font-black text-purple-700 uppercase tracking-widest truncate max-w-[120px]">
+                                        {activeFair}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
 
                         {!isOpen && (
                             <button

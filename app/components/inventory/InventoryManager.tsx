@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Save, Plus, Package, RefreshCw, Trash2, Pencil } from "lucide-react"
+import { Save, Plus, Package, Trash2, Search, Activity, Tag, Hash, Store } from "lucide-react"
 import { bulkUpdateStock, addProduct, deleteProduct } from "@/actions/transaction-actions"
 import { useRouter } from "next/navigation"
 import { EditProductModal } from "./EditProductModal"
@@ -33,7 +33,13 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
     const [updates, setUpdates] = useState<Record<string, { price: number, addStock: number, name?: string }>>({})
 
     // State for new product
-    const [newItem, setNewItem] = useState({ name: "", price: "", minStock: "" })
+    const [searchTerm, setSearchTerm] = useState("")
+    const [activeFair, setActiveFair] = useState<string | null>(null)
+
+    useEffect(() => {
+        // Listen to active fair
+        setActiveFair(localStorage.getItem('current_fair'))
+    }, [])
 
     // State for modal editing
     const [editingProduct, setEditingProduct] = useState<Product | null>(null)
@@ -193,10 +199,20 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
     return (
         <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
-                    <Package className="w-5 h-5 text-atsit-blue" />
-                    Gestión de Inventario
-                </h2>
+                <div className="flex flex-col">
+                    <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
+                        <Package className="w-5 h-5 text-atsit-blue" />
+                        Gestión de Inventario
+                    </h2>
+                    {activeFair && (
+                        <div className="flex items-center gap-1.5 mt-1 animate-in fade-in slide-in-from-top-1">
+                            <Store className="w-3.5 h-3.5 text-purple-600" />
+                            <span className="text-[10px] font-bold text-purple-700 uppercase tracking-widest bg-purple-100 px-2 py-0.5 rounded-full border border-purple-200 shadow-sm">
+                                Feria {activeFair}
+                            </span>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {/* Cabeceras simuladas para desktop (ocultas en mobile para simplificar) */}
