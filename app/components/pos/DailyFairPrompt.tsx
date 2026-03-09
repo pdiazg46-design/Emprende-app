@@ -49,6 +49,7 @@ export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
         const today = new Date().toISOString().split('T')[0]
         localStorage.setItem('emprende_last_fair_prompt', today)
         localStorage.setItem('current_fair', newFairName)
+        window.dispatchEvent(new Event('fairUpdated')) // Notificar a los componentes UI
         setIsOpen(false)
     }
 
@@ -56,6 +57,7 @@ export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
         const today = new Date().toISOString().split('T')[0]
         localStorage.setItem('emprende_last_fair_prompt', today)
         localStorage.removeItem('current_fair') // Limpiamos la feria de ayer si existía
+        window.dispatchEvent(new Event('fairUpdated')) // Notificar a los componentes UI
         setIsOpen(false)
     }
 

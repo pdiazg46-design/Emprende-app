@@ -29,8 +29,16 @@ export function CartSummary() {
             if (setConfig) setPaymentConfig(setConfig)
         })
         
-        // Cargar feria activa para visibilidad
+        // Cargar feria activa inicial
         setActiveFair(localStorage.getItem('current_fair'))
+
+        // Escuchar cambios en vivo del prompt modal
+        const handleFairUpdate = () => {
+            setActiveFair(localStorage.getItem('current_fair'))
+        }
+        window.addEventListener('fairUpdated', handleFairUpdate)
+        
+        return () => window.removeEventListener('fairUpdated', handleFairUpdate)
     }, [])
 
     if (cartCount === 0) {

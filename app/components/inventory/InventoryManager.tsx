@@ -39,6 +39,13 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
     useEffect(() => {
         // Listen to active fair
         setActiveFair(localStorage.getItem('current_fair'))
+
+        const handleFairUpdate = () => {
+            setActiveFair(localStorage.getItem('current_fair'))
+        }
+        window.addEventListener('fairUpdated', handleFairUpdate)
+        
+        return () => window.removeEventListener('fairUpdated', handleFairUpdate)
     }, [])
 
     // State for modal editing
