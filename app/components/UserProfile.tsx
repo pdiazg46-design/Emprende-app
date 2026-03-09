@@ -20,6 +20,7 @@ interface UserProfileProps {
 export function UserProfile({ user }: UserProfileProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [isAdminOpen, setIsAdminOpen] = useState(false)
+    const [activeFair, setActiveFair] = useState<string | null>(null)
     const { data: session } = useSession()
     const menuRef = useRef<HTMLDivElement>(null)
 
@@ -36,6 +37,8 @@ export function UserProfile({ user }: UserProfileProps) {
         if (isOpen) {
             document.addEventListener("mousedown", handleClickOutside)
             document.addEventListener("touchstart", handleClickOutside)
+            // Check active fair
+            setActiveFair(localStorage.getItem('current_fair'))
         }
 
         return () => {
@@ -137,15 +140,32 @@ export function UserProfile({ user }: UserProfileProps) {
                                 <Wallet className="w-3.5 h-3.5" /> Inteligencia Financiera
                             </button>
 
-                            <button
-                                onClick={() => {
-                                    setIsOpen(false)
-                                    handleManualFairTrigger()
-                                }}
-                                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest text-center mb-2 border border-purple-200 shadow-sm"
-                            >
-                                <Store className="w-3.5 h-3.5" /> Activar Rastreo de Feria
-                            </button>
+                            {activeFair ? (
+                                <button
+                                    onClick={() => {
+                                        if (confirm(`¿Terminaste tu jornada en la feria "${activeFair}"? Las próximas ventas serán normales.`)) {
+                                            localStorage.removeItem('current_fair')
+                                            setActiveFair(null)
+                                            setIsOpen(false)
+                                            alert("✅ Rastreo de feria detenido. Ventas normales reactivadas.")
+                                            window.location.reload()
+                                        }
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest text-center mb-2 border border-red-200 shadow-sm"
+                                >
+                                    <Store className="w-3.5 h-3.5" /> Detener Rastreo ({activeFair})
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => {
+                                        setIsOpen(false)
+                                        handleManualFairTrigger()
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest text-center mb-2 border border-purple-200 shadow-sm"
+                                >
+                                    <Store className="w-3.5 h-3.5" /> Activar Rastreo de Feria
+                                </button>
+                            )}
 
                             <button
                                 onClick={() => {
