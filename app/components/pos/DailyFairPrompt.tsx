@@ -112,9 +112,9 @@ export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
 
                     <button
                         onClick={handleConfirm}
-                        className="w-full bg-slate-900 text-white font-black uppercase tracking-widest text-xs py-4 rounded-xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 active:scale-95 mt-2"
+                        className="w-full bg-slate-900 text-white font-black uppercase tracking-widest text-[10px] py-4 rounded-xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-lg shadow-slate-900/20 active:scale-95 mt-2"
                     >
-                        <TrendingUp className="w-4 h-4" /> Iniciar Rastreo
+                        <TrendingUp className="w-4 h-4" /> Iniciar ventas y éxito en {fairName ? fairName : 'la feria'}
                     </button>
 
                     <button
