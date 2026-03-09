@@ -63,13 +63,18 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
                 let sumupHref = '';
                 
                 if (isIOS) {
-                    // MODO IOS (PWA SAFARI):
-                    // Eliminamos 'app-id' (causaba Error de Conexión en PWA por descarte de Bundle ID)
-                    // Eliminamos 'affiliate-key' (causaba Error de Conexión si iba acompañado, e intentar sin él pero con %20 procesa el cobro al no forzar validación de API)
-                    // NOTA: SumUp en iOS permite operar el lector básico si la URL va *totalmente limpia* pero con caracteres HTTP estándar (%20, no +).
-                    const callbackUrl = encodeURIComponent(`${window.location.origin}/emprende`);
-                    const titleParam = encodeURIComponent('Venta POS');
-                    sumupHref = `sumupmerchant://pay/1.0?amount=${sumupAmount}&total=${sumupAmount}&currency=CLP&title=${titleParam}&callback=${callbackUrl}`;
+                    // MODO IOS (PWA SAFARI): DEGRADACIÓN ELEGANTE (Zero-touch API)
+                    // SumUp bloquea la API a PWAs sin Bundle ID oficial (generando "Error en la conexión").
+                    // Solución: Copiar el monto al portapapeles y abrir la app "limpia" (sin parámetros).
+                    try {
+                        navigator.clipboard.writeText(total.toString());
+                        alert(`Monto $${total.toLocaleString('es-CL')} copiado.\\n\\nPor favor, pégalo (o dígalo) directamente en la App de SumUp al momento de cobrar.`);
+                    } catch (e) {
+                        alert(`Por favor, ingresa manualmente $${total.toLocaleString('es-CL')} en la App de SumUp.`);
+                    }
+                    
+                    // Abrimos la App de SumUp de forma genérica (sin gatillar la API de pago que detona el error)
+                    sumupHref = `sumupmerchant://`;
                 } else {
                     // MODO ANDROID / APP NATIVA (COMPORTAMIENTO ORIGINAL SALVAGUARDADO)
                     // Android y Capacitor native config sí respetan y necesitan la validación completa.
