@@ -52,18 +52,21 @@ export default async function PremiumMobilePaywall() {
                             <Smartphone className="w-4 h-4 text-slate-400" />
                             App Móvil Básica
                         </h3>
-                        <p className="text-xs text-slate-500 mb-4 h-12">
-                            Anota ventas y créditos/fiados a mano. Sin pagos mensuales ni sorpresas.
+                        <div className="flex items-baseline gap-1 my-2">
+                            <span className="text-2xl font-black text-slate-900">$15.000</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Único</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 mb-4 h-8">
+                            Anota ventas y créditos a mano. Sin cobros mensuales.
                         </p>
 
                         <a
                             href="https://mpago.la/1bobeaX"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full py-3.5 bg-slate-900 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:bg-slate-800 transition-colors flex flex-col items-center justify-center gap-1"
+                            className="w-full py-3.5 bg-slate-900 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
                         >
-                            <span>$15.000 Pago Único.</span>
-                            <span>Gratis para siempre</span>
+                            Obtener Licencia Básica
                         </a>
                     </div>
 
@@ -76,31 +79,28 @@ export default async function PremiumMobilePaywall() {
                             <Sparkles className="w-4 h-4 text-violet-500" />
                             Emprende PRO
                         </h3>
-                        <p className="text-xs text-violet-700/80 mb-4 h-12 pr-4">
-                            Máquina del Tiempo (Analíticas), Modo Feria IA y Control de Gastos para Ganancias Reales.
+                        <div className="flex items-baseline gap-1 my-2">
+                            <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-fuchsia-600">$9.990</span>
+                            <span className="text-[10px] font-bold text-violet-500 uppercase tracking-widest">/ mes</span>
+                        </div>
+                        <p className="text-[11px] text-violet-700/80 mb-4 h-8 pr-2">
+                            Analíticas, Modo IA y Control de Gastos Duros.
                         </p>
 
                         <a
                             href="https://www.mercadopago.cl/subscriptions/checkout?preapproval_plan_id=4cb1a5c9597d4bea924afdc82a1ef778"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full py-3.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:opacity-90 shadow-lg shadow-violet-500/20 transition-transform active:scale-95 flex items-center justify-center gap-2"
+                            className="w-full py-3.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:opacity-90 shadow-lg shadow-violet-500/20 transition-transform active:scale-95 flex flex-col items-center justify-center gap-1 text-center"
                         >
-                            Suscripción Mensual PRO $9.990
+                            <span>Suscripción Mensual PRO</span>
+                            <span>$9.990</span>
                         </a>
                     </div>
 
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col items-center gap-4">
-                    <a
-                        href={`mailto:atsittelecom@gmail.com?subject=Soporte%20Pago%20App%20Emprende&body=Hola,%20ya%20pagué%20el%20plan%20y%20necesito%20activación%20para:%20${email}`}
-                        className="text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center justify-center gap-1 transition-colors text-center"
-                    >
-                        ¿Ya pagaste? Informa tu pago a soporte
-                        <ChevronRight className="w-3 h-3" />
-                    </a>
-
                     <a
                         href="/api/manual-logout"
                         className="text-[10px] font-bold text-slate-300 hover:text-slate-500 uppercase tracking-widest underline decoration-slate-200 underline-offset-4"

@@ -49,7 +49,8 @@ export default async function PlanesPage() {
                                 Perfecto para digitalizar tus ventas hoy mismo sin ataduras.
                             </p>
                             <div className="mt-6 flex items-baseline gap-2">
-                                <span className="text-4xl font-black text-slate-900">Pago Único</span>
+                                <span className="text-4xl md:text-5xl font-black text-slate-900">$15.000</span>
+                                <span className="text-sm font-bold text-slate-400">Pago Único</span>
                             </div>
                             <div className="inline-block mt-3 px-3 py-1 bg-green-100 text-green-700 text-xs font-black uppercase tracking-wider rounded-lg border border-green-200">
                                 Gratis para siempre
@@ -69,10 +70,10 @@ export default async function PlanesPage() {
                                 href="https://mpago.la/1bobeaX"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm tracking-widest uppercase hover:bg-slate-800 transition-colors flex flex-col items-center justify-center gap-1 group"
+                                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm tracking-widest uppercase hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 group"
                             >
-                                <span>$15.000 Pago Único.</span>
-                                <span>Gratis para siempre</span>
+                                Obtener Licencia Básica
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                             </a>
                         </div>
                     </div>
@@ -96,9 +97,10 @@ export default async function PlanesPage() {
                                 La máquina de hacer dinero. Análisis, rentabilidad extrema y control total.
                             </p>
                             <div className="mt-6 flex items-baseline gap-2">
-                                <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-400">
-                                    Suscripción
+                                <span className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-fuchsia-400">
+                                    $9.990
                                 </span>
+                                <span className="text-sm font-bold text-slate-500">/ mes</span>
                             </div>
                             <div className="inline-block mt-3 px-3 py-1 bg-violet-900/50 text-violet-300 text-xs font-black uppercase tracking-wider rounded-lg border border-violet-800 backdrop-blur-sm">
                                 Facturación Mensual
@@ -121,29 +123,17 @@ export default async function PlanesPage() {
                                 href="https://www.mercadopago.cl/subscriptions/checkout?preapproval_plan_id=4cb1a5c9597d4bea924afdc82a1ef778"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl font-black text-sm tracking-widest uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 group shadow-xl shadow-violet-600/25"
+                                className="w-full py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl font-black text-sm tracking-widest uppercase hover:opacity-90 transition-opacity flex flex-col items-center justify-center gap-1 group shadow-xl shadow-violet-600/25 text-center"
                             >
-                                Suscripción Mensual PRO $9.990
-                                <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                <span>Suscripción Mensual PRO</span>
+                                <span>$9.990</span>
                             </a>
                         </div>
                     </div>
 
                 </div>
 
-                {/* Footer Notes */}
-                <div className="mt-16 text-center animate-in fade-in duration-700 delay-300">
-                    <p className="text-slate-500 font-medium text-sm mb-4">
-                        ¿Ya adquiriste un plan y necesitas que te activemos tu cuenta?
-                    </p>
-                    <a
-                        href={`mailto:atsittelecom@gmail.com?subject=Soporte%20Pago%20App%20Emprende&body=Hola,%20ya%20pagué%20el%20plan%20y%20necesito%20activación%20para:%20${email}`}
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-full font-bold hover:bg-slate-50 transition-colors shadow-sm"
-                    >
-                        <MessageSquare className="w-4 h-4" />
-                        Informar pago a soporte (atsittelecom@gmail.com)
-                    </a>
-                </div>
+                {/* Footer Notes removed to trust the automated webhook */}
 
             </div>
         </div>
