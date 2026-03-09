@@ -119,11 +119,10 @@ export function CartSummary() {
                 />
             )}
 
-            {/* Floating Bar / Sheet */}
             <div className={cn(
-                "fixed bottom-0 left-0 right-0 z-40 bg-white shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 rounded-t-[2rem]",
-                isOpen ? "h-[90vh] md:h-auto" : "h-24 md:h-auto",
-                "md:relative md:bottom-auto md:right-auto md:left-auto md:w-full md:rounded-[2rem] md:border md:border-slate-100 md:shadow-sm" // Anular clases fixed en Desktop para que encaje en el layout RightSide
+                "fixed bottom-0 left-0 right-0 z-40 bg-white shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 rounded-t-[2rem] flex flex-col",
+                isOpen ? "max-h-[85dvh] h-auto" : "h-24 md:h-auto",
+                "md:relative md:max-h-none md:bottom-auto md:right-auto md:left-auto md:w-full md:rounded-[2rem] md:border md:border-slate-100 md:shadow-sm" // Anular clases fixed en Desktop para que encaje en el layout RightSide
             )}>
                 {/* Handle for dragging (visual only - hidden on Desktop) */}
                 <div
@@ -133,7 +132,7 @@ export function CartSummary() {
                     <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
                 </div>
 
-                <div className="px-6 pb-6 h-full flex flex-col">
+                <div className="px-6 pb-6 flex flex-col flex-1 min-h-0">
                     {/* Banner Móvil de Feria (Visible sólo en Mobile cuando el carrito está expandido) */}
                     {isOpen && activeFair && (
                         <div className="md:hidden w-full flex items-center justify-between gap-3 px-4 py-2 bg-gradient-to-r from-purple-50 to-fuchsia-50/20 border border-purple-100 rounded-xl mb-4 animate-in slide-in-from-top-2">
@@ -198,8 +197,8 @@ export function CartSummary() {
 
                     {/* Expanded Content */}
                     <div className={cn(
-                        "flex-1 overflow-y-auto mt-4 space-y-3 pb-4 md:pb-6 scrollbar-hide",
-                        !isOpen ? "hidden md:block md:max-h-[60vh]" : "max-h-[60vh] md:max-h-[60vh]"
+                        "overflow-y-auto mt-4 space-y-3 pb-4 md:pb-6 scrollbar-hide shrink-0",
+                        !isOpen ? "hidden md:block md:max-h-[60vh]" : "max-h-[55dvh] md:max-h-[60vh]"
                     )}>
                         {cart.map((item) => (
                             <div key={item.id} className={cn(
