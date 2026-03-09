@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
-import { Sparkles, Smartphone, Check, ArrowRight, ShieldCheck, Zap, LineChart, MessageSquare, Briefcase } from "lucide-react"
+import { Sparkles, Smartphone, Check, ArrowRight, ShieldCheck, Zap, LineChart, MessageSquare, Briefcase, X } from "lucide-react"
 import Link from "next/link"
 
 export const dynamic = 'force-dynamic'
@@ -21,8 +21,13 @@ export default async function PlanesPage() {
             <div className="absolute top-40 left-0 -ml-40 w-96 h-96 bg-violet-600 rounded-full blur-[120px] opacity-10 pointer-events-none" />
 
             <div className="max-w-5xl mx-auto relative z-10">
+                <div className="absolute top-0 right-0 z-50">
+                    <Link href="/emprende" className="p-3 bg-slate-200/50 hover:bg-slate-200 rounded-full text-slate-500 transition-colors flex items-center justify-center">
+                        <X className="w-6 h-6" />
+                    </Link>
+                </div>
                 
-                <div className="text-center mb-16 animate-in slide-in-from-bottom-4 duration-500">
+                <div className="text-center mb-16 animate-in slide-in-from-bottom-4 duration-500 pt-8 md:pt-0">
                     <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
                         Pasa al siguiente nivel
                     </h1>
@@ -53,7 +58,7 @@ export default async function PlanesPage() {
 
                         <div className="space-y-4 mb-8 flex-1">
                             <FeatureItem text="Punto de Venta Celular Rápido" />
-                            <FeatureItem text="Inventario Ilimitado (Control de Stock)" />
+                            <FeatureItem text="Inventario Básico (hasta 30 productos)" />
                             <FeatureItem text="Asistente de Voz Básico (Vende hablando)" />
                             <FeatureItem text="Control de Medios de Pago (Efectivo, Tarjeta, Transf.)" />
                             <FeatureItem text="Créditos a Clientes (Anotación de Fiados con registro en sistema)" />
@@ -64,10 +69,10 @@ export default async function PlanesPage() {
                                 href="https://mpago.la/1bobeaX"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm tracking-widest uppercase hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 group"
+                                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm tracking-widest uppercase hover:bg-slate-800 transition-colors flex flex-col items-center justify-center gap-1 group"
                             >
-                                Adquirir Licencia
-                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                <span>$15.000 Pago Único.</span>
+                                <span>Gratis para siempre</span>
                             </a>
                         </div>
                     </div>
@@ -107,7 +112,7 @@ export default async function PlanesPage() {
                             <FeatureItem PRO text="Reportes con Inteligencia Artificial" />
                             <FeatureItem PRO text="Control de Gastos Duros y Cálculo de Ganancia Real" />
                             <FeatureItem PRO text="Bóveda Interna (Separación Física vs Digital)" />
-                            <FeatureItem PRO text="Auto F29 (Aviso de Impuestos - Próximamente)" />
+                            <FeatureItem PRO text="Auto F29 (Listo para enviar a tu contador)" />
                             <FeatureItem PRO text="Soporte VIP" />
                         </div>
 
@@ -118,7 +123,7 @@ export default async function PlanesPage() {
                                 rel="noopener noreferrer"
                                 className="w-full py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-2xl font-black text-sm tracking-widest uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 group shadow-xl shadow-violet-600/25"
                             >
-                                Suscribirme a PRO
+                                Suscripción Mensual PRO $9.990
                                 <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
                             </a>
                         </div>
@@ -132,13 +137,11 @@ export default async function PlanesPage() {
                         ¿Ya adquiriste un plan y necesitas que te activemos tu cuenta?
                     </p>
                     <a
-                        href={`https://wa.me/56912345678?text=Hola,%20ya%20pagué%20el%20plan%20y%20necesito%20activación%20para:%20${email}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href={`mailto:atsittelecom@gmail.com?subject=Soporte%20Pago%20App%20Emprende&body=Hola,%20ya%20pagué%20el%20plan%20y%20necesito%20activación%20para:%20${email}`}
                         className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-full font-bold hover:bg-slate-50 transition-colors shadow-sm"
                     >
                         <MessageSquare className="w-4 h-4" />
-                        Avisar pago por WhatsApp
+                        Informar pago a soporte (atsittelecom@gmail.com)
                     </a>
                 </div>
 

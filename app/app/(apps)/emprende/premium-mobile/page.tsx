@@ -60,9 +60,10 @@ export default async function PremiumMobilePaywall() {
                             href="https://mpago.la/1bobeaX"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full py-3.5 bg-slate-900 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
+                            className="w-full py-3.5 bg-slate-900 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:bg-slate-800 transition-colors flex flex-col items-center justify-center gap-1"
                         >
-                            Pago Único. Gratis para siempre
+                            <span>$15.000 Pago Único.</span>
+                            <span>Gratis para siempre</span>
                         </a>
                     </div>
 
@@ -85,7 +86,7 @@ export default async function PremiumMobilePaywall() {
                             rel="noopener noreferrer"
                             className="w-full py-3.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:opacity-90 shadow-lg shadow-violet-500/20 transition-transform active:scale-95 flex items-center justify-center gap-2"
                         >
-                            Suscripción Mensual PRO
+                            Suscripción Mensual PRO $9.990
                         </a>
                     </div>
 
@@ -93,12 +94,10 @@ export default async function PremiumMobilePaywall() {
 
                 <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col items-center gap-4">
                     <a
-                        href={`https://wa.me/56912345678?text=Hola,%20ya%20pagué%20el%20plan%20y%20necesito%20activación%20para:%20${email}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center justify-center gap-1 transition-colors"
+                        href={`mailto:atsittelecom@gmail.com?subject=Soporte%20Pago%20App%20Emprende&body=Hola,%20ya%20pagué%20el%20plan%20y%20necesito%20activación%20para:%20${email}`}
+                        className="text-xs font-bold text-slate-400 hover:text-slate-600 flex items-center justify-center gap-1 transition-colors text-center"
                     >
-                        ¿Ya pagaste y sigues bloqueado? Avísame
+                        ¿Ya pagaste? Informa tu pago a soporte
                         <ChevronRight className="w-3 h-3" />
                     </a>
 
