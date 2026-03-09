@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Save, Plus, Package, Trash2, Search, Activity, Tag, Hash, Store } from "lucide-react"
+import { Save, Plus, Package, Trash2, Search, Activity, Tag, Hash, Store, Pencil, RefreshCw } from "lucide-react"
 import { bulkUpdateStock, addProduct, deleteProduct } from "@/actions/transaction-actions"
 import { useRouter } from "next/navigation"
 import { EditProductModal } from "./EditProductModal"
