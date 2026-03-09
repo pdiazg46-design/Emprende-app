@@ -60,18 +60,14 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
                 // Por ejemplo, 1500 se convierte en el texto EXACTO "1500.00" sin que JS meta mano.
                 const sumupAmount = `${Math.round(total)}.00`;
                 
-                const urlParams = new URLSearchParams({
-                    'affiliate-key': 'emprende_pos',
-                    'app-id': 'com.emprende.app',
-                    'amount': sumupAmount,
-                    'total': sumupAmount,
-                    'currency': 'CLP',
-                    'title': 'Venta POS',
-                    'callback': `${window.location.origin}/emprende`
-                });
-
-                // Construimos la URL final asegurando que los parámetros estén 100% URL-encoded para que iOS (Safari/App) no se rompa al leer el callback o los espacios
-                window.location.href = `sumupmerchant://pay/1.0?${urlParams.toString()}`;
+                // Simplificamos la URL eliminando app-id y affiliate-key para evitar 
+                // errores de validación de Bundle ID al abrirse desde la PWA en iOS.
+                // Además construimos los parámetros manualmente con encodeURIComponent
+                // para evitar que los espacios se codifiquen como '+' y rompan el deep link.
+                const callbackUrl = encodeURIComponent(`${window.location.origin}/emprende`);
+                const titleParam = encodeURIComponent('Venta POS');
+                
+                window.location.href = `sumupmerchant://pay/1.0?amount=${sumupAmount}&total=${sumupAmount}&currency=CLP&title=${titleParam}&callback=${callbackUrl}`;
                 
                 // Timeout to re-enable button if user cancels or returns to PWA without paying
                 setTimeout(() => setLoading(false), 5000)
