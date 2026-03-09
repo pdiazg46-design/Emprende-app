@@ -41,9 +41,13 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
     if (!isOpen) return null
 
     const handleConfirm = async () => {
+        if (loading) return
+        setLoading(true)
+
         if (method === 'CASH') {
             onConfirmSale(method)
             onClose()
+            setLoading(false)
             return
         }
 
@@ -57,9 +61,13 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
                 const sumupAmount = `${Math.round(total)}.00`;
                 const callbackUrl = encodeURIComponent(`${window.location.origin}/emprende`);
                 window.location.href = `sumupmerchant://pay/1.0?affiliate-key=emprende_pos&app-id=com.emprende.app&amount=${sumupAmount}&total=${sumupAmount}&currency=CLP&title=Venta%20POS&callback=${callbackUrl}`;
+                
+                // Timeout to re-enable button if user cancels or returns to PWA without paying
+                setTimeout(() => setLoading(false), 5000)
             } else {
                 onConfirmSale('SUMUP')
                 onClose()
+                setLoading(false)
             }
             return
         }
@@ -67,15 +75,18 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
         if (method === 'TRANSFER') {
             onConfirmSale('TRANSFER')
             onClose()
+            setLoading(false)
             return
         }
 
         if (method === 'MP') {
             if (!qrData) {
                 generateMPLink()
+                // generateMPLink manages loading state internally
             } else {
                 onConfirmSale('MP')
                 onClose()
+                setLoading(false)
             }
         }
     }
@@ -246,9 +257,11 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
 
                             <button
                                 onClick={handleConfirm}
-                                className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all active:scale-95"
+                                disabled={loading}
+                                className={`w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all active:scale-95 flex justify-center items-center gap-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
-                                Confirmar Transferencia
+                                {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                                {loading ? 'PROCESANDO...' : 'Confirmar Transferencia'}
                             </button>
                         </div>
                     )}
@@ -257,13 +270,14 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
                     {(method === 'CASH' || method === 'SUMUP') && (
                         <button
                             onClick={handleConfirm}
-                            className={`w-full py-3 md:py-4 rounded-xl font-black text-base md:text-lg shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 ${method === 'CASH'
+                            disabled={loading}
+                            className={`w-full py-3 md:py-4 rounded-xl font-black text-base md:text-lg shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''} ${method === 'CASH'
                                 ? 'bg-green-500 text-white shadow-green-500/20 hover:bg-green-600'
                                 : 'bg-indigo-600 text-white shadow-indigo-500/20 hover:bg-indigo-700'
                                 }`}
                         >
-                            <Check className="w-5 h-5 md:w-6 md:h-6" />
-                            CONFIRMAR VENTA
+                            {loading ? <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" /> : <Check className="w-5 h-5 md:w-6 md:h-6" />}
+                            {loading ? 'PROCESANDO...' : 'CONFIRMAR VENTA'}
                         </button>
                     )}
                 </div>
