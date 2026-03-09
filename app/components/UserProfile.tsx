@@ -1,7 +1,7 @@
 'use client'
 
 import { signOut, useSession } from "next-auth/react"
-import { LogOut, Users, RefreshCw, Settings, Mail, Calculator, Wallet, Store } from "lucide-react"
+import { LogOut, Users, RefreshCw, Settings, Mail, Calculator, Wallet, Store, Sparkles } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { AdminUsersModal } from "./AdminUsersModal"
 import { InstallButton } from "./InstallButton"
@@ -166,6 +166,16 @@ export function UserProfile({ user }: UserProfileProps) {
                                     <Store className="w-3.5 h-3.5" /> Activar Rastreo de Feria
                                 </button>
                             )}
+
+                            <button
+                                onClick={() => {
+                                    setIsOpen(false)
+                                    window.location.href = "/emprende/planes"
+                                }}
+                                className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-gradient-to-r from-violet-50 to-fuchsia-50 text-violet-700 hover:opacity-90 rounded-xl transition-all text-[10px] font-bold uppercase tracking-widest text-center mb-2 border border-violet-200 shadow-sm"
+                            >
+                                <Sparkles className="w-3.5 h-3.5" /> Planes y Suscripción
+                            </button>
 
                             <button
                                 onClick={() => {

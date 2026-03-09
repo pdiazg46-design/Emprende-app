@@ -4,8 +4,8 @@ import { X, Mic, Package, ShoppingBag, Receipt, Calculator, ChevronRight, Sparkl
 
 export function VoiceHelpModal({ onClose }: { onClose: () => void }) {
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 relative">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose}>
+            <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 relative" onClick={(e) => e.stopPropagation()}>
                 {/* Header */}
                 <div className="bg-slate-900 p-8 text-white relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full blur-3xl opacity-20 -mr-16 -mt-16 pointer-events-none" />
@@ -22,7 +22,8 @@ export function VoiceHelpModal({ onClose }: { onClose: () => void }) {
 
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors backdrop-blur-sm"
+                        className="absolute top-4 right-4 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors backdrop-blur-sm z-50 shadow-lg"
+                        aria-label="Cerrar"
                     >
                         <X className="w-5 h-5" />
                     </button>

@@ -53,16 +53,16 @@ export default async function PremiumMobilePaywall() {
                             App Móvil Básica
                         </h3>
                         <p className="text-xs text-slate-500 mb-4 h-12">
-                            Usa la aplicación en tu celular para siempre. Sin pagos mensuales ni sorpresas.
+                            Anota ventas y créditos/fiados a mano. Sin pagos mensuales ni sorpresas.
                         </p>
 
                         <a
                             href="https://mpago.la/1bobeaX"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full py-3.5 bg-slate-900 text-white rounded-xl font-black text-xs tracking-widest uppercase hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
+                            className="w-full py-3.5 bg-slate-900 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
                         >
-                            Pago Único $15.000
+                            Pago Único. Gratis para siempre
                         </a>
                     </div>
 
@@ -75,17 +75,17 @@ export default async function PremiumMobilePaywall() {
                             <Sparkles className="w-4 h-4 text-violet-500" />
                             Emprende PRO
                         </h3>
-                        <p className="text-xs text-violet-700/80 mb-4 h-12">
-                            Escritorio PC, Control de Gastos, Inteligencia de Negocio y Soporte VIP.
+                        <p className="text-xs text-violet-700/80 mb-4 h-12 pr-4">
+                            Máquina del Tiempo (Analíticas), Modo Feria IA y Control de Gastos para Ganancias Reales.
                         </p>
 
                         <a
                             href="https://www.mercadopago.cl/subscriptions/checkout?preapproval_plan_id=4cb1a5c9597d4bea924afdc82a1ef778"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full py-3.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-black text-xs tracking-widest uppercase hover:opacity-90 shadow-lg shadow-violet-500/20 transition-transform active:scale-95 flex items-center justify-center gap-2"
+                            className="w-full py-3.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-black text-[10px] tracking-widest uppercase hover:opacity-90 shadow-lg shadow-violet-500/20 transition-transform active:scale-95 flex items-center justify-center gap-2"
                         >
-                            Suscribirme a PRO por $9.990/mes
+                            Suscripción Mensual PRO
                         </a>
                     </div>
 
