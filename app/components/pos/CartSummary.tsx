@@ -111,7 +111,7 @@ export function CartSummary() {
             {/* Backdrop */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
+                    className="fixed inset-0 bg-black/40 z-[9990] backdrop-blur-sm"
                     onClick={() => {
                         setIsOpen(false);
                         setIsCartExpanded(false);
@@ -121,7 +121,7 @@ export function CartSummary() {
 
             {/* Floating Bar / Sheet */}
             <div className={cn(
-                "fixed bottom-0 left-0 right-0 z-40 bg-white shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 rounded-t-[2rem]",
+                "fixed bottom-0 left-0 right-0 z-[9999] bg-white shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 rounded-t-[2rem]",
                 isOpen ? "h-[80vh] md:h-auto" : "h-24 md:h-auto",
                 "md:relative md:max-h-none md:bottom-auto md:right-auto md:left-auto md:w-full md:rounded-[2rem] md:border md:border-slate-100 md:shadow-sm" // Anular clases fixed en Desktop para que encaje en el layout RightSide
             )}>
