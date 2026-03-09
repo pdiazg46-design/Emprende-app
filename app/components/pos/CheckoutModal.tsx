@@ -53,21 +53,39 @@ export function CheckoutModal({ isOpen, onClose, cart, total, onConfirmSale, pay
 
         if (method === 'SUMUP') {
             if (window.innerWidth < 768) {
-                // CORRECCIÓN CRÍTICA DE IOS: En Chile (CLP), la app nativa de SumUp (sobre todo en iOS) 
+                // CORRECCIÓN CRÍTICA DE IOS: En Chile (CLP), la app nativa de SumUp
                 // suele fallar o malinterpretar los montos si se envían con `.toFixed(2)` nativo de JS
-                // y si se manda entero (`1500`) no lo lee. La única forma 100% segura para iOS es enviar 
-                // el entero convertido a string y concatenarle el texto literal `.00`.
-                // Por ejemplo, 1500 se convierte en el texto EXACTO "1500.00" sin que JS meta mano.
                 const sumupAmount = `${Math.round(total)}.00`;
                 
-                // Simplificamos la URL eliminando app-id para evitar 
-                // errores de validación de Bundle ID al abrirse desde la PWA en iOS.
-                // Sin embargo, reintroducimos 'affiliate-key' ya que SumUp lo exige
-                // para procesar parámetros de cobro como el 'amount' (evitando cobrar $0).
-                const callbackUrl = encodeURIComponent(`${window.location.origin}/emprende`);
-                const titleParam = encodeURIComponent('Venta POS');
+                // Detección de dispositivo iOS para evitar el "Error de conexión" (strict Bundle ID validation)
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+
+                let sumupHref = '';
                 
-                window.location.href = `sumupmerchant://pay/1.0?affiliate-key=emprende_pos&amount=${sumupAmount}&total=${sumupAmount}&currency=CLP&title=${titleParam}&callback=${callbackUrl}`;
+                if (isIOS) {
+                    // MODO IOS (PWA SAFARI):
+                    // Eliminamos 'app-id' (causaba Error de Conexión en PWA por descarte de Bundle ID)
+                    // Eliminamos 'affiliate-key' (causaba Error de Conexión si iba acompañado, e intentar sin él pero con %20 procesa el cobro al no forzar validación de API)
+                    // NOTA: SumUp en iOS permite operar el lector básico si la URL va *totalmente limpia* pero con caracteres HTTP estándar (%20, no +).
+                    const callbackUrl = encodeURIComponent(`${window.location.origin}/emprende`);
+                    const titleParam = encodeURIComponent('Venta POS');
+                    sumupHref = `sumupmerchant://pay/1.0?amount=${sumupAmount}&total=${sumupAmount}&currency=CLP&title=${titleParam}&callback=${callbackUrl}`;
+                } else {
+                    // MODO ANDROID / APP NATIVA (COMPORTAMIENTO ORIGINAL SALVAGUARDADO)
+                    // Android y Capacitor native config sí respetan y necesitan la validación completa.
+                    const urlParams = new URLSearchParams({
+                        'affiliate-key': 'emprende_pos',
+                        'app-id': 'com.emprende.app',
+                        'amount': sumupAmount,
+                        'total': sumupAmount,
+                        'currency': 'CLP',
+                        'title': 'Venta POS',
+                        'callback': `${window.location.origin}/emprende`
+                    });
+                    sumupHref = `sumupmerchant://pay/1.0?${urlParams.toString()}`;
+                }
+
+                window.location.href = sumupHref;
                 
                 // Timeout to re-enable button if user cancels or returns to PWA without paying
                 setTimeout(() => setLoading(false), 5000)
