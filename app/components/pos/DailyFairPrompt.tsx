@@ -41,8 +41,15 @@ export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
 
         const newFairName = fairName.trim()
         
+        // Cargar freshest state de memoria local
+        let currentFairs: string[] = []
+        try {
+            const stored = localStorage.getItem('emprende_known_fairs')
+            if (stored) currentFairs = JSON.parse(stored)
+        } catch(e) {}
+
         // Guardar en el historial de ferias (máximo 5)
-        const updatedFairs = Array.from(new Set([newFairName, ...knownFairs])).slice(0, 5)
+        const updatedFairs = Array.from(new Set([newFairName, ...currentFairs])).slice(0, 5)
         localStorage.setItem('emprende_known_fairs', JSON.stringify(updatedFairs))
         setKnownFairs(updatedFairs)
 
