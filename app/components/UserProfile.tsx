@@ -50,7 +50,7 @@ export function UserProfile({ user }: UserProfileProps) {
     // Function to manually trigger the Daily Fair Prompt
     const handleManualFairTrigger = () => {
         localStorage.removeItem('emprende_last_fair_prompt')
-        window.location.reload()
+        window.location.href = '/emprende'
     }
 
     return (
