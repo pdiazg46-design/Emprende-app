@@ -17,7 +17,6 @@ import { SalesCard } from "@/components/dashboard/SalesCard"
 import { ExpenseCard } from "@/components/dashboard/ExpenseCard"
 import { InventoryCard } from "@/components/dashboard/InventoryCard"
 import { RiskManager } from "@/components/dashboard/RiskManager"
-import { IntelligentFOMOBanner } from "@/components/dashboard/IntelligentFOMOBanner"
 import { Suspense } from "react"
 
 // Force dynamic rendering

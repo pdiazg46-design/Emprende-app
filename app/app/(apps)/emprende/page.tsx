@@ -17,7 +17,7 @@ import { SalesCard } from "@/components/dashboard/SalesCard"
 import { ExpenseCard } from "@/components/dashboard/ExpenseCard"
 import { InventoryCard } from "@/components/dashboard/InventoryCard"
 import { RiskManager } from "@/components/dashboard/RiskManager"
-import { IntelligentFOMOBanner } from "@/components/dashboard/IntelligentFOMOBanner"
+import { DemoHeaderBadge } from "@/components/dashboard/DemoHeaderBadge"
 import { Suspense } from "react"
 import { DailyFairPrompt } from "@/components/pos/DailyFairPrompt"
 
@@ -59,10 +59,11 @@ async function DashboardLeft({ session, isTrial, daysRemaining }: { session: any
         </div>
 
         {/* Title Center - Blue & Absolute */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
           <h1 className="text-xl font-black text-[#4379F2] uppercase tracking-widest leading-none">
             Emprende
           </h1>
+          <DemoHeaderBadge isTrial={isTrial} daysRemaining={daysRemaining} />
         </div>
 
         <div className="flex items-center gap-2">
@@ -73,9 +74,6 @@ async function DashboardLeft({ session, isTrial, daysRemaining }: { session: any
 
       {/* Ajuste de padding para mobile header */}
       <div className="lg:hidden h-16" />
-
-      {/* Intelligent FOMO Client Component */}
-      <IntelligentFOMOBanner isTrial={isTrial} daysRemaining={daysRemaining} />
 
       <div className="space-y-6 lg:space-y-8 w-full">
         <div className="hidden lg:flex mb-3 items-center justify-between">

@@ -9,9 +9,22 @@ import { UserProfile } from "@/components/UserProfile";
 import { signOut } from "next-auth/react";
 import { MobileSimulatorToggle } from "@/components/MobileSimulatorToggle";
 import { VoiceToggle } from "@/components/voice/VoiceToggle";
+import { DemoHeaderBadge } from "@/components/dashboard/DemoHeaderBadge";
 
 export function DesktopSidebar({ user }: { user: any }) {
     const pathname = usePathname();
+
+    const isTrial = String(user?.subscriptionPlan).toUpperCase() === 'BASIC' && String(user?.subscriptionStatus).toUpperCase() === 'TRIAL';
+    let daysRemaining = 0;
+
+    if (isTrial && user?.trialStartsAt) {
+        const startDate = new Date(user.trialStartsAt);
+        const today = new Date();
+        startDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+        const daysSinceStart = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+        daysRemaining = Math.max(0, 30 - daysSinceStart);
+    }
 
     const navItems = [
         { name: "Dashboard", href: "/emprende", icon: LayoutDashboard },
@@ -35,13 +48,16 @@ export function DesktopSidebar({ user }: { user: any }) {
                         priority
                     />
                 </div>
-                <div>
+                <div className="flex flex-col items-center">
                     <h1 className="font-black text-[#4379F2] leading-tight text-xl uppercase tracking-[0.2em] drop-shadow-sm">
                         Emprende
                     </h1>
-                    <p className="text-xs font-semibold text-slate-500 tracking-wide mt-1.5">
-                        Tu visión, nuestra tecnología
-                    </p>
+                    <DemoHeaderBadge isTrial={isTrial} daysRemaining={daysRemaining} />
+                    {!isTrial && (
+                        <p className="text-xs font-semibold text-slate-500 tracking-wide mt-1.5">
+                            Tu visión, nuestra tecnología
+                        </p>
+                    )}
                 </div>
             </div>
 
