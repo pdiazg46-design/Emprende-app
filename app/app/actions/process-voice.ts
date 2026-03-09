@@ -40,20 +40,20 @@ export async function processVoiceCommand(text: string) {
                     'SALE', 'MULTI_SALE', 'EXPENSE', 'INVENTORY_ADD', 'INVENTORY_RESTOCK', 'CASH_WITHDRAWAL',
                     'RECORDS_INCOME', 'DELETE_LAST', 'UPDATE_BUDGET', 'UPDATE_PARTNER', 'CALIBRATE_FUND'
                 ]).describe("El tipo de operación detectada."),
-                amount: z.string().optional().describe("Monto total o cantidad. Siempre devolver como STRING de texto. Ej: '1000', '1', 'un'."),
-                paymentMethod: z.enum(['CASH', 'TRANSFER']).optional().describe("Para RETIROS (CASH_WITHDRAWAL) o INGRESOS, especifica CASH o TRANSFER."),
-                description: z.string().optional().describe("Descripción limpia para Gastos o nombre del Presupuesto. Si no hay, envía ''."),
-                productName: z.string().optional().describe("Nombre de producto si es Venta o Inventario. Si no hay, envía ''."),
-                isQuantity: z.boolean().optional().describe("True si el número dictado es una cantidad en vez de un valor monetario. False por defecto."),
+                amount: z.string().describe("Monto total o cantidad. Siempre devolver como STRING de texto. Ej: '1000', '1', 'un'. Si no aplica, devuelve '0'."),
+                paymentMethod: z.enum(['CASH', 'TRANSFER', 'NONE']).describe("Específica CASH o TRANSFER. Si no aplica, devuelve NONE."),
+                description: z.string().describe("Descripción limpia para Gastos o Presupuestos. Si no hay, envía ''."),
+                productName: z.string().describe("Nombre de producto si es Venta o Inventario. Si no hay, envía ''."),
+                isQuantity: z.boolean().describe("True si el número dictado es una cantidad en vez de monetario. Si no aplica, false."),
                 items: z.array(z.object({
-                    amount: z.string().describe("Cantidad o valor. Siempre como string de texto. Ej: '1', 'un', 'dos'. Obligatorio llenar con '1' si se omite."),
+                    amount: z.string().describe("Cantidad o valor. Siempre como string de texto. Obligatorio llenar con '1' si se omite."),
                     product: z.string().describe("Nombre del producto limpio. Obligatorio llenar."),
-                    isQuantity: z.boolean().describe("True si 'amount' es cantidad de items. Asumir true si es un producto.")
-                })).describe("Usar si hay multiples productos en una misma oración. Retornar array vacío [] si no hay múltiples."),
-                price: z.string().optional().describe("Precio unitario. Siempre string."),
-                installments: z.string().optional().describe("Cantidad de cuotas. Siempre string."),
-                categoryType: z.enum(['SUBSCRIPTION', 'FIXED_PAGO', 'VARIABLE_SERVICE', 'CONTRIBUTION', 'GENERAL', 'NONE']).optional().describe("Tipo. Usa 'NONE' si no aplica."),
-                confidence: z.number().optional().describe("Qué tan seguro estás del intent (0 a 1).")
+                    isQuantity: z.boolean().describe("True si 'amount' es cantidad de items. Asumir true si es producto.")
+                })).describe("Usar si hay MULTIPLES productos en una misma oración. Si es uno o nada, enviar array vacío []."),
+                price: z.string().describe("Precio unitario. Siempre string. Si no aplica, '0'."),
+                installments: z.string().describe("Cantidad de cuotas. Siempre string. Si no aplica, '0'."),
+                categoryType: z.enum(['SUBSCRIPTION', 'FIXED_PAGO', 'VARIABLE_SERVICE', 'CONTRIBUTION', 'GENERAL', 'NONE']).describe("Tipo. Usa 'NONE' si no aplica."),
+                confidence: z.number().describe("Qué tan seguro estás del intent (0 a 1).")
             }),
             prompt: `
             Eres un asistente financiero ultra-inteligente para Chile. Extrae información en formato exacto.
