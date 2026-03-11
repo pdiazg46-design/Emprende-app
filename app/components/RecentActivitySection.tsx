@@ -46,10 +46,8 @@ export function RecentActivitySection({ transactions }: RecentActivitySectionPro
                 </button>
             </div>
 
-            <div className="flex-1 relative min-h-0 bg-transparent">
-                <div className="absolute inset-0 overflow-y-auto scrollbar-hide">
-                    <TransactionList transactions={displayTransactions} />
-                </div>
+            <div className="flex-1 overflow-y-auto min-h-0 pr-1">
+                <TransactionList transactions={displayTransactions} />
             </div>
 
             <HistoryModal

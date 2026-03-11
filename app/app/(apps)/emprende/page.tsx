@@ -188,7 +188,7 @@ export default async function Home() {
         </div>
 
         {/* COLUMNA DERECHA (4/12 - 33%) - Carrito y Actividad Reciente */}
-        <div className="md:col-span-4 w-full flex flex-col gap-6 md:sticky md:top-24 md:h-[calc(100vh-[120px])] relative z-50">
+        <div className="md:col-span-4 w-full flex flex-col gap-6 md:sticky md:top-24 md:h-[calc(100vh-120px)] relative z-50">
           <CartSummary />
 
           <div className="hidden md:flex flex-1 min-h-0 flex-col h-full bg-red-500/0">
