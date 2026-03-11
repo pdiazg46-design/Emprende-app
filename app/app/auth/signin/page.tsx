@@ -21,8 +21,8 @@ function SignInForm() {
     const isRegistered = searchParams.get("registered") === "true"
     const urlError = searchParams.get("error")
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+    const handleSubmit = async (e?: React.FormEvent | React.KeyboardEvent) => {
+        if (e) e.preventDefault()
         setIsLoading(true)
         setError("")
 
@@ -65,7 +65,9 @@ function SignInForm() {
                         Tu libertad financiera comienza aquí. <br />Accede a tu cuenta de Emprende.
                     </p>
 
-                    <form onSubmit={handleSubmit} className="w-full space-y-4">
+                    <div 
+                        className="w-full space-y-4"
+                    >
                         {(error || urlError) && (
                             <div className="p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-xs font-bold mb-4">
                                 {error || "Error al iniciar sesión. Verifica tus credenciales."}
@@ -85,11 +87,15 @@ function SignInForm() {
                                     <Mail className="w-5 h-5" />
                                 </div>
                                 <input
-                                    type="email"
+                                    type="text"
+                                    inputMode="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="tu@correo.com"
                                     required
+                                    autoComplete="off"
+                                    name="random-email-string"
+                                    id="random-email-string"
                                     className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-sm font-medium focus:border-blue-500 focus:bg-white transition-all outline-none text-slate-700"
                                 />
                             </div>
@@ -107,6 +113,9 @@ function SignInForm() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Ingresa tu clave"
                                     required
+                                    autoComplete="new-password"
+                                    name="random-password-string"
+                                    id="random-password-string"
                                     className="w-full pl-12 pr-12 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-sm font-medium focus:border-blue-500 focus:bg-white transition-all outline-none text-slate-700"
                                 />
                                 <button
@@ -120,7 +129,8 @@ function SignInForm() {
                         </div>
 
                         <button
-                            type="submit"
+                            type="button"
+                            onClick={(e) => handleSubmit(e)}
                             disabled={isLoading}
                             className="w-full mt-6 bg-[#4379F2] text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-3 transition-all hover:bg-blue-700 active:scale-[0.98] shadow-lg shadow-blue-500/30 disabled:opacity-70"
                         >
@@ -134,7 +144,7 @@ function SignInForm() {
                                 </>
                             )}
                         </button>
-                    </form>
+                    </div>
 
                     <div className="mt-8 text-sm font-medium text-slate-500">
                         ¿No tienes cuenta?{" "}
