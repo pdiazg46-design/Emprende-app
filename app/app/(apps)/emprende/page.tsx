@@ -119,7 +119,7 @@ async function DashboardRight() {
   const { transactionsToday } = await getDashboardMetrics()
 
   return (
-    <section className="w-full">
+    <section className="w-full h-full flex flex-col min-h-0">
       <RecentActivitySection transactions={transactionsToday as any} />
     </section>
   )
@@ -188,11 +188,11 @@ export default async function Home() {
         </div>
 
         {/* COLUMNA DERECHA (4/12 - 33%) - Carrito y Actividad Reciente */}
-        <div className="md:col-span-4 w-full flex flex-col gap-6 md:sticky md:top-24 md:max-h-[calc(100vh-6rem)] relative z-50">
+        <div className="md:col-span-4 w-full flex flex-col gap-6 md:sticky md:top-24 md:h-[calc(100vh-6rem)] relative z-50">
           <CartSummary />
 
-          <div className="hidden md:block h-full">
-            <Suspense fallback={<div className="h-64 bg-slate-100 rounded-3xl animate-pulse"></div>}>
+          <div className="hidden md:flex flex-1 min-h-0 flex-col">
+            <Suspense fallback={<div className="h-64 flex-1 bg-slate-100 rounded-3xl animate-pulse"></div>}>
               <DashboardRight />
             </Suspense>
           </div>

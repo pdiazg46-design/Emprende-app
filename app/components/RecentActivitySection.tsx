@@ -25,7 +25,7 @@ export function RecentActivitySection({ transactions }: RecentActivitySectionPro
     const displayTransactions = [...optimisticTransactions, ...transactions]
 
     return (
-        <section className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm h-full max-h-[65vh] md:max-h-full flex flex-col">
+        <section className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm h-full max-h-[65vh] md:max-h-none flex flex-col min-h-0">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div className="flex items-center gap-3">
                     <h2 className="text-lg font-black text-slate-800 uppercase tracking-wide flex items-center gap-2 whitespace-nowrap">
@@ -46,8 +46,10 @@ export function RecentActivitySection({ transactions }: RecentActivitySectionPro
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto min-h-[300px]">
-                <TransactionList transactions={displayTransactions} />
+            <div className="flex-1 relative min-h-0 bg-transparent">
+                <div className="absolute inset-0 overflow-y-auto scrollbar-hide">
+                    <TransactionList transactions={displayTransactions} />
+                </div>
             </div>
 
             <HistoryModal
