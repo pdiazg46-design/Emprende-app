@@ -191,6 +191,9 @@ function getChileTimeBounds(baseDate: Date = new Date()) {
     const yearStart = new Date(Date.UTC(year, 0, 1, tzOffsetHours, 0, 0, 0));
     const yearEnd = new Date(Date.UTC(year, 11, 31, tzOffsetHours + 23, 59, 59, 999));
 
+    // Medianoche Final en Chile (23:59:59)
+    const todayEnd = new Date(Date.UTC(year, month, date, tzOffsetHours + 23, 59, 59, 999));
+
     // Corrección para "Mes Anterior" con cambio de año
     const lastMonthYear = month === 0 ? year - 1 : year;
     const lastMonthIdx = month === 0 ? 11 : month - 1;
@@ -202,7 +205,7 @@ function getChileTimeBounds(baseDate: Date = new Date()) {
     const lastYearStart = new Date(Date.UTC(year - 1, 0, 1, tzOffsetHours, 0, 0, 0));
     const lastYearEnd = new Date(Date.UTC(year - 1, 11, 31, tzOffsetHours + 23, 59, 59, 999));
 
-    return { todayStart, weekStart, weekEnd, lastWeekStart, lastWeekEnd, monthStart, monthEnd, lastMonthStart, lastMonthEnd, yearStart, yearEnd, lastYearStart, lastYearEnd, chileTime };
+    return { todayStart, todayEnd, weekStart, weekEnd, lastWeekStart, lastWeekEnd, monthStart, monthEnd, lastMonthStart, lastMonthEnd, yearStart, yearEnd, lastYearStart, lastYearEnd, chileTime };
 }
 
 export const getDashboardMetrics = cache(async (timeframe: string = 'today') => {
@@ -216,7 +219,7 @@ export const getDashboardMetrics = cache(async (timeframe: string = 'today') => 
     
     // Dynamic boundaries based on timeframe
     let periodStart = bounds.todayStart;
-    let periodEnd = new Date(); // now
+    let periodEnd = bounds.todayEnd; // Fix: 23:59:59 Chile (GMT-3), NOT standard absolute new Date() UTC
 
     if (timeframe === 'week') {
         periodStart = bounds.weekStart;
@@ -555,7 +558,10 @@ export async function getSalesInsights(timeframe: string = 'week') {
         let isDailyTrend = true; // Si es true, agrupa por día (ej: "Lun", "15"). Si es false, agrupa por mes (ej: "Ene", "Feb")
         
         // --- TIMEFRAME PARSING ---
-        if (timeframe === 'month') {
+        if (timeframe === 'today') {
+            startDate = bounds.todayStart;
+            endDate = bounds.todayEnd;
+        } else if (timeframe === 'month') {
             startDate = bounds.monthStart;
             endDate = bounds.monthEnd;
         } else if (timeframe === 'year') {
@@ -639,7 +645,9 @@ export async function getSalesInsights(timeframe: string = 'week') {
         }>()
 
         // --- TREND MAP INITIATION ---
-        if (timeframe === 'week' || timeframe === 'prev_week') {
+        if (timeframe === 'today') {
+            trendMap.set('Hoy', 0)
+        } else if (timeframe === 'week' || timeframe === 'prev_week') {
             const daysOfWeek = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
             daysOfWeek.forEach(day => trendMap.set(day, 0))
         } else if (timeframe === 'month') {
@@ -730,7 +738,9 @@ export async function getSalesInsights(timeframe: string = 'week') {
 
             let labelKey = ''
 
-            if (timeframe === 'week' || timeframe === 'prev_week') {
+            if (timeframe === 'today') {
+                labelKey = 'Hoy'
+            } else if (timeframe === 'week' || timeframe === 'prev_week') {
                 const dayIndex = saleDateLocal.getUTCDay()
                 const mappedIndex = dayIndex === 0 ? 6 : dayIndex - 1
                 labelKey = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][mappedIndex]
