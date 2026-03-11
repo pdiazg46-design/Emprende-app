@@ -25,7 +25,7 @@ export function RecentActivitySection({ transactions }: RecentActivitySectionPro
     const displayTransactions = [...optimisticTransactions, ...transactions]
 
     return (
-        <section className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm h-full flex flex-col">
+        <section className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm h-full max-h-[65vh] md:max-h-full flex flex-col">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div className="flex items-center gap-3">
                     <h2 className="text-lg font-black text-slate-800 uppercase tracking-wide flex items-center gap-2 whitespace-nowrap">

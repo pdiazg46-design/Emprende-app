@@ -48,6 +48,12 @@ export function HistoryModal({ isOpen, onClose }: HistoryModalProps) {
     useEffect(() => {
         if (isOpen) {
             fetchHistory()
+            document.body.style.overflow = 'hidden' // BUGFIX: PWA Overlay Scroll Lock
+        } else {
+            document.body.style.overflow = ''
+        }
+        return () => {
+            document.body.style.overflow = ''
         }
     }, [isOpen, startDate, endDate])
 

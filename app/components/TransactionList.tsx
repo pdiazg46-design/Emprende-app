@@ -2,7 +2,7 @@
 
 import { TrendingUp, TrendingDown, Trash2, Package, ChevronRight, X, Clock, Receipt, ArrowDownToLine, Landmark } from "lucide-react"
 import { deleteTransaction } from "@/actions/transaction-actions"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
 interface Transaction {
@@ -28,6 +28,18 @@ export function TransactionList({ transactions }: { transactions: Transaction[] 
     const [deletingId, setDeletingId] = useState<string | null>(null)
     const [selectedGroup, setSelectedGroup] = useState<GroupedTransaction | null>(null)
     const router = useRouter()
+
+    // 🔴 BUGFIX: Mobile Scroll Lock (Prevent PWA Freeze on Overlay Open)
+    useEffect(() => {
+        if (selectedGroup) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = ''
+        }
+        return () => {
+            document.body.style.overflow = ''
+        }
+    }, [selectedGroup])
 
     // Group transactions logic
     const groupedTransactions = useMemo(() => {
