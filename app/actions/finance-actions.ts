@@ -69,7 +69,7 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
         const sales = await prisma.transaction.findMany({
             where: {
                 userId: session.user.id,
-                type: { in: ['SALE', 'WITHDRAWAL', 'CASH_DEPOSIT'] },
+                type: { in: ['SALE', 'WEB_SALE', 'WITHDRAWAL', 'CASH_DEPOSIT'] },
                 amount: { gt: 0 },
                 NOT: [
                     { description: { contains: 'Añadido', mode: 'insensitive' } },
@@ -107,7 +107,7 @@ export async function getFinanceInsights(timeframe: 'today' | 'week' | 'month' |
             let fee = 0;
             let percent = 0;
 
-            if (s.type === 'SALE') {
+            if (s.type === 'SALE' || s.type === 'WEB_SALE') {
                 if (method === 'SUMUP') {
                     fee = Math.round(s.amount * SUMUP_FEE_RATE);
                     percent = SUMUP_FEE_RATE;

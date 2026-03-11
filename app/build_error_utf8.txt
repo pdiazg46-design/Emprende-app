@@ -1,0 +1,184 @@
+﻿
+> emprende-app@0.1.0 build
+> prisma generate && next build
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+
+Ô£ö Generated Prisma Client (v5.22.0) to .\node_modules\@prisma\client in 114ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Help us improve the Prisma ORM for everyone. Share your feedback in a short 2-min survey: https://pris.ly/orm/survey/release-5-22
+
+node.exe : ÔÜá 
+Warning: Next.js 
+inferred your 
+workspace root, but 
+it may not be correct.
+En línea: 1 Carácter: 
+1
++ & "C:\Program Files\
+nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo 
+...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (ÔÜá Warnin   
+ g: Ne...not be co    
+rrect.:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+ We detected multiple 
+lockfiles and 
+selected the 
+directory of C:\Users\
+pdiaz\Desarrollos\Empr
+ende\package-lock.json
+ as the root 
+directory.
+ To silence this 
+warning, set 
+`turbopack.root` in 
+your Next.js config, 
+or consider removing 
+one of the lockfiles 
+if it's not needed.
+   See https://nextjs.
+org/docs/app/api-refer
+ence/config/next-confi
+g-js/turbopack#root-di
+rectory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * C:\Users\pdiaz\De
+sarrollos\Emprende\app
+\package-lock.json
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local, .env
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack 
+build failed with 1 
+errors:
+./app/components/PosSy
+ncListener.tsx:4:1
+Module not found: 
+Can't resolve '@supaba
+se/supabase-js'
+[0m [90m 2 |[39m 
+[36mimport[39m { 
+useEffect } 
+[36mfrom[39m 
+[32m'react'[39m
+ [90m 3 |[39m 
+[36mimport[39m { 
+useRouter } 
+[36mfrom[39m [32m'n
+ext/navigation'[39m
+[31m[1m>[22m[39m[
+90m 4 |[39m 
+[36mimport[39m { 
+createClient } 
+[36mfrom[39m [32m'@
+supabase/supabase-js'
+[39m
+ [90m   |[39m [31m
+[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^
+[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22
+m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m
+[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^
+[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22
+m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m
+[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^
+[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22
+m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m
+[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^
+[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22
+m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m
+[31m[1m^[22m[39m[
+31m[1m^[22m[39m[31
+m[1m^[22m[39m[31m
+[1m^[22m[39m[31m[1
+m^[22m[39m[31m[1m^
+[22m[39m[31m[1m^[
+22m[39m[31m[1m^[22
+m[39m[31m[1m^[22m
+[39m[31m[1m^[22m[3
+9m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m 
+[90m// Listener 
+Global de 
+Sincronizaci├│n 
+Inventario 
+(E-Commerce -> 
+POS)[39m
+ [90m 7 |[39m 
+[36mexport[39m 
+[36mdefault[39m 
+[36mfunction[39m [3
+3mPosSyncListener[39m
+({ storeId 
+}[33m:[39m { 
+storeId[33m:[39m 
+string }) {[0m
+
+
+
+Import trace:
+  Server Component:
+    ./app/components/P
+osSyncListener.tsx
+    
+./app/app/layout.tsx
+
+https://nextjs.org/doc
+s/messages/module-not-
+found
+
+
+    at <unknown> (./ap
+p/components/PosSyncLi
+stener.tsx:4:1)
+    at <unknown> (http
+s://nextjs.org/docs/me
+ssages/module-not-foun
+d)

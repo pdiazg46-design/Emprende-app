@@ -100,7 +100,7 @@ export function TransactionList({ transactions }: { transactions: Transaction[] 
                 {groupedTransactions.map((group) => {
                     const isGroup = group.items.length > 1
                     const firstTx = group.items[0]
-                    const isSale = group.type === 'SALE';
+                    const isSale = group.type === 'SALE' || group.type === 'WEB_SALE';
                     const isInventoryIn = group.type === 'INVENTORY_IN';
                     const isInventoryOut = group.type === 'INVENTORY_OUT';
                     const isInventory = isInventoryIn || isInventoryOut;
@@ -117,10 +117,10 @@ export function TransactionList({ transactions }: { transactions: Transaction[] 
 
                     if (isSale) {
                         // Restore Icon
-                        iconContent = isGroup ? <Receipt className="w-5 h-5" /> : <TrendingUp className="w-5 h-5" />;
-                        colorClass = "text-emerald-600";
-                        bgClass = "bg-emerald-50";
-                        typeLabel = "Venta";
+                        iconContent = group.type === 'WEB_SALE' ? <Package className="w-5 h-5 text-indigo-500" /> : (isGroup ? <Receipt className="w-5 h-5" /> : <TrendingUp className="w-5 h-5" />);
+                        colorClass = group.type === 'WEB_SALE' ? "text-indigo-600" : "text-emerald-600";
+                        bgClass = group.type === 'WEB_SALE' ? "bg-indigo-50" : "bg-emerald-50";
+                        typeLabel = group.type === 'WEB_SALE' ? "Venta Web" : "Venta";
                         sign = "+";
                     } else if (isInventory) {
                         iconContent = <Package className="w-5 h-5" />;

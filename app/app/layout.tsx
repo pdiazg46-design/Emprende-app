@@ -49,6 +49,7 @@ import { Providers } from "@/components/Providers";
 import { PWARegistration } from "@/components/PWARegistration";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { MobileFrame } from "@/components/MobileFrame";
+import PosSyncListener from "@/components/PosSyncListener";
 
 export default function RootLayout({
   children,
@@ -64,6 +65,8 @@ export default function RootLayout({
         <PWARegistration />
         <InstallPrompt />
         <Providers>
+          {/* El storeId estático temporal asume un único tenant para el E-Commerce en esta Beta V1. En Saas completo vendrá de la sesión. */}
+          <PosSyncListener storeId="TEMPORAL_OWNER_ID" />
           <MobileFrame>
             {children}
           </MobileFrame>

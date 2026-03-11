@@ -66,7 +66,7 @@ export async function getF29Data(year: number, month: number) {
     let gastosSinRespaldo = 0; // Vales
 
     transactions.forEach(tx => {
-        if (tx.type === 'SALE') {
+        if (tx.type === 'SALE' || tx.type === 'WEB_SALE') {
             // Toda venta en la app se asume Bruta (IVA Incluido)
             totalVentasBrutas += tx.amount;
         } else if (tx.type === 'EXPENSE') {

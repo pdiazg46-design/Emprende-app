@@ -79,7 +79,7 @@ export default function VentasClient({
     let totalRevenue = 0
     let totalCost = 0
 
-    const salesTransactions = metrics?.transactionsToday?.filter((t: any) => t.type === 'SALE') || []
+    const salesTransactions = metrics?.transactionsToday?.filter((t: any) => t.type === 'SALE' || t.type === 'WEB_SALE') || []
 
     salesTransactions.forEach((t: any) => {
         totalRevenue += t.amount

@@ -259,7 +259,7 @@ export const getDashboardMetrics = cache(async (timeframe: string = 'today') => 
         prisma.transaction.aggregate({
             where: {
                 userId: user.id,
-                type: 'SALE',
+                type: { in: ['SALE', 'WEB_SALE'] },
                 amount: { gt: 0 },
                 NOT: [
                     { description: { contains: 'Añadido', mode: 'insensitive' } },
@@ -274,7 +274,7 @@ export const getDashboardMetrics = cache(async (timeframe: string = 'today') => 
         prisma.transaction.aggregate({
             where: {
                 userId: user.id,
-                type: 'SALE',
+                type: { in: ['SALE', 'WEB_SALE'] },
                 amount: { gt: 0 },
                 NOT: [
                     { description: { contains: 'Añadido', mode: 'insensitive' } },
@@ -594,7 +594,7 @@ export async function getSalesInsights(timeframe: string = 'week') {
         const sales = await prisma.transaction.findMany({
             where: {
                 userId: session.user.id,
-                type: 'SALE',
+                type: { in: ['SALE', 'WEB_SALE'] },
                 amount: { gt: 0 },
                 NOT: [
                     { description: { contains: 'Añadido', mode: 'insensitive' } },
