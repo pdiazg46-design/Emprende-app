@@ -31,6 +31,12 @@ export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
         } catch(e) {}
     }, [isPro])
 
+    useEffect(() => {
+        const handleForceOpen = () => setIsOpen(true)
+        window.addEventListener('openFairPrompt', handleForceOpen)
+        return () => window.removeEventListener('openFairPrompt', handleForceOpen)
+    }, [])
+
     if (!isOpen) return null
 
     const handleConfirm = () => {

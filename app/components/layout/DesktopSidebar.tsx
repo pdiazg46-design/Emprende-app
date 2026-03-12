@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, TrendingUp, TrendingDown, Settings, LogOut, ShieldCheck, Wallet, ShoppingBag } from "lucide-react";
+import { LayoutDashboard, TrendingUp, TrendingDown, Settings, LogOut, ShieldCheck, Wallet, ShoppingBag, Store } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserProfile } from "@/components/UserProfile";
 import { signOut } from "next-auth/react";
@@ -90,6 +90,19 @@ export function DesktopSidebar({ user }: { user: any }) {
             </nav>
 
             <div className="p-4 border-t border-slate-100 bg-slate-50/50 space-y-3 shrink-0">
+
+                {/* Feria Toggle for Quick Access (PC Support) */}
+                {(user?.subscriptionPlan === 'PRO' || user?.role === 'ADMIN') && (
+                    <button 
+                        onClick={() => window.dispatchEvent(new Event('openFairPrompt'))}
+                        className="w-full flex items-center justify-between px-2 bg-gradient-to-r from-violet-50 to-fuchsia-50 hover:from-violet-100 hover:to-fuchsia-100 p-2 rounded-lg border border-violet-100 shadow-sm transition-colors text-left"
+                    >
+                        <div className="flex items-center gap-2">
+                            <Store className="w-4 h-4 text-violet-600" />
+                            <span className="text-[10px] font-bold text-violet-700 uppercase tracking-wider">Lanzar Modo Feria</span>
+                        </div>
+                    </button>
+                )}
 
                 {/* Voice Toggle for Quick Access */}
                 <div className="flex items-center justify-between px-1 bg-white p-2 rounded-lg border border-slate-100 shadow-sm">
