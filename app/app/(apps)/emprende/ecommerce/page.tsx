@@ -48,8 +48,8 @@ export default async function EcommerceSSOPage() {
     const encryptedToken = encryptToken(payload);
 
     // Get the destination URL.
-    // Use an environment variable, fallback to localhost:3001 normally used for the e-commerce app in dev.
-    const ecommerceBaseUrl = process.env.NEXT_PUBLIC_ECOMMERCE_URL || 'http://localhost:3001';
+    // Use an environment variable, fallback to the production URL to ensure SSO works out of the box.
+    const ecommerceBaseUrl = process.env.NEXT_PUBLIC_ECOMMERCE_URL || 'https://ecommerce-emprende.vercel.app';
     
     // Construct the SSO redirect URL
     const destinationUrl = `${ecommerceBaseUrl}/api/sso-login?token=${encodeURIComponent(encryptedToken)}`;
