@@ -70,7 +70,7 @@ export default async function EcommerceSSOPage() {
         )
     }
 
-    const ecommerceBaseUrl = process.env.NEXT_PUBLIC_ECOMMERCE_URL || 'https://ecommerce-emprende.vercel.app';
+    const ecommerceBaseUrl = 'https://ecommerce-emprende.vercel.app';
     const destinationUrl = `${ecommerceBaseUrl}/api/sso-login?token=${encodeURIComponent(encryptedToken)}`;
 
     redirect(destinationUrl);
