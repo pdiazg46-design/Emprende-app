@@ -131,3 +131,33 @@ export async function wipeUserData() {
         throw new Error("Fallo Crítico al intentar borrar datos.")
     }
 }
+
+export async function updateActiveFair(fairName: string | null, knownFairs?: string[]) {
+    const session = await auth();
+    if (!session?.user?.id) throw new Error("No autorizado");
+
+    try {
+        const dataToUpdate: any = {
+            activeFair: fairName,
+            activeFairStartedAt: fairName ? new Date() : null
+        };
+
+        if (knownFairs !== undefined) {
+            dataToUpdate.knownFairs = knownFairs;
+        }
+
+        await prisma.user.update({
+            where: { id: session.user.id },
+            data: dataToUpdate
+        });
+        
+        // Refrescar paneles de UI que dependan del servidor
+        revalidatePath("/emprende");
+        revalidatePath("/emprende/ventas");
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Error actualizando feria activa:", error);
+        return { success: false, error: "Error de sincronización con la nube" };
+    }
+}

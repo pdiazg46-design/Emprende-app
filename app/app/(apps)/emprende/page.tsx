@@ -20,6 +20,7 @@ import { RiskManager } from "@/components/dashboard/RiskManager"
 import { DemoHeaderBadge } from "@/components/dashboard/DemoHeaderBadge"
 import { Suspense } from "react"
 import { DailyFairPrompt } from "@/components/pos/DailyFairPrompt"
+import { FairSyncer } from "@/components/pos/FairSyncer"
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -135,7 +136,7 @@ export default async function Home() {
   // 1. Fetch Fresh User Data from DB (Bypass Cached NextAuth Token for Trial Logic)
   const dbUser = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { subscriptionPlan: true, subscriptionStatus: true, trialStartsAt: true, createdAt: true, role: true }
+    select: { subscriptionPlan: true, subscriptionStatus: true, trialStartsAt: true, createdAt: true, role: true, activeFair: true }
   });
 
   if (!dbUser) {
@@ -209,6 +210,7 @@ export default async function Home() {
 
       <VoiceWrapper />
       <DailyFairPrompt isPro={activeSession.user.role === 'ADMIN' || activeSession.user.subscriptionPlan === 'PRO'} />
+      <FairSyncer activeFairFromDB={dbUser.activeFair} />
     </DesktopLayout >
   )
 }

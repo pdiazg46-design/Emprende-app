@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Store, X, MapPin, CalendarClock, TrendingUp, History } from "lucide-react"
+import { updateActiveFair } from "@/actions/user-settings-actions"
 
 export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
     const [isOpen, setIsOpen] = useState(false)
@@ -39,7 +40,7 @@ export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
 
     if (!isOpen) return null
 
-    const handleConfirm = () => {
+    const handleConfirm = async () => {
         if (!fairName.trim()) {
             alert("Por favor, ingresa el nombre de la feria o evento.")
             return;
@@ -61,15 +62,23 @@ export function DailyFairPrompt({ isPro }: { isPro: boolean }) {
 
         const today = new Date().toISOString().split('T')[0]
         localStorage.setItem('emprende_last_fair_prompt', today)
-        localStorage.setItem('current_fair', newFairName)
+        localStorage.setItem('current_fair', newFairName) // Legacy fallback
+        
+        // Sincronización en la Nube
+        await updateActiveFair(newFairName, updatedFairs)
+        
         window.dispatchEvent(new Event('fairUpdated')) // Notificar a los componentes UI
         setIsOpen(false)
     }
 
-    const handleDismiss = () => {
+    const handleDismiss = async () => {
         const today = new Date().toISOString().split('T')[0]
         localStorage.setItem('emprende_last_fair_prompt', today)
         localStorage.removeItem('current_fair') // Limpiamos la feria de ayer si existía
+        
+        // Limpiamos en la nube
+        await updateActiveFair(null)
+        
         window.dispatchEvent(new Event('fairUpdated')) // Notificar a los componentes UI
         setIsOpen(false)
     }

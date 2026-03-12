@@ -24,6 +24,9 @@ model User {
   subscriptionPlan   String           @default("BASIC")
   f29Active          Boolean          @default(false)
   ecommerceActive    Boolean          @default(false)
+  activeFair         String?          // Tracker global para sincronización cruzada móvil-PC
+  activeFairStartedAt DateTime?       // Marca de tiempo del evento
+  knownFairs         String[]         @default([]) // Historial de ferias para reutilizar
   ppmRate            Float            @default(1.0)
   mpPreapprovalId    String?
   nextPaymentDate    DateTime?        @default(now())
