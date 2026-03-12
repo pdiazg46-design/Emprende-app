@@ -95,12 +95,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     jwt: {
         async encode(params) {
-            // Forzamos el secreto para prevenir 'Configuration' en Vercel Edge Runtime
             params.secret = process.env.AUTH_SECRET || "c17ea4e6-88a5-43ad-a8ee-df6c6b02fc47"
+            if (!params.salt) params.salt = "authjs.session-token"
             return defaultEncode(params)
         },
         async decode(params) {
             params.secret = process.env.AUTH_SECRET || "c17ea4e6-88a5-43ad-a8ee-df6c6b02fc47"
+            if (!params.salt) params.salt = "authjs.session-token"
             return defaultDecode(params)
         }
     },
