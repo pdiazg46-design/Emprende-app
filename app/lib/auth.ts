@@ -2,6 +2,7 @@ import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import prisma from "@/lib/prisma"
 import bcrypt from "bcryptjs"
+import { encode as defaultEncode, decode as defaultDecode } from "next-auth/jwt"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
@@ -90,6 +91,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 session.user.trialStartsAt = token.trialStartsAt
             }
             return session
+        }
+    },
+    jwt: {
+        async encode(params) {
+            // Forzamos el secreto para prevenir 'Configuration' en Vercel Edge Runtime
+            params.secret = process.env.AUTH_SECRET || "c17ea4e6-88a5-43ad-a8ee-df6c6b02fc47"
+            return defaultEncode(params)
+        },
+        async decode(params) {
+            params.secret = process.env.AUTH_SECRET || "c17ea4e6-88a5-43ad-a8ee-df6c6b02fc47"
+            return defaultDecode(params)
         }
     },
     basePath: "/api/auth",
