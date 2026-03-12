@@ -41,9 +41,9 @@ export async function createPaymentPreference(items: { title: string, unit_price
             body: {
                 items: listItems,
                 back_urls: {
-                    success: "http://localhost:3000/emprende/pos?status=success",
-                    failure: "http://localhost:3000/emprende/pos?status=failure",
-                    pending: "http://localhost:3000/emprende/pos?status=pending"
+                    success: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://emprende-atsit.vercel.app'}/emprende/pos?status=success`,
+                    failure: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://emprende-atsit.vercel.app'}/emprende/pos?status=failure`,
+                    pending: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://emprende-atsit.vercel.app'}/emprende/pos?status=pending`
                 },
                 auto_return: "approved",
                 statement_descriptor: "EMPRENDE POS",
