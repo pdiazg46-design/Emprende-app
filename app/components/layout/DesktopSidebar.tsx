@@ -65,10 +65,13 @@ export function DesktopSidebar({ user }: { user: any }) {
             <nav className="p-4 space-y-2 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
+                    const isExternal = item.href === "/emprende/ecommerce";
                     return (
                         <Link
                             key={item.href}
                             href={item.href}
+                            target={isExternal ? "_blank" : undefined}
+                            rel={isExternal ? "noopener noreferrer" : undefined}
                             className={cn(
                                 "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all duration-200",
                                 isActive
