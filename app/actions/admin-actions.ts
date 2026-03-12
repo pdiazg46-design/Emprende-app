@@ -73,6 +73,7 @@ export async function getAllUsers() {
             createdAt: true,
             notes: true,
             f29Active: true,
+            ecommerceActive: true,
             ppmRate: true,
             _count: {
                 select: {
@@ -128,6 +129,21 @@ export async function updateUserF29(userId: string, f29Active: boolean, ppmRate:
         return { success: true }
     } catch (error) {
         return { success: false, error: "Failed to update F29 configuration" }
+    }
+}
+
+export async function updateUserEcommerce(userId: string, ecommerceActive: boolean) {
+    await requireAdmin()
+
+    try {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { ecommerceActive }
+        })
+        revalidatePath("/admin")
+        return { success: true }
+    } catch (error) {
+        return { success: false, error: "Failed to update E-Commerce configuration" }
     }
 }
 

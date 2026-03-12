@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { grantProAccess, grantBasicAccess, updateUserF29, deleteUser } from "@/actions/admin-actions"
-import { MoreHorizontal, Check, X, Shield, Lock, CreditCard, Gift, Smartphone } from "lucide-react"
+import { grantProAccess, grantBasicAccess, updateUserF29, updateUserEcommerce, deleteUser } from "@/actions/admin-actions"
+import { MoreHorizontal, Check, X, Shield, Lock, CreditCard, Gift, Smartphone, Briefcase } from "lucide-react"
 
 export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
     const [users, setUsers] = useState(initialUsers)
@@ -64,6 +64,27 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
         setLoading(null);
     }
 
+    const handleToggleEcommerce = async (user: any) => {
+        const newValue = !user.ecommerceActive;
+
+        if (newValue) {
+            if (!confirm(`¿Regalar módulo E-Commerce a ${user.name || 'este usuario'}? Tendrá su tienda online activa para configurar.`)) return;
+        } else {
+            if (!confirm(`¿Estás seguro de desactivar el E-Commerce (Tienda Online) para ${user.name || 'este usuario'}?`)) return;
+        }
+
+        setLoading(user.id);
+        setActionMenuOpen(null);
+
+        const res = await updateUserEcommerce(user.id, newValue);
+        if (res.success) {
+            setUsers(users.map(u => u.id === user.id ? { ...u, ecommerceActive: newValue } : u));
+        } else {
+            alert(res.error || "Error al actualizar E-Commerce");
+        }
+        setLoading(null);
+    }
+
     const handleDeleteUser = async (user: any) => {
         const confirm1 = confirm(`PELIGRO: Estás a punto de eliminar a ${user.name || user.email} y todos sus datos (Ventas, Inventario, Cuenta). ¿Continuar?`);
         if (!confirm1) return;
@@ -98,7 +119,7 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
                             <th className="px-6 py-4">Ingreso</th>
                             <th className="px-6 py-4">Estado</th>
                             <th className="px-6 py-4">Plan (B2B)</th>
-                            <th className="px-6 py-4">Tributario (F29)</th>
+                            <th className="px-6 py-4">Add-Ons</th>
                             <th className="px-6 py-4">Uso</th>
                             <th className="px-6 py-4">Acciones</th>
                         </tr>
@@ -169,15 +190,26 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
                                     )}
                                 </td>
                                 <td className="px-6 py-4">
-                                    <span
-                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black tracking-widest uppercase shadow-sm ${user.f29Active
-                                            ? 'bg-blue-600 text-white border-none'
-                                            : 'bg-slate-100 text-slate-400 border border-slate-200'
-                                            }`}
-                                    >
-                                        <Shield className="w-3.5 h-3.5" />
-                                        {user.f29Active ? `ON (${user.ppmRate}%)` : 'OFF'}
-                                    </span>
+                                    <div className="flex flex-col gap-1.5 align-middle">
+                                        <span
+                                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black tracking-widest uppercase shadow-sm w-fit ${user.f29Active
+                                                ? 'bg-blue-600 text-white border-none'
+                                                : 'bg-slate-100 text-slate-400 border border-slate-200'
+                                                }`}
+                                        >
+                                            <Shield className="w-3.5 h-3.5" />
+                                            {user.f29Active ? `F29 (${user.ppmRate}%)` : 'F29 OFF'}
+                                        </span>
+                                        <span
+                                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black tracking-widest uppercase shadow-sm w-fit ${user.ecommerceActive
+                                                ? 'bg-emerald-600 text-white border-none'
+                                                : 'bg-slate-100 text-slate-400 border border-slate-200'
+                                                }`}
+                                        >
+                                            <Briefcase className="w-3.5 h-3.5" />
+                                            {user.ecommerceActive ? 'E-COM ON' : 'E-COM OFF'}
+                                        </span>
+                                    </div>
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col gap-1.5 text-sm font-bold text-slate-900">
@@ -223,6 +255,15 @@ export function AdminUserTable({ initialUsers }: { initialUsers: any[] }) {
                                                     >
                                                         <Shield className="w-3.5 h-3.5" />
                                                         {user.f29Active ? "Apagar Motor Tributario" : "Encender Motor F29 (VIP)"}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleToggleEcommerce(user)}
+                                                        disabled={loading === user.id}
+                                                        className={`w-full text-left px-3 py-2 text-xs font-semibold flex items-center gap-2 rounded-lg mt-1
+                                                            ${user.ecommerceActive ? 'hover:bg-red-50 text-red-700' : 'hover:bg-emerald-50 text-emerald-700'}`}
+                                                    >
+                                                        <Briefcase className="w-3.5 h-3.5" />
+                                                        {user.ecommerceActive ? "Apagar SaaS E-Commerce" : "Regalar Módulo E-Commerce"}
                                                     </button>
                                                     <div className="my-2 border-t border-slate-100"></div>
                                                     <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest px-2 mb-1">Zona de Peligro</p>

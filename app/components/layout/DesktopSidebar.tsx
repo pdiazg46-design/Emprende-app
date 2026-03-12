@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, TrendingUp, TrendingDown, Settings, LogOut, ShieldCheck, Wallet } from "lucide-react";
+import { LayoutDashboard, TrendingUp, TrendingDown, Settings, LogOut, ShieldCheck, Wallet, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserProfile } from "@/components/UserProfile";
 import { signOut } from "next-auth/react";
@@ -32,6 +32,7 @@ export function DesktopSidebar({ user }: { user: any }) {
         { name: "Gastos", href: "/emprende/gastos", icon: TrendingDown },
         { name: "Finanzas", href: "/emprende/finanzas", icon: Wallet },
         { name: "Auto F29", href: "/emprende/f29", icon: ShieldCheck },
+        { name: "Mi E-commerce", href: "/emprende/ecommerce", icon: ShoppingBag },
         { name: "Configuración", href: "/emprende/settings", icon: Settings },
     ];
 

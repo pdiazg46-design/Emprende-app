@@ -12,7 +12,7 @@ export default async function PlanesPage() {
         redirect("/signin")
     }
 
-    const { email } = session.user as any
+    const { email, subscriptionStatus, subscriptionPlan, f29Active, ecommerceActive } = session.user as any
 
     return (
         <div className="min-h-[calc(100vh-4rem)] bg-slate-50 py-12 px-4 relative overflow-hidden">
@@ -132,6 +132,66 @@ export default async function PlanesPage() {
                     </div>
 
                 </div>
+
+                {/* Add-Ons Section */}
+                {(subscriptionPlan === 'PRO' || subscriptionStatus === 'ACTIVE') && (!f29Active || !ecommerceActive) && (
+                    <div className="mt-12">
+                        <div className="text-center mb-8 animate-in slide-in-from-bottom-4 duration-500 pt-8 border-t border-slate-200">
+                            <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-2 tracking-tight">
+                                Módulos Empresariales (Add-Ons)
+                            </h2>
+                            <p className="text-slate-500 font-medium max-w-2xl mx-auto">
+                                Potencia tu Emprende PRO con herramientas de misión crítica.
+                            </p>
+                        </div>
+                        
+                        <div className="grid md:grid-cols-2 gap-8 items-stretch">
+                            
+                            {/* Add-On: F29 */}
+                            {!f29Active && (
+                                <div className="bg-white rounded-[2rem] p-6 shadow-lg border border-slate-200 flex flex-col hover:-translate-y-1 transition-transform">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                                            <LineChart className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-black text-slate-900">Motor F29 Inteligente</h3>
+                                            <span className="text-sm font-bold text-blue-600">+$1.000 / mes</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-slate-500 text-sm mb-6 flex-1">
+                                        Calculadora tributaria automatizada. IVA Crédito, Débito y PPM listos para tu contador.
+                                    </p>
+                                    <button className="w-full py-3 bg-blue-600 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition">
+                                        Activar F29
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Add-On: E-Commerce */}
+                            {!ecommerceActive && (
+                                <div className="bg-white rounded-[2rem] p-6 shadow-lg border border-slate-200 flex flex-col hover:-translate-y-1 transition-transform">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                                            <Briefcase className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-black text-slate-900">SaaS E-Commerce</h3>
+                                            <span className="text-sm font-bold text-emerald-600">+$19.990 / mes</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-slate-500 text-sm mb-6 flex-1">
+                                        Tu propia tienda online conectada (Ej: tunegocio.cl). Descuento de stock en tiempo real y facturación integrada.
+                                    </p>
+                                    <button className="w-full py-3 bg-emerald-600 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-emerald-700 transition">
+                                        Activar E-Commerce
+                                    </button>
+                                </div>
+                            )}
+                            
+                        </div>
+                    </div>
+                )}
 
                 {/* Footer Notes removed to trust the automated webhook */}
 
