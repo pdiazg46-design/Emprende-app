@@ -92,7 +92,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return session
         }
     },
+    },
+    basePath: "/api/auth",
     trustHost: true,
-    debug: true,
-    secret: process.env.AUTH_SECRET || "fallback-secret-emprende-prod-emergency-2026",
+    debug: process.env.NODE_ENV === 'development',
+    secret: process.env.AUTH_SECRET || "c17ea4e6-88a5-43ad-a8ee-df6c6b02fc47",
 })
