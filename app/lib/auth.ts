@@ -89,9 +89,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 session.user.subscriptionPlan = token.subscriptionPlan
                 session.user.trialStartsAt = token.trialStartsAt
             }
-            return session
         }
-    },
     },
     basePath: "/api/auth",
     trustHost: true,
