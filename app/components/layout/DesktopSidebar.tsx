@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -10,9 +11,24 @@ import { signOut } from "next-auth/react";
 import { MobileSimulatorToggle } from "@/components/MobileSimulatorToggle";
 import { VoiceToggle } from "@/components/voice/VoiceToggle";
 import { DemoHeaderBadge } from "@/components/dashboard/DemoHeaderBadge";
+import { updateActiveFair } from "@/actions/user-settings-actions";
 
 export function DesktopSidebar({ user }: { user: any }) {
     const pathname = usePathname();
+    const [activeFair, setActiveFair] = useState<string | null>(null);
+
+    useEffect(() => {
+        // Cargar estado inicial
+        setActiveFair(localStorage.getItem('current_fair'));
+
+        // Escuchar cambios de otros componentes
+        const handleFairUpdate = () => {
+            setActiveFair(localStorage.getItem('current_fair'));
+        };
+
+        window.addEventListener('fairUpdated', handleFairUpdate);
+        return () => window.removeEventListener('fairUpdated', handleFairUpdate);
+    }, []);
 
     const isTrial = String(user?.subscriptionPlan).toUpperCase() === 'BASIC' && String(user?.subscriptionStatus).toUpperCase() === 'TRIAL';
     let daysRemaining = 0;
@@ -93,15 +109,38 @@ export function DesktopSidebar({ user }: { user: any }) {
 
                 {/* Feria Toggle for Quick Access (PC Support) */}
                 {(user?.subscriptionPlan === 'PRO' || user?.role === 'ADMIN') && (
-                    <button 
-                        onClick={() => window.dispatchEvent(new Event('openFairPrompt'))}
-                        className="w-full flex items-center justify-between px-2 bg-gradient-to-r from-violet-50 to-fuchsia-50 hover:from-violet-100 hover:to-fuchsia-100 p-2 rounded-lg border border-violet-100 shadow-sm transition-colors text-left"
-                    >
-                        <div className="flex items-center gap-2">
-                            <Store className="w-4 h-4 text-violet-600" />
-                            <span className="text-[10px] font-bold text-violet-700 uppercase tracking-wider">Lanzar Modo Feria</span>
-                        </div>
-                    </button>
+                    activeFair ? (
+                        <button 
+                            onClick={async () => {
+                                if (confirm(`¿Terminaste tu jornada en la feria "${activeFair}"? Las próximas ventas serán normales.`)) {
+                                    const today = new Date().toISOString().split('T')[0]
+                                    localStorage.setItem('emprende_last_fair_prompt', today)
+                                    localStorage.removeItem('current_fair')
+                                    await updateActiveFair(null)
+                                    setActiveFair(null)
+                                    window.dispatchEvent(new Event('fairUpdated'))
+                                    alert("✅ Rastreo de feria detenido. Ventas normales reactivadas.")
+                                    window.location.reload()
+                                }
+                            }}
+                            className="w-full flex items-center justify-between px-2 bg-red-50 hover:bg-red-100 p-2 rounded-lg border border-red-200 shadow-sm transition-colors text-left"
+                        >
+                            <div className="flex items-center gap-2">
+                                <Store className="w-4 h-4 text-red-600" />
+                                <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider truncate">Detener Rastreo ({activeFair})</span>
+                            </div>
+                        </button>
+                    ) : (
+                        <button 
+                            onClick={() => window.dispatchEvent(new Event('openFairPrompt'))}
+                            className="w-full flex items-center justify-between px-2 bg-gradient-to-r from-violet-50 to-fuchsia-50 hover:from-violet-100 hover:to-fuchsia-100 p-2 rounded-lg border border-violet-100 shadow-sm transition-colors text-left"
+                        >
+                            <div className="flex items-center gap-2">
+                                <Store className="w-4 h-4 text-violet-600" />
+                                <span className="text-[10px] font-bold text-violet-700 uppercase tracking-wider">Lanzar Modo Feria</span>
+                            </div>
+                        </button>
+                    )
                 )}
 
                 {/* Voice Toggle for Quick Access */}

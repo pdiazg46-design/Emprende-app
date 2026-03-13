@@ -8,6 +8,7 @@ import { InstallButton } from "./InstallButton"
 import { HardwareIdFetcher } from "./HardwareIdFetcher"
 import { useVoicePreferences } from "./voice/VoicePreferencesContext"
 import { VoiceToggle } from "./voice/VoiceToggle"
+import { updateActiveFair } from "@/actions/user-settings-actions"
 
 interface UserProfileProps {
     user: {
@@ -142,11 +143,15 @@ export function UserProfile({ user }: UserProfileProps) {
 
                             {activeFair ? (
                                 <button
-                                    onClick={() => {
+                                    onClick={async () => {
                                         if (confirm(`¿Terminaste tu jornada en la feria "${activeFair}"? Las próximas ventas serán normales.`)) {
+                                            const today = new Date().toISOString().split('T')[0]
+                                            localStorage.setItem('emprende_last_fair_prompt', today)
                                             localStorage.removeItem('current_fair')
+                                            await updateActiveFair(null)
                                             setActiveFair(null)
                                             setIsOpen(false)
+                                            window.dispatchEvent(new Event('fairUpdated'))
                                             alert("✅ Rastreo de feria detenido. Ventas normales reactivadas.")
                                             window.location.reload()
                                         }
