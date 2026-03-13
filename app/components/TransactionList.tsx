@@ -153,7 +153,7 @@ export function TransactionList({ transactions }: { transactions: Transaction[] 
                         <div
                             key={group.id}
                             onClick={() => {
-                                if (isGroup || group.groupId) { // Open modal
+                                if (isGroup || group.groupId || group.type === 'WEB_SALE') { // Open modal
                                     setSelectedGroup(group)
                                 }
                             }}
@@ -211,10 +211,10 @@ export function TransactionList({ transactions }: { transactions: Transaction[] 
                                     ) : (
                                         <span className="privacy-sensitive text-sm sm:text-base font-black tracking-tight whitespace-nowrap">{sign}${group.totalAmount.toLocaleString('es-CL')}</span>
                                     )}
-                                    {(isGroup || group.groupId) && <ChevronRight className="hidden sm:block w-4 h-4 text-slate-300 mt-1" />}
+                                    {(isGroup || group.groupId || group.type === 'WEB_SALE') && <ChevronRight className="hidden sm:block w-4 h-4 text-slate-300 mt-1" />}
                                 </div>
 
-                                {!isGroup && !group.groupId && (
+                                {!isGroup && !group.groupId && group.type !== 'WEB_SALE' && (
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation()
