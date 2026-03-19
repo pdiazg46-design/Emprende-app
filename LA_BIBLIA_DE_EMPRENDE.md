@@ -84,6 +84,12 @@ Esta es la configuración de los componentes críticos al estado actual. Cualqui
 - **Ruido Visual Cero:** En la pestaña principal de "Histórico de Ventas" de la administración E-commerce quedan ocultos permanentemente los Carritos Abandonados (`PENDING_PAYMENT`). Cero basura en la vista central.
 - **"Máquina del Tiempo" Logística:** Porque los humanos cometen errores ingresando Courriers, el sistema permite revertir el estado de un paquete de `SENT` (Despachado) de vuelta a `PAID` (Pagado) vaciando los campos de seguimiento. La Ley Dicta: *Esta regresión de estado NO debe jamás volver a inyectar ingresos a la contabilidad ni devolver inventario fantasma.*
 
+### 8. Aislamiento Tenant y Single-Device Ghosting (Seguridad)
+- **Hardcodes de Diagnóstico:** Queda **ESTRICTAMENTE PROHIBIDO** dejar correos electrónicos en duro (`email === 'pdiazg46@gmail.com'`) en el backend de ninguna API. El backend debe confiar ciegamente en la sesión descifrada por `@supabase/ssr` para resolver el propietario de los datos vía Prisma.
+- **Residuos de LocalStorage (PWA Compartida):** Al ejecutar un Logout, no basta con destruir la cookie en el Server (SSR). El frontend **DEBE** limpiar proactivamente la caché móvil (`localStorage.removeItem('current_fair')` y `emprende_pos_cart`) antes de disparar la salida, evitando fuga cruzada de datos entre dos comerciantes que usen el mismo navegador físico.
+- **Sincronizadores Maestros:** Los componentes invisibles que fuerzan coherencia de estado (Ej: `<FairSyncer />`) deben inyectarse en el `layout.tsx` superior, ejecutándose antes del `{children}` alimentados por la base de datos real, aplastando cualquier anomalía de LocalStorage.
+- **Sincronía Híbrida de Inventario (Ley del Toggle Web):** La tienda E-commerce filtra rígidamente por `isActiveOnline: true`. La única vía arquitectónica legal para exponer un producto físico a la web es mediante un **Botón Toggle WEB (UI Optimista)**, el cual muta instantáneamente la RAM del POS local y despacha en la sombra una sincronización asimilando el `stock` al campo aislado `stockEcommerce`, protegiendo la bodega física.
+
 ---
 
 ## 🛡️ PARTE 4: PROCEDIMIENTOS DE RESOLUCIÓN DE CRISIS!
