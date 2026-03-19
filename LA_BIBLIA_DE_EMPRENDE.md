@@ -77,6 +77,13 @@ Esta es la configuración de los componentes críticos al estado actual. Cualqui
 - **Despliegue unificado (Web = Móvil):** La regla ahora es "Push -> Vercel -> Cliente". Todo dispositivo que tenga instalada la PWA en su pantalla de inicio recibirá la aplicación actualizada sin depender o esperar tiempos de aprobación de terceros.
 - **Standby Nativo (Recurso futuro):** Solo si es estrictamente justificado por el negocio reactivaremos el uso de features nativas de sistema, Capacitor, Java y las firmas de código. Por ahora, estos procesos de compilación móvil nativo mueren y mantenemos nuestra base de herramientas limpia y eficiente.
 
+### 7. Arquitectura E-commerce Integrada (Zero-Touch)
+- El E-commerce opera como una extensión umbilical de Emprende POS. No es un sistema separado, es una "vista al cliente" del mismo catálogo y de la misma sesión compartida (`ecommerceActive` flag en Prisma).
+- **Prohibición del Login Nativo Web:** El cliente no se "registra" como en tiendas tradicionales. Accede a través de **URL Tokens Firmados** generados por el dueño desde su panel POS (`/api/sso-login`). El E-commerce no posee formularios de Login expuestos al público.
+- **Filosofía Cero-Toque (Zero-Touch Payments):** El backoffice del E-commerce confía ciegamente en la pasarela de pagos (Mercado Pago). **ESTRICTAMENTE PROHIBIDO** reintroducir botones manuales de "Aprobar Pago". Un carro pasa a verde ("PAID" y listo para despacho) *únicamente* cuando el Webhook de la pasarela lo dicta.
+- **Ruido Visual Cero:** En la pestaña principal de "Histórico de Ventas" de la administración E-commerce quedan ocultos permanentemente los Carritos Abandonados (`PENDING_PAYMENT`). Cero basura en la vista central.
+- **"Máquina del Tiempo" Logística:** Porque los humanos cometen errores ingresando Courriers, el sistema permite revertir el estado de un paquete de `SENT` (Despachado) de vuelta a `PAID` (Pagado) vaciando los campos de seguimiento. La Ley Dicta: *Esta regresión de estado NO debe jamás volver a inyectar ingresos a la contabilidad ni devolver inventario fantasma.*
+
 ---
 
 ## 🛡️ PARTE 4: PROCEDIMIENTOS DE RESOLUCIÓN DE CRISIS!

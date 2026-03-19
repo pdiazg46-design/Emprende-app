@@ -236,6 +236,8 @@ export function UserProfile({ user }: UserProfileProps) {
                                 } catch (e) {
                                     console.error("Error silencioso en signOut:", e);
                                 } finally {
+                                    localStorage.removeItem('current_fair');
+                                    localStorage.removeItem('emprende_pos_cart');
                                     window.location.href = "/api/manual-logout";
                                 }
                             }}

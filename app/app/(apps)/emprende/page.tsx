@@ -20,7 +20,6 @@ import { RiskManager } from "@/components/dashboard/RiskManager"
 import { DemoHeaderBadge } from "@/components/dashboard/DemoHeaderBadge"
 import { Suspense } from "react"
 import { DailyFairPrompt } from "@/components/pos/DailyFairPrompt"
-import { FairSyncer } from "@/components/pos/FairSyncer"
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -210,7 +209,6 @@ export default async function Home() {
 
       <VoiceWrapper />
       <DailyFairPrompt isPro={activeSession.user.role === 'ADMIN' || activeSession.user.subscriptionPlan === 'PRO'} />
-      <FairSyncer activeFairFromDB={dbUser.activeFair} />
     </DesktopLayout >
   )
 }

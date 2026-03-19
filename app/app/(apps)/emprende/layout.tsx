@@ -1,5 +1,7 @@
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
+import prisma from "@/lib/prisma"
+import { FairSyncer } from "@/components/pos/FairSyncer"
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -15,6 +17,11 @@ export default async function EmprendeLayout({
     if (!session?.user?.email) {
         redirect("/signin")
     }
+
+    const userDb = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: { activeFair: true }
+    });
 
     // 2. Check Subscription Status (Skip for ADMIN)
     const role = (session.user as any).role
@@ -46,6 +53,7 @@ export default async function EmprendeLayout({
 
     return (
         <>
+            <FairSyncer activeFairFromDB={userDb?.activeFair || null} />
             {children}
         </>
     );

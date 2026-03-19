@@ -167,6 +167,8 @@ export function DesktopSidebar({ user }: { user: any }) {
                             } catch (e) {
                                 console.error("Error silencioso en signOut sidebar:", e);
                             } finally {
+                                localStorage.removeItem('current_fair');
+                                localStorage.removeItem('emprende_pos_cart');
                                 window.location.href = "/api/manual-logout";
                             }
                         }}
