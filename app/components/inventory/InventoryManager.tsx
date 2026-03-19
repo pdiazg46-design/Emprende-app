@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Save, Plus, Package, Trash2, Search, Activity, Tag, Hash, Store, Pencil, RefreshCw } from "lucide-react"
+import { Save, Plus, Package, Trash2, Search, Activity, Tag, Hash, Store, Pencil, RefreshCw, Globe } from "lucide-react"
 import { bulkUpdateStock, addProduct, deleteProduct } from "@/actions/transaction-actions"
 import { useRouter } from "next/navigation"
 import { EditProductModal } from "./EditProductModal"
@@ -14,6 +14,8 @@ interface Product {
     stock: number
     minStock: number
     cost: number
+    isActiveOnline?: boolean
+    stockEcommerce?: number
 }
 
 export function InventoryManager({ inventory }: { inventory: Product[] }) {
@@ -267,13 +269,43 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                                     <Plus className="w-3 h-3 md:w-3.5 md:h-3.5" />
                                 </button>
 
-                                <div className="flex flex-col min-w-0 pr-1">
+                                <div className="flex flex-col min-w-0 pr-1 gap-0.5 mt-0.5">
                                     <span className="font-bold text-slate-700 text-[11px] md:text-[13px] line-clamp-1 leading-tight uppercase truncate">
                                         {product.name}
                                     </span>
-                                    <span className="font-bold text-slate-500 text-[10px] md:text-[11px] mt-0.5">
-                                        ${formatNumber(product.price)}
-                                    </span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-bold text-slate-500 text-[10px] md:text-[11px]">
+                                            ${formatNumber(product.price)}
+                                        </span>
+                                        <button
+                                             onClick={async (e) => {
+                                                 e.stopPropagation();
+                                                 const newState = !product.isActiveOnline;
+                                                 const newStock = newState ? (product.stockEcommerce || product.stock) : 0;
+                                                 
+                                                 // UI Optimista Automática
+                                                 setLocalInventory(prev => prev.map(p => p.id === product.id ? { ...p, isActiveOnline: newState, stockEcommerce: newStock } : p));
+                                                 
+                                                 try {
+                                                     const { toggleProductWeb } = await import('@/actions/transaction-actions');
+                                                     await toggleProductWeb(product.id, newState, newStock);
+                                                 } catch (error) {
+                                                     console.error(error);
+                                                     setLocalInventory(prev => prev.map(p => p.id === product.id ? product : p));
+                                                     alert("Fallo al conectar con el servidor web.");
+                                                 }
+                                             }}
+                                             className={`flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold border transition-colors ${
+                                                 product.isActiveOnline 
+                                                     ? "bg-blue-50 text-blue-600 border-blue-200 shadow-sm"
+                                                     : "bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-100"
+                                             }`}
+                                             title={product.isActiveOnline ? "Publicado en E-Commerce" : "Activar en E-Commerce"}
+                                         >
+                                             <Globe className="w-2.5 h-2.5" />
+                                             {product.isActiveOnline ? 'WEB' : 'NO WEB'}
+                                         </button>
+                                    </div>
                                 </div>
                             </div>
 

@@ -1134,3 +1134,21 @@ export async function getRiskAnalysis() {
 
     return null
 }
+
+export async function toggleProductWeb(id: string, isActiveOnline: boolean, stockEcommerce?: number) {
+    const session = await auth()
+    if (!session?.user?.id) throw new Error("No autorizado")
+
+    const data: any = { isActiveOnline }
+    if (stockEcommerce !== undefined) {
+        data.stockEcommerce = stockEcommerce
+    }
+
+    await prisma.product.update({
+        where: { id, userId: session.user.id },
+        data
+    })
+
+    revalidatePath("/")
+    return { success: true }
+}
