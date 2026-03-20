@@ -18,7 +18,7 @@ interface Product {
     stockEcommerce?: number
 }
 
-export function InventoryManager({ inventory }: { inventory: Product[] }) {
+export function InventoryManager({ inventory, ecommerceActive }: { inventory: Product[], ecommerceActive?: boolean }) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const { addToCart, setCatalog } = useCart()
@@ -277,33 +277,35 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                                         <span className="font-bold text-slate-500 text-[10px] md:text-[12px] tracking-tight">
                                             ${formatNumber(product.price)}
                                         </span>
-                                        <button
-                                             onClick={async (e) => {
-                                                 e.stopPropagation();
-                                                 const newState = !product.isActiveOnline;
-                                                 const newStock = newState ? (product.stockEcommerce || product.stock) : 0;
-                                                 
-                                                 setLocalInventory(prev => prev.map(p => p.id === product.id ? { ...p, isActiveOnline: newState, stockEcommerce: newStock } : p));
-                                                 
-                                                 try {
-                                                     const { toggleProductWeb } = await import('@/actions/transaction-actions');
-                                                     await toggleProductWeb(product.id, newState, newStock);
-                                                 } catch (error) {
-                                                     console.error(error);
-                                                     setLocalInventory(prev => prev.map(p => p.id === product.id ? product : p));
-                                                     alert("Fallo al conectar con el servidor web.");
-                                                 }
-                                             }}
-                                             className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-all border ${
-                                                 product.isActiveOnline 
-                                                     ? "bg-blue-50 text-blue-600 border-blue-200 shadow-sm"
-                                                     : "bg-slate-50/80 text-slate-400 border-slate-200 opacity-80 hover:opacity-100"
-                                             }`}
-                                             title={product.isActiveOnline ? "Desactivar de Catálogo Web" : "Activar en Catálogo Web"}
-                                         >
-                                             <Globe className={`w-2.5 h-2.5 shrink-0 ${product.isActiveOnline ? 'text-blue-500' : 'text-slate-400'}`} />
-                                             <span className="whitespace-nowrap">{product.isActiveOnline ? 'Web' : 'No Web'}</span>
-                                         </button>
+                                        {ecommerceActive && (
+                                            <button
+                                                 onClick={async (e) => {
+                                                     e.stopPropagation();
+                                                     const newState = !product.isActiveOnline;
+                                                     const newStock = newState ? (product.stockEcommerce || product.stock) : 0;
+                                                     
+                                                     setLocalInventory(prev => prev.map(p => p.id === product.id ? { ...p, isActiveOnline: newState, stockEcommerce: newStock } : p));
+                                                     
+                                                     try {
+                                                         const { toggleProductWeb } = await import('@/actions/transaction-actions');
+                                                         await toggleProductWeb(product.id, newState, newStock);
+                                                     } catch (error) {
+                                                         console.error(error);
+                                                         setLocalInventory(prev => prev.map(p => p.id === product.id ? product : p));
+                                                         alert("Fallo al conectar con el servidor web.");
+                                                     }
+                                                 }}
+                                                 className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-all border ${
+                                                     product.isActiveOnline 
+                                                         ? "bg-blue-50 text-blue-600 border-blue-200 shadow-sm"
+                                                         : "bg-slate-50/80 text-slate-400 border-slate-200 opacity-80 hover:opacity-100"
+                                                 }`}
+                                                 title={product.isActiveOnline ? "Desactivar de Catálogo Web" : "Activar en Catálogo Web"}
+                                             >
+                                                 <Globe className={`w-2.5 h-2.5 shrink-0 ${product.isActiveOnline ? 'text-blue-500' : 'text-slate-400'}`} />
+                                                 <span className="whitespace-nowrap">{product.isActiveOnline ? 'Web' : 'No Web'}</span>
+                                             </button>
+                                        )}
                                     </div>
                                 </div>
                             </div>

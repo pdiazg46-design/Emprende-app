@@ -40,7 +40,7 @@ function DashboardSkeleton() {
 
 // Extraído el contenido que bloquea el Time-To-First-Byte
 // Mitad Izquierda: Productos y Dashboard
-async function DashboardLeft({ session, isTrial, daysRemaining }: { session: any, isTrial: boolean, daysRemaining: number }) {
+async function DashboardLeft({ session, isTrial, daysRemaining, ecommerceActive }: { session: any, isTrial: boolean, daysRemaining: number, ecommerceActive: boolean }) {
   const { salesToday, expensesToday, expensesThisWeek, transactionsToday, totalStockValue, inventory } = await getDashboardMetrics()
 
   return (
@@ -107,7 +107,7 @@ async function DashboardLeft({ session, isTrial, daysRemaining }: { session: any
         </section>
 
         <section className="h-full">
-          <InventoryManager inventory={inventory as any} />
+          <InventoryManager inventory={inventory as any} ecommerceActive={ecommerceActive} />
         </section>
       </div>
     </>
@@ -135,7 +135,7 @@ export default async function Home() {
   // 1. Fetch Fresh User Data from DB (Bypass Cached NextAuth Token for Trial Logic)
   const dbUser = await prisma.user.findUnique({
     where: { email: session.user.email },
-    select: { subscriptionPlan: true, subscriptionStatus: true, trialStartsAt: true, createdAt: true, role: true, activeFair: true }
+    select: { subscriptionPlan: true, subscriptionStatus: true, trialStartsAt: true, createdAt: true, role: true, activeFair: true, ecommerceActive: true }
   });
 
   if (!dbUser) {
@@ -167,7 +167,8 @@ export default async function Home() {
       role: dbUser.role,
       subscriptionPlan: dbUser.subscriptionPlan,
       subscriptionStatus: dbUser.subscriptionStatus,
-      trialStartsAt: dbUser.trialStartsAt
+      trialStartsAt: dbUser.trialStartsAt,
+      ecommerceActive: dbUser.ecommerceActive
     }
   };
 
@@ -183,7 +184,7 @@ export default async function Home() {
         {/* COLUMNA IZQUIERDA (8/12 - 66%) - Productos y Resumen */}
         <div className="md:col-span-8 w-full flex flex-col gap-6 md:gap-8">
           <Suspense fallback={<DashboardSkeleton />}>
-            <DashboardLeft session={activeSession} isTrial={isTrial} daysRemaining={daysRemaining} />
+            <DashboardLeft session={activeSession} isTrial={isTrial} daysRemaining={daysRemaining} ecommerceActive={dbUser.ecommerceActive} />
           </Suspense>
         </div>
 
