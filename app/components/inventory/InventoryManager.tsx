@@ -302,7 +302,7 @@ export function InventoryManager({ inventory }: { inventory: Product[] }) {
                                              title={product.isActiveOnline ? "Desactivar de Catálogo Web" : "Activar en Catálogo Web"}
                                          >
                                              <Globe className={`w-2.5 h-2.5 shrink-0 ${product.isActiveOnline ? 'text-blue-500' : 'text-slate-400'}`} />
-                                             <span className="hidden sm:inline">{product.isActiveOnline ? 'Web' : 'No Web'}</span>
+                                             <span className="whitespace-nowrap">{product.isActiveOnline ? 'Web' : 'No Web'}</span>
                                          </button>
                                     </div>
                                 </div>
