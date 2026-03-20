@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   description: "Tu punto de venta y gestión de negocios inteligente. Haz crecer tu emprendimiento al siguiente nivel.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/favicon-optico.png?v=mega2",
-    apple: "/apple-icon.png?v=solid7",
+    icon: "/favicon.ico?v=transparent",
+    apple: "/favicon.ico?v=transparent",
   },
   openGraph: {
     title: "Emprende SaaS & POS",
