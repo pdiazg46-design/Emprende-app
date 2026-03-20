@@ -159,6 +159,8 @@ export default async function Home() {
     daysRemaining = Math.max(0, 30 - daysSinceStart);
   }
 
+  const isEcommerceActive = dbUser.ecommerceActive || dbUser.role === 'ADMIN';
+
   // Inject fresh Role into session object for the children props safely
   const activeSession = {
     ...session,
@@ -168,7 +170,7 @@ export default async function Home() {
       subscriptionPlan: dbUser.subscriptionPlan,
       subscriptionStatus: dbUser.subscriptionStatus,
       trialStartsAt: dbUser.trialStartsAt,
-      ecommerceActive: dbUser.ecommerceActive
+      ecommerceActive: isEcommerceActive
     }
   };
 
@@ -184,7 +186,7 @@ export default async function Home() {
         {/* COLUMNA IZQUIERDA (8/12 - 66%) - Productos y Resumen */}
         <div className="md:col-span-8 w-full flex flex-col gap-6 md:gap-8">
           <Suspense fallback={<DashboardSkeleton />}>
-            <DashboardLeft session={activeSession} isTrial={isTrial} daysRemaining={daysRemaining} ecommerceActive={dbUser.ecommerceActive} />
+            <DashboardLeft session={activeSession} isTrial={isTrial} daysRemaining={daysRemaining} ecommerceActive={isEcommerceActive} />
           </Suspense>
         </div>
 

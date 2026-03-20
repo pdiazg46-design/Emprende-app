@@ -208,7 +208,7 @@ function getChileTimeBounds(baseDate: Date = new Date()) {
     return { todayStart, todayEnd, weekStart, weekEnd, lastWeekStart, lastWeekEnd, monthStart, monthEnd, lastMonthStart, lastMonthEnd, yearStart, yearEnd, lastYearStart, lastYearEnd, chileTime };
 }
 
-export const getDashboardMetrics = cache(async (timeframe: string = 'today') => {
+export const getDashboardMetrics = async (timeframe: string = 'today') => {
     const session = await auth()
     if (!session?.user?.id) return { salesToday: 0, expensesToday: 0, transactionsToday: [], totalStockValue: 0, inventory: [] }
 
@@ -322,7 +322,7 @@ export const getDashboardMetrics = cache(async (timeframe: string = 'today') => 
         totalStockValue,
         inventory
     }
-})
+}
 
 export async function getTransactionsByRange(from: string, to: string) {
     const session = await auth()
